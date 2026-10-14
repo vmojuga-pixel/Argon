@@ -16,6 +16,7 @@ export function renderSwarmUI() {
     <span id="epoch" class="text-xs px-2 py-0.5 rounded bg-slate-800 text-cyan-400 border border-slate-700">EPOCH #0</span>
   </div>
   <div class="flex gap-2 flex-wrap">
+    <input id="apiKey" placeholder="X-API-Key" class="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs w-44" />
     <input id="swarmId" value="GLOBAL_CORP_SWARM" class="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs w-44" />
     <input id="topic" placeholder="custom topic (optional)" class="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs w-52" />
     <button id="runBtn" onclick="runCycle()" class="text-xs px-3 py-1.5 rounded bg-cyan-600 hover:bg-cyan-500 text-white font-bold">RUN CYCLE</button>
@@ -59,36 +60,56 @@ function agentIndex(name) {
   const map = { '01_VISIONARY':1,'02_ARCHITECT':2,'03_SYNTHESIZER':3,'04_THE_BREAKER':4,'05_OPTIMIZER':5,'06_THE_JUDGE':6,'07_THE_SCRIBE':7 };
   return map[name] || 0;
 }
-function runCycle() {
-  if (es) { es.close(); es = null; }
+async function runCycle() {
+  if (es) { try { es.abort(); } catch {} es = null; }
   for (let i=1;i<=7;i++) setAgent(i,'I');
   $('feed').innerHTML = '';
   $('runBtn').classList.add('hidden');
   $('stopBtn').classList.remove('hidden');
   const sid = $('swarmId').value.trim() || 'GLOBAL_CORP_SWARM';
   const topic = $('topic').value.trim();
+  const key = $('apiKey').value.trim();
+  if (!key) { log('ERROR','X-API-Key required','text-rose-400'); finish(); return; }
   const url = '/swarm/stream?swarm='+encodeURIComponent(sid)+(topic?'&topic='+encodeURIComponent(topic):'');
-  es = new EventSource(url);
-  es.onmessage = (e) => {
-    const d = JSON.parse(e.data);
-    if (d.type === 'epoch_start') { $('epoch').innerText = 'EPOCH #'+d.epoch; log('SYSTEM','Epoch '+d.epoch+' started','text-emerald-400'); }
-    else if (d.type === 'agent_start') { setAgent(agentIndex(d.agent),'A'); log(d.agent,'working...','text-amber-400'); }
-    else if (d.type === 'agent_done') {
-      setAgent(agentIndex(d.agent),'D');
-      let extra = d.sandbox ? ' | sandbox: '+d.sandbox.join('; ') : '';
-      log(d.agent, (d.output||'')+extra, 'text-cyan-400');
+  es = new AbortController();
+  try {
+    const r = await fetch(url, { headers: { 'X-API-Key': key }, signal: es.signal });
+    if (!r.ok) { log('ERROR','HTTP '+r.status,'text-rose-400'); finish(); return; }
+    const reader = r.body.getReader();
+    const dec = new TextDecoder();
+    let buf = '';
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      let i;
+      while ((i = buf.indexOf('\n\n')) >= 0) {
+        const chunk = buf.slice(0, i); buf = buf.slice(i + 2);
+        const line = chunk.split('\n').find(l => l.startsWith('data: '));
+        if (!line) continue;
+        try {
+          const d = JSON.parse(line.slice(6));
+          if (d.type === 'epoch_start') { $('epoch').innerText = 'EPOCH #'+d.epoch; log('SYSTEM','Epoch '+d.epoch+' started','text-emerald-400'); }
+          else if (d.type === 'agent_start') { setAgent(agentIndex(d.agent),'A'); log(d.agent,'working...','text-amber-400'); }
+          else if (d.type === 'agent_done') {
+            setAgent(agentIndex(d.agent),'D');
+            let extra = d.sandbox ? ' | sandbox: '+d.sandbox.join('; ') : '';
+            log(d.agent, (d.output||'')+extra, 'text-cyan-400');
+          }
+          else if (d.type === 'complete') { log('SYSTEM','Cycle complete. GitHub: '+(d.githubStatus.synced?'OK':'FAIL'),'text-emerald-400'); $('ghBadge').innerText='GitHub: '+(d.githubStatus.synced?'OK':'FAIL'); }
+          else if (d.type === 'error') { log('ERROR', d.message, 'text-rose-400'); }
+        } catch {}
+      }
     }
-    else if (d.type === 'complete') { log('SYSTEM','Cycle complete. GitHub: '+(d.githubStatus.synced?'OK':'FAIL'),'text-emerald-400'); $('ghBadge').innerText='GitHub: '+(d.githubStatus.synced?'OK':'FAIL'); finish(); }
-    else if (d.type === 'error') { log('ERROR', d.message, 'text-rose-400'); finish(); }
-  };
-  es.onerror = () => { log('SYSTEM','SSE closed','text-rose-400'); finish(); };
+  } catch (e) { if (e.name !== 'AbortError') log('ERROR', e.message, 'text-rose-400'); }
+  finish();
 }
 function finish() { if (es) { es.close(); es = null; } $('runBtn').classList.remove('hidden'); $('stopBtn').classList.add('hidden'); }
-function stopStream() { finish(); log('SYSTEM','Stopped by user','text-rose-400'); }
+function stopStream() { if (es) { try { es.abort(); } catch {} es = null; } finish(); log('SYSTEM','Stopped by user','text-rose-400'); }
 async function initState() {
   try {
     const sid = $('swarmId').value.trim() || 'GLOBAL_CORP_SWARM';
-    const r = await fetch('/swarm/state?swarm='+encodeURIComponent(sid));
+    const r = await fetch('/swarm/state?swarm='+encodeURIComponent(sid), { headers: { 'X-API-Key': $('apiKey').value.trim() } });
     const d = await r.json();
     $('epoch').innerText = 'EPOCH #'+d.epoch;
   } catch(e){}

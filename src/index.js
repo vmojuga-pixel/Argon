@@ -2,7 +2,7 @@ import { renderLanding } from './web/landing.js';
 import { renderSwarmUI } from './web/swarm-ui.js';
 import { handleChat } from './api/chat.js';
 import { handleAgent } from './api/agent.js';
-import { validateApiKey } from './auth/apikey.js';
+import { validateApiKey, validateBasicAuth } from './auth/apikey.js';
 import { SwarmBrain } from './swarm.js';
 
 export { SwarmBrain };
@@ -14,9 +14,7 @@ const CORS = {
 };
 
 function resolveSwarmId(request, url) {
-  return url.searchParams.get('swarm')
-    || request.headers.get('X-Swarm-ID')
-    || 'GLOBAL_CORP_SWARM';
+  return url.searchParams.get('swarm') || request.headers.get('X-Swarm-ID') || 'GLOBAL_CORP_SWARM';
 }
 
 export default {
@@ -26,23 +24,43 @@ export default {
 
     if (request.method === 'OPTIONS') return new Response(null, { headers: CORS });
 
-    // ---- Swarm routes (multi-tenant Durable Object) ----
+    // ===== SWARM ROUTES — PROTECTED =====
     if (path.startsWith('/swarm')) {
+      // Dashboard UI — Basic Auth
       if (path === '/swarm' || path === '/swarm/') {
+        const basic = await validateBasicAuth(request, env);
+        if (!basic.ok) {
+          return new Response('Auth required', {
+            status: 401,
+            headers: { 'WWW-Authenticate': 'Basic realm="Argon Swarm"' }
+          });
+        }
         return new Response(renderSwarmUI(), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
       }
+
+      // API endpoints — X-API-Key
+      const auth = await validateApiKey(request, env);
+      if (!auth.ok) return Response.json({ error: auth.error }, { status: 401, headers: CORS });
+
       const swarmId = resolveSwarmId(request, url);
       const id = env.SWARM_BRAIN.idFromName(swarmId);
       return env.SWARM_BRAIN.get(id).fetch(request);
     }
 
-    // ---- Argon routes ----
+    // ===== ARGON ROUTES =====
     if (path === '/' || path === '/landing') {
+      const basic = await validateBasicAuth(request, env);
+      if (!basic.ok) {
+        return new Response('Auth required', {
+          status: 401,
+          headers: { 'WWW-Authenticate': 'Basic realm="Argon"' }
+        });
+      }
       return new Response(renderLanding(env), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
 
     if (path === '/api/health') {
-      return Response.json({ status: 'ok', service: 'Argon', swarm: 'available', multi_tenant: true, ts: Date.now() }, { headers: CORS });
+      return Response.json({ status: 'ok', service: 'Argon', protected: true, ts: Date.now() }, { headers: CORS });
     }
 
     if (path === '/api/chat' && request.method === 'POST') {
@@ -68,11 +86,9 @@ export default {
   },
 
   async scheduled(event, env, ctx) {
-    // Rotate through a few swarm IDs for variety
     const SWARMS = ['GLOBAL_CORP_SWARM', 'SWARM_RESEARCH', 'SWARM_SECURITY'];
     const pick = SWARMS[Math.floor(Date.now() / 60000) % SWARMS.length];
     const id = env.SWARM_BRAIN.idFromName(pick);
-    const obj = env.SWARM_BRAIN.get(id);
-    ctx.waitUntil(obj.fetch(new Request("https://internal/swarm/evolve", { method: "POST" })));
+    ctx.waitUntil(env.SWARM_BRAIN.get(id).fetch(new Request("https://internal/swarm/evolve", { method: "POST" })));
   }
 };
