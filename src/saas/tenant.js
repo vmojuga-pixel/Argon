@@ -45,7 +45,7 @@ export async function validateTenantKey(env, rawKey) {
     return { ok: false, error: 'no valid tenant key in DB' };
   }
   await env.DB.prepare('UPDATE tenant_api_keys SET last_used = unixepoch() WHERE id = ?').bind(row.key_id).run();
-  return { ok: true, tenantId: row.tenant_id, plan: row.plan, scopes: row.scopes.split(',') };
+  return { ok: true, tenantId: row.tenant_id, plan: row.plan, scopes: row.scopes.split(','), keyId: row.key_id };
 }
 
 export async function checkQuota(env, tenantId, resource, amount = 1) {
