@@ -174,3 +174,35 @@
     source /root/Argon/scripts/creds.sh
     argon_health && echo "OK"
     argon_me | python3 -c "import sys,json; print('tenant OK:', json.load(sys.stdin)['tenant']['email'])"
+
+---
+
+## 6. OVERLORD TIER-1 SENIOR DEV (2026-10-15)
+
+**Apa:** Durable Object baru `OverlordSeniorDev` — integrate sebagai `/overlord/*` di atas Swarm sedia ada.
+
+**Endpoint:**
+| Method | Path | Fungsi |
+|:---|:---|:---|
+| GET | `/overlord/report?q=...` | Laporan eksekutif segera |
+| POST | `/overlord/command` | Bina + deploy + commit 1 task |
+| POST | `/overlord/maintain` | Force kitaran 24/7 sweep |
+| POST | `/overlord/topics` | Update focus topics R&D |
+
+**Safety guardrails (CRITICAL):**
+- Slug wajib prefix `argon-app-` (tidak boleh deploy over `argon` production)
+- `PROTECTED_SLUGS` = {`argon`, `nexus-swarm`} — tak boleh overwrite
+- CF_API_TOKEN disimpan sebagai secret (bukan env var)
+- Fallback ke SIMULATED_SANDBOX kalau CF_API_TOKEN belum set (tak crash)
+
+**Secrets baru:**
+- CF_ACCOUNT_ID (untuk deploy)
+- CF_API_TOKEN (Workers Scripts:Edit) — SIR kena generate sendiri
+- CF_SUBDOMAIN (default: vmojuga)
+
+**Cron:** Setiap tick (15 min) → Overlord maintain + Swarm evolve (parallel)
+
+**Known limitation:**
+- Overlord tidak boleh deploy kalau CF_API_TOKEN belum set
+- Swarm + Overlord concurrent boleh consume Workers AI Neurons cepat (monitor)
+- Generated code ada risk (jarang, tapi boleh) — semua deploy di-tag `argon-app-*` untuk isolasi

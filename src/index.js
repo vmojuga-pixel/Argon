@@ -6,6 +6,7 @@ import { handleChat } from './api/chat.js';
 import { handleAgent } from './api/agent.js';
 import { validateApiKey, validateBasicAuth } from './auth/apikey.js';
 import { SwarmBrain } from './swarm.js';
+import { OverlordSeniorDev } from './overlord.js';
 import { validateTenantKey, checkQuota, incrementUsage } from './saas/tenant.js';
 import { checkRateLimit, rateHeaders } from './saas/ratelimit.js';
 import { registerWebhook, listWebhooks, deleteWebhook, dispatchEvent } from './saas/webhooks.js';
@@ -14,7 +15,7 @@ import { handleAdminStats, handleAdminTenants, handleAdminUsage } from './admin/
 import { analyzePayload as reconAnalyze, renderReconUI } from './tools/recon.js';
 import { handleAdminRotateKey } from './admin/recover.js';
 
-export { SwarmBrain };
+export { SwarmBrain, OverlordSeniorDev };
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -242,6 +243,9 @@ export default {
   },
 
   async scheduled(event, env, ctx) {
+    // Overlord maintenance sweep (setiap cron tick)
+    ctx.waitUntil(env.OVERLORD_BRAIN.get(env.OVERLORD_BRAIN.idFromName('GLOBAL_SENIOR_DEV_OVERLORD')).fetch(new Request('https://internal/overlord/maintain', { method: 'POST' })));
+
     const SWARMS = ['GLOBAL_CORP_SWARM', 'SWARM_RESEARCH', 'SWARM_SECURITY'];
     const pick = SWARMS[Math.floor(Date.now() / 60000) % SWARMS.length];
     ctx.waitUntil(env.SWARM_BRAIN.get(env.SWARM_BRAIN.idFromName(pick)).fetch(new Request("https://internal/swarm/evolve", { method: "POST" })));

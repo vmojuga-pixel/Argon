@@ -27,9 +27,17 @@ bucket_name = "argon-audit"
 name = "SWARM_BRAIN"
 class_name = "SwarmBrain"
 
+[[durable_objects.bindings]]
+name = "OVERLORD_BRAIN"
+class_name = "OverlordSeniorDev"
+
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["SwarmBrain"]
+
+[[migrations]]
+tag = "v2"
+new_sqlite_classes = ["OverlordSeniorDev"]
 
 [triggers]
 crons = ["*/15 * * * *"]
