@@ -74,6 +74,38 @@
 
 ## Cron
 - */15 * * * * — auto-evolve swarm (rotate 3 swarm ID)
+
+---
+
+## Overlord Endpoints (Tier-1 Senior Dev)
+| Method | Path | Auth | Fungsi |
+|:---|:---|:---|:---|
+| GET | /overlord-ui | Basic Auth | Command center UI (browser) |
+| GET | /overlord/report?q=... | X-API-Key | Executive report instant |
+| POST | /overlord/command | X-API-Key | Build + deploy + commit 1 task |
+| POST | /overlord/maintain | X-API-Key | Force watchdog sweep |
+| POST | /overlord/topics | X-API-Key | Update focus topics R&D |
+
+## Overlord Flow
+    POST /overlord/command {"directive":"...","slug":"argon-app-xyz"}
+      ↓
+    1. LLM (llama-4-scout) generate full Worker ES Module code
+    2. Audit (breaker pattern check)
+    3. PUT ke Cloudflare Workers API (deploy)
+    4. Commit ke GitHub repo Argon (docs/swarm-output/<slug>/)
+    5. Register ke watchdog (auto-heal 6 jam)
+
+## Safety Guardrails (CRITICAL)
+- Slug wajib prefix `argon-app-` (tak boleh deploy over `argon` production)
+- PROTECTED_SLUGS = {`argon`, `nexus-swarm`, `argon-test`}
+- CF_API_TOKEN disimpan sebagai secret Cloudflare
+- Fallback ke SIMULATED_SANDBOX kalau CF_API_TOKEN belum set
+
+## Watchdog (Cron 0 */6 * * *)
+- Health check setiap servis yang diregister
+- HTTP 530 = skip (propagasi, bukan gagal)
+- Auto-redeploy kalau HTTP 5xx sebenar
+- Auto-tulis Grimoire (topic R&D rotation)
 # ARGON — BLUEPRINT (Part 3: Billing)
 
 ## Tier matrix
@@ -152,6 +184,29 @@ Break-even: 3 pelanggan Starter cover Workers Paid ($5/bln).
 - Tarikh: 2026-10-14
 - Simptom: marker EOF conflict
 - Fix: guna unique marker (ZSWARM_Z, ZIDX_FINAL_Z)
+
+## Bug #008 — DO env var cache
+- Tarikh: 2026-10-15
+- Simptom: `GITHUB_REPO_OVERLORD` env baru tak load lepas deploy
+- Punca: Durable Object instance cached env lama
+- Fix: Tukar `idFromName('GLOBAL_SENIOR_DEV_OVERLORD')` → `_V2`
+- Sampingan: Services count 0 dalam V2 (storage baru kosong)
+- Pelajaran: DO storage persistent across deploys. Kalau env berubah, kena force new instance
+
+## Bug #009 — Overlord commit ke repo salah
+- Tarikh: 2026-10-15
+- Simptom: File masuk `buku-koding-agentic` (grimoire) bukan `Argon` repo
+- Punca: Satu env `GITHUB_REPO` dikongsi untuk 2 tujuan (Swarm Scribe + Overlord)
+- Fix: Pisahkan `GITHUB_REPO` (grimoire) + `GITHUB_REPO_OVERLORD` (Argon)
+- Pelajaran: Setiap subsystem patut ada env var sendiri kalau guna resource berbeza
+
+## Bug #010 — Watchdog self-heal salah HTTP 530
+- Tarikh: 2026-10-15
+- Simptom: Worker sihat kena auto-redeploy (overwrite lastStableCode lama)
+- Punca: Propagasi `*.workers.dev` subdomain lambat (5-30s) → 530 temporary
+- Fix: `SKIP_530_PROPAGATING` — kalau status 530, tag je, jangan heal
+- Tambahan: 4xx warn (bukan heal), 5xx heal
+- Pelajaran: Health check kena distinguish antara transient error vs real failure
 # ARGON — BLUEPRINT (Part 5: Lessons & Credentials)
 
 ## Pelajaran teknikal
@@ -344,3 +399,59 @@ Break-even: 3 pelanggan Starter cover Workers Paid ($5/bln).
 | Android APK | JADX + Frida |
 | Web/API | mitmproxy |
 | JS frontend | webcrack / Babel AST |
+
+# ARGON — BLUEPRINT (Part 8: Overlord Tier-1 Senior Dev)
+
+## Ringkasan
+`OverlordSeniorDev` = Durable Object yang menggabungkan code generation + Cloudflare Workers Deployment API + GitHub Contents API + 24/7 watchdog. Di atas Swarm sedia ada.
+
+## Kapabiliti
+| # | Feature | Implementasi |
+|:---|:---|:---|
+| 1 | Auto-code generation | Workers AI (llama-4-scout-17b) |
+| 2 | Auto-deploy ke CF Edge | PUT /accounts/{id}/workers/scripts/{name} |
+| 3 | Auto-commit GitHub | PUT /repos/{owner}/{repo}/contents/{path} |
+| 4 | 24/7 watchdog | Cron `0 */6 * * *` + SKIP_530 guardrail |
+| 5 | Executive report | /overlord/report |
+| 6 | Command center UI | /overlord-ui (Basic Auth) |
+| 7 | Deterministic fallback | Kalau LLM down, guna `deterministicCodeGenerator` |
+
+## Fail
+- Backend: `src/overlord.js` (class OverlordSeniorDev)
+- UI: `src/web/overlord-ui.js`
+- Wiring: `src/index.js` (import + route `/overlord/*` + cron)
+- Binding: `wrangler.toml` (OVERLORD_BRAIN DO + migration v2)
+
+## Secrets (Cloudflare)
+| Secret | Value | Purpose |
+|:---|:---|:---|
+| CF_ACCOUNT_ID | 695a620ee3223aa69b69b1e48eb91962 | Deploy target |
+| CF_API_TOKEN | (root/.cf-key) | Workers Scripts:Edit |
+| CF_SUBDOMAIN | vmojuga | Subdomain suffix |
+| GITHUB_TOKEN | (gh auth token) | Commit ke repo |
+| GITHUB_REPO | vmojuga-pixel/buku-koding-agentic | Grimoire (Swarm Scribe) |
+| GITHUB_REPO_OVERLORD | vmojuga-pixel/Argon | Overlord output |
+
+## Flow (from SIR command to live worker)
+    1. SIR taip directive dalam /overlord-ui
+    2. POST /overlord/command → Overlord DO
+    3. LLM generate full Worker code
+    4. Audit (breaker pattern)
+    5. PUT CF API → worker live di https://<slug>.vmojuga.workers.dev
+    6. Commit ke repo Argon (docs/swarm-output/<slug>/worker.js + README.md)
+    7. Register ke watchdog managed_services list
+    8. Setiap 6 jam: health check, auto-heal kalau rosak
+
+## Safety Layers
+- Slug prefix: `argon-app-*` (wajib)
+- Protected: {argon, nexus-swarm, argon-test}
+- Concurrent: max ~3 deploys serentak (Workers API rate limit)
+- Rollback: `lastStableCode` disimpan dalam DO storage
+- Isolasi: worker baru tak boleh access env Argon production
+
+## Known Limitations
+- Model deprecated boleh break (guard: fallback deterministic)
+- CF API rate limit (1200 req/5min)
+- DO storage limit (128 KB per key) — untuk lastStableCode panjang
+- Workers AI Neuron budget (monitor kalau cron 15min)
+- Webhook signature verification hanya kalau customer register

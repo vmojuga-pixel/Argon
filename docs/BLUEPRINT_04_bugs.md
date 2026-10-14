@@ -36,3 +36,26 @@
 - Tarikh: 2026-10-14
 - Simptom: marker EOF conflict
 - Fix: guna unique marker (ZSWARM_Z, ZIDX_FINAL_Z)
+
+## Bug #008 — DO env var cache
+- Tarikh: 2026-10-15
+- Simptom: `GITHUB_REPO_OVERLORD` env baru tak load lepas deploy
+- Punca: Durable Object instance cached env lama
+- Fix: Tukar `idFromName('GLOBAL_SENIOR_DEV_OVERLORD')` → `_V2`
+- Sampingan: Services count 0 dalam V2 (storage baru kosong)
+- Pelajaran: DO storage persistent across deploys. Kalau env berubah, kena force new instance
+
+## Bug #009 — Overlord commit ke repo salah
+- Tarikh: 2026-10-15
+- Simptom: File masuk `buku-koding-agentic` (grimoire) bukan `Argon` repo
+- Punca: Satu env `GITHUB_REPO` dikongsi untuk 2 tujuan (Swarm Scribe + Overlord)
+- Fix: Pisahkan `GITHUB_REPO` (grimoire) + `GITHUB_REPO_OVERLORD` (Argon)
+- Pelajaran: Setiap subsystem patut ada env var sendiri kalau guna resource berbeza
+
+## Bug #010 — Watchdog self-heal salah HTTP 530
+- Tarikh: 2026-10-15
+- Simptom: Worker sihat kena auto-redeploy (overwrite lastStableCode lama)
+- Punca: Propagasi `*.workers.dev` subdomain lambat (5-30s) → 530 temporary
+- Fix: `SKIP_530_PROPAGATING` — kalau status 530, tag je, jangan heal
+- Tambahan: 4xx warn (bukan heal), 5xx heal
+- Pelajaran: Health check kena distinguish antara transient error vs real failure
