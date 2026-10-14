@@ -1,0 +1,52 @@
+{
+  "source": "anthropic-review",
+  "captured_at": "2026-10-15",
+  "category": "billing-patterns",
+  "modules": [
+    {
+      "id": "001-signature",
+      "path": "corpus/anthropic/001-signature/solution.ts",
+      "tests": "corpus/anthropic/001-signature/solution.test.ts",
+      "test_count": 8,
+      "tags": ["crypto", "hmac", "stripe", "webhook", "signature-verification", "timing-safe", "replay-prevention"],
+      "summary": "Verify Stripe webhook signature using HMAC-SHA256 with timestamp tolerance + rotation support.",
+      "when_to_use": "Any inbound webhook that requires authenticity. Reusable for GitHub, Slack, custom HMAC."
+    },
+    {
+      "id": "002-idempotency",
+      "path": "corpus/anthropic/002-idempotency/solution.ts",
+      "tests": "corpus/anthropic/002-idempotency/solution.test.ts",
+      "test_count": 4,
+      "tags": ["idempotency", "webhook", "claim-release", "concurrent-delivery", "state-machine"],
+      "summary": "Idempotent webhook processing with atomic claim/release so retries don't double-process.",
+      "when_to_use": "Any webhook handler + any endpoint that must be safe under retry."
+    },
+    {
+      "id": "003-entitlement",
+      "path": "corpus/anthropic/003-entitlement/solution.ts",
+      "tests": "corpus/anthropic/003-entitlement/solution.test.ts",
+      "test_count": 6,
+      "tags": ["subscription", "state-machine", "grace-period", "fail-closed", "access-control"],
+      "summary": "Map subscription status → entitlement (active/trial/grace/canceled_until_period_end/none).",
+      "when_to_use": "Gating any paid feature. Fail-closed on unknown status."
+    },
+    {
+      "id": "004-ordering",
+      "path": "corpus/anthropic/004-ordering/solution.ts",
+      "tests": "corpus/anthropic/004-ordering/solution.test.ts",
+      "test_count": 7,
+      "tags": ["cas", "compare-and-swap", "out-of-order", "race-condition", "eventual-consistency"],
+      "summary": "Apply out-of-order events with monotonic lastEventCreated + CAS retry loop.",
+      "when_to_use": "Any state where events can arrive unordered and newer must win."
+    },
+    {
+      "id": "005-pricing",
+      "path": "corpus/anthropic/005-pricing/solution.ts",
+      "tests": "corpus/anthropic/005-pricing/solution.test.ts",
+      "test_count": 8,
+      "tags": ["pricing", "tiered", "graduated", "integer-money", "tax", "invoice"],
+      "summary": "Graduated tiered pricing + flat fee + tax — all in integer cents, no float drift.",
+      "when_to_use": "Any usage-based billing. Never use float for money."
+    }
+  ]
+}
