@@ -68,7 +68,7 @@ Otherwise, respond to the user normally.`;
   for (let i = 0; i < 4; i++) {
     let aiRes;
     try {
-      aiRes = await env.AI.run(env.DEFAULT_MODEL || '@cf/meta/llama-3.1-8b-instruct', { messages });
+      aiRes = await env.AI.run(env.DEFAULT_MODEL || '@cf/meta/llama-4-scout-17b-16e-instruct', { messages });
     } catch (e) {
       return Response.json({ error: 'ai error', detail: String(e), trace }, { status: 502, headers: CORS });
     }

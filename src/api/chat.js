@@ -41,7 +41,7 @@ export async function handleChat(request, env, ctx, auth) {
 
   let reply = '';
   try {
-    const aiRes = await env.AI.run(env.DEFAULT_MODEL || '@cf/meta/llama-3.1-8b-instruct', { messages });
+    const aiRes = await env.AI.run(env.DEFAULT_MODEL || '@cf/meta/llama-4-scout-17b-16e-instruct', { messages });
     reply = (aiRes && (aiRes.response || aiRes.result || aiRes.text)) || '';
   } catch (e) {
     return Response.json({ error: 'ai error', detail: String(e) }, { status: 502, headers: CORS });

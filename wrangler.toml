@@ -25,4 +25,4 @@ bucket_name = "argon-audit"
 
 [vars]
 APP_NAME = "Argon"
-DEFAULT_MODEL = "@cf/meta/llama-3.1-8b-instruct"
+DEFAULT_MODEL = "@cf/meta/llama-4-scout-17b-16e-instruct"
