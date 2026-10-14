@@ -1,4 +1,5 @@
 import { renderLanding } from './web/landing.js';
+import { renderSwarmUI } from './web/swarm-ui.js';
 import { handleChat } from './api/chat.js';
 import { handleAgent } from './api/agent.js';
 import { validateApiKey } from './auth/apikey.js';
@@ -9,8 +10,14 @@ export { SwarmBrain };
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-API-Key',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-API-Key, X-Swarm-ID',
 };
+
+function resolveSwarmId(request, url) {
+  return url.searchParams.get('swarm')
+    || request.headers.get('X-Swarm-ID')
+    || 'GLOBAL_CORP_SWARM';
+}
 
 export default {
   async fetch(request, env, ctx) {
@@ -19,19 +26,23 @@ export default {
 
     if (request.method === 'OPTIONS') return new Response(null, { headers: CORS });
 
-    // ---- Swarm routes (Durable Object) ----
-    if (path.startsWith('/swarm/')) {
-      const id = env.SWARM_BRAIN.idFromName("GLOBAL_CORP_SWARM");
+    // ---- Swarm routes (multi-tenant Durable Object) ----
+    if (path.startsWith('/swarm')) {
+      if (path === '/swarm' || path === '/swarm/') {
+        return new Response(renderSwarmUI(), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+      }
+      const swarmId = resolveSwarmId(request, url);
+      const id = env.SWARM_BRAIN.idFromName(swarmId);
       return env.SWARM_BRAIN.get(id).fetch(request);
     }
 
-    // ---- Argon existing routes ----
+    // ---- Argon routes ----
     if (path === '/' || path === '/landing') {
       return new Response(renderLanding(env), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
 
     if (path === '/api/health') {
-      return Response.json({ status: 'ok', service: 'Argon', swarm: 'available', ts: Date.now() }, { headers: CORS });
+      return Response.json({ status: 'ok', service: 'Argon', swarm: 'available', multi_tenant: true, ts: Date.now() }, { headers: CORS });
     }
 
     if (path === '/api/chat' && request.method === 'POST') {
@@ -57,7 +68,10 @@ export default {
   },
 
   async scheduled(event, env, ctx) {
-    const id = env.SWARM_BRAIN.idFromName("GLOBAL_CORP_SWARM");
+    // Rotate through a few swarm IDs for variety
+    const SWARMS = ['GLOBAL_CORP_SWARM', 'SWARM_RESEARCH', 'SWARM_SECURITY'];
+    const pick = SWARMS[Math.floor(Date.now() / 60000) % SWARMS.length];
+    const id = env.SWARM_BRAIN.idFromName(pick);
     const obj = env.SWARM_BRAIN.get(id);
     ctx.waitUntil(obj.fetch(new Request("https://internal/swarm/evolve", { method: "POST" })));
   }

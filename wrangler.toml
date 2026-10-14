@@ -32,7 +32,7 @@ tag = "v1"
 new_sqlite_classes = ["SwarmBrain"]
 
 [triggers]
-crons = ["0 */6 * * *"]
+crons = ["*/15 * * * *"]
 
 [vars]
 APP_NAME = "Argon"
