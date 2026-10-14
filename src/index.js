@@ -240,6 +240,23 @@ export default {
       return Response.json(result, { headers: CORS });
     }
 
+    // ===== OVERLORD (Tier-1 Senior Dev) =====
+    if (path === '/overlord-ui' || path === '/overlord-ui/') {
+      const basic = await validateBasicAuth(request, env);
+      if (!basic.ok) return new Response('Auth required', { status: 401, headers: { 'WWW-Authenticate': 'Basic realm="Overlord UI"' } });
+      return new Response(renderOverlordUI(), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+    }
+    if (path.startsWith('/overlord')) {
+      const auth = await authenticate(request, env);
+      if (!auth.ok) return Response.json({ error: auth.error }, { status: 401, headers: CORS });
+      if (auth.mode === 'tenant') {
+        const rl = await checkRateLimit(env, auth.tenantId, auth.plan);
+        if (!rl.ok) return Response.json({ error: 'rate limit exceeded' }, { status: 429, headers: { ...CORS, ...rateHeaders(rl) } });
+      }
+      const id = env.OVERLORD_BRAIN.idFromName('GLOBAL_SENIOR_DEV_OVERLORD');
+      return env.OVERLORD_BRAIN.get(id).fetch(request);
+    }
+
     return new Response('Not Found', { status: 404, headers: CORS });
   },
 
