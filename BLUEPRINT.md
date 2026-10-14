@@ -1,0 +1,297 @@
+# ARGON — BLUEPRINT (Part 1: Overview)
+
+## Platform
+- **Cloudflare Workers** (edge runtime)
+- **Workers AI** — model: @cf/meta/llama-4-scout-17b-16e-instruct
+- **Durable Objects** (SQLite state untuk swarm)
+- **D1** (SQLite global) — tenants, usage, webhooks, audit
+- **KV** (rate limiting, cache)
+- **R2** (audit logs, webhook payloads)
+- **Cron** — */15 * * * * (auto-evolve swarm)
+
+## URLs
+- Worker: https://argon.vmojuga.workers.dev
+- Repo: https://github.com/vmojuga-pixel/Argon
+- Grimoire: https://github.com/vmojuga-pixel/buku-koding-agentic
+
+## Fail struktur
+    /root/Argon/
+    ├── wrangler.toml
+    ├── migrations/
+    │   ├── 0001_init.sql
+    │   ├── 0002_saas.sql
+    │   └── 0003_top_tier.sql
+    ├── src/
+    │   ├── index.js            (entry: routing, auth, CORS)
+    │   ├── swarm.js            (SwarmBrain DO)
+    │   ├── api/{chat,agent}.js
+    │   ├── auth/apikey.js
+    │   ├── saas/{tenant,signup,ratelimit,webhooks}.js
+    │   ├── admin/{stats,recover}.js
+    │   └── web/{landing,swarm-ui,dashboard,docs}.js
+    ├── scripts/creds.sh        (central credential loader)
+    └── docs/BLUEPRINT_*.md
+# ARGON — BLUEPRINT (Part 2: Endpoints)
+
+## Public (no auth)
+| Method | Path | Fungsi |
+|:---|:---|:---|
+| GET | /api/health | Health + feature list |
+| POST | /signup | Create tenant + return API key |
+| GET | /docs | Public API documentation |
+| GET | /dashboard | Customer self-service UI |
+
+## Basic Auth (admin/landing)
+| Method | Path | Fungsi |
+|:---|:---|:---|
+| GET | / | Landing + chat UI |
+| GET | /swarm | Swarm SSE dashboard |
+| GET | /admin/stats | Global observability |
+| GET | /admin/tenants | List semua tenant |
+| GET | /admin/usage | Usage per tenant |
+| POST | /admin/rotate-tenant-key | Recover tenant key |
+
+## Tenant (X-API-Key: arg_tn_*)
+| Method | Path | Fungsi |
+|:---|:---|:---|
+| GET | /api/me | Tenant info + usage + quota + keys |
+| POST | /api/chat | LLM chat |
+| POST | /api/agent | Agentic tool-calling |
+| GET | /api/sessions | List sessions |
+| POST | /api/keys/rotate | New key |
+| POST | /api/keys/revoke | Revoke by key_id (safe) atau prefix |
+| GET | /api/webhooks | List webhook |
+| POST | /api/webhooks | Register webhook |
+| DELETE | /api/webhooks/:id | Delete webhook |
+| POST | /swarm/evolve | Trigger swarm cycle |
+| GET | /swarm/state | Epoch + history |
+| GET | /swarm/stream | SSE live stream |
+
+## Admin key (X-API-Key: argon_*)
+| Method | Path | Fungsi |
+|:---|:---|:---|
+| GET | /api/sessions | Legacy admin sessions |
+
+## Cron
+- */15 * * * * — auto-evolve swarm (rotate 3 swarm ID)
+# ARGON — BLUEPRINT (Part 3: Billing)
+
+## Tier matrix
+| Tier | Harga | Chat/bln | Agent/bln | Swarm/bln | RPM | Burst |
+|:---|:---|:---|:---|:---|:---|:---|
+| Free | $0 | 100 | - | - | 10 | 20 |
+| Starter | $29 | 10,000 | 1,000 | 100 | 60 | 120 |
+| Pro | $149 | 100,000 | 20,000 | 5,000 | 300 | 600 |
+| Enterprise | Custom | unlimited | unlimited | unlimited | 1,000 | 2,000 |
+
+## Enforcement flow
+    Request → authenticate(X-API-Key) → checkRateLimit(KV) → checkQuota(D1) → handler
+
+## 3 jenis had
+1. **Quota bulanan** — checkQuota() sebelum handler, 429 bila exceeded
+2. **Rate limit (RPM)** — KV sliding window per menit, 429 bila spam
+3. **Burst** — buffer untuk spike pendek
+
+## Webhook trigger
+- quota.warning @ 80% usage
+- quota.exceeded @ 100%
+
+## Unit economics
+| Tier | Kos SIR | Harga | Margin |
+|:---|:---|:---|:---|
+| Free | ~$0.02 | $0 | Loss leader |
+| Starter | ~$4 | $29 | 86% |
+| Pro | ~$45 | $149 | 70% |
+| Enterprise | Variable | Custom | 60-80% |
+
+Break-even: 3 pelanggan Starter cover Workers Paid ($5/bln).
+
+## Overage (optional)
+- Chat: $0.002/req
+- Agent: $0.01/req
+- Swarm: $0.05/cycle
+
+## Manual upgrade
+    export CLOUDFLARE_API_TOKEN=$(cat /root/.cf-key) && cd /root/Argon
+    npx wrangler d1 execute argon-db --remote --command="UPDATE tenants SET plan='starter' WHERE id='tn_xxx';"
+# ARGON — BLUEPRINT (Part 4: Bug Log)
+
+## Bug #001 — Model deprecated
+- Tarikh: 2026-10-14
+- Simptom: /api/chat return "AiError 5028: deprecated on 2026-05-30"
+- Punca: llama-3.1-8b-instruct retired
+- Fix: guna @cf/meta/llama-4-scout-17b-16e-instruct
+- Pelajaran: selalu cek model catalog sebelum deploy
+
+## Bug #002 — Swarm cycle lambat 67s
+- Tarikh: 2026-10-15
+- Simptom: /swarm/evolve 65-67s
+- Punca: 6 AI calls sequential, max_tokens 1024, prompt panjang
+- Fix: max_tokens 250, directive "JAWAPAN WAJIB RINGKAS", temp 0.3
+- Hasil: 67s → 32s
+
+## Bug #003 — Tenant key collide dengan admin key
+- Tarikh: 2026-10-15
+- Simptom: /api/me return "tenant key required"
+- Punca: authenticate() cek admin dulu, tenant masuk mode admin
+- Fix: route by prefix — arg_* → tenant, argon_* → admin
+
+## Bug #004 — Revoke by prefix revoke SEMUA key
+- Tarikh: 2026-10-15
+- Simptom: lepas revoke, tenant tak boleh login
+- Punca: UPDATE ... WHERE prefix = ? match semua row
+- Fix: revoke by key_id (primary), fallback prefix exclude auth.keyId
+- validateTenantKey return keyId
+
+## Bug #005 — R2 bucket uppercase
+- Tarikh: 2026-10-14
+- Simptom: bucket_name="Argon-audit" invalid
+- Fix: lowercase → argon-db, argon-kv, argon-audit
+
+## Bug #006 — Heredoc conflict mobile
+- Tarikh: 2026-10-14
+- Simptom: marker EOF conflict
+- Fix: guna unique marker (ZSWARM_Z, ZIDX_FINAL_Z)
+# ARGON — BLUEPRINT (Part 5: Lessons & Credentials)
+
+## Pelajaran teknikal
+1. Workers AI deprecated cepat — selalu ada fallback model
+2. Durable Objects paid — new_sqlite_classes perlu Workers Paid $5/bln
+3. Sequential AI calls lambat — parallelize atau ringkas output
+4. Multi-auth guna prefix route, bukan try-both
+5. Revoke op guna ID bukan prefix
+6. KV TTL — rate limit sliding window TTL 120s
+7. D1 batch() untuk multi-insert
+8. ctx.waitUntil() untuk fire-and-forget (audit, webhook, usage)
+9. HMAC signing guna crypto.subtle.importKey + HMAC-SHA256
+10. CORS + credentials konflik — whitelist origin untuk production
+
+## Credentials — lokasi /root/.argon-secrets/ (chmod 600)
+| File | Isi | Guna |
+|:---|:---|:---|
+| admin.key | argon_xxx | Legacy /api/sessions |
+| tenant.key | arg_tn_xxx | Chat/Agent/Swarm |
+| tenant.id | tn_xxx | Tenant ID |
+| tenant.email | owner@vmojuga.dev | Login email |
+| basic.full | argon:PASS | curl -u dashboard/admin |
+| basic.user | argon | Username |
+| basic.pass | PASS | Password |
+
+## Cloudflare secrets (live di Worker)
+| Secret | Purpose |
+|:---|:---|
+| GITHUB_TOKEN | Commit Grimoire |
+| BASIC_AUTH_USER | Basic Auth user |
+| BASIC_AUTH_PASS | Basic Auth pass |
+
+## External
+| Secret | Lokasi | Purpose |
+|:---|:---|:---|
+| CLOUDFLARE_API_TOKEN | /root/.cf-key | Wrangler deploy |
+
+## Central helper — scripts/creds.sh
+    source /root/Argon/scripts/creds.sh
+    argon_whoami
+    argon_health
+    argon_me
+    argon_chat "Hello"
+    argon_agent "run date"
+    argon_swarm_evolve "topic"
+    argon_admin_stats
+
+## Matrix akses
+| Endpoint | Auth | Credential |
+|:---|:---|:---|
+| /api/health, /signup, /docs | Public | - |
+| /dashboard | Public UI | tenant.key (field) |
+| /, /swarm, /admin/* | Basic Auth | basic.full |
+| /api/sessions | X-API-Key | admin.key |
+| /api/me, /api/chat, /api/agent | X-API-Key | tenant.key |
+| /swarm/evolve, /swarm/state, /swarm/stream | X-API-Key | tenant.key |
+
+## Rotation
+    # Admin
+    export CLOUDFLARE_API_TOKEN=$(cat /root/.cf-key) && cd /root/Argon
+    npx wrangler d1 execute argon-db --remote --command="UPDATE api_keys SET active=0;"
+    NEWKEY="argon_$(openssl rand -hex 32)"
+    npx wrangler d1 execute argon-db --remote --command="INSERT INTO api_keys (key,label,active) VALUES ('$NEWKEY','admin-root',1);"
+    echo "$NEWKEY" > /root/.argon-secrets/admin.key
+
+    # Basic
+    NEWPASS=$(openssl rand -base64 24 | tr -d '/+=' | head -c 28)
+    echo "$NEWPASS" | npx wrangler secret put BASIC_AUTH_PASS
+    printf "argon:%s\n" "$NEWPASS" > /root/.argon-secrets/basic.full
+
+    # Tenant
+    source /root/Argon/scripts/creds.sh
+    curl -X POST "$ARGON_URL/api/keys/rotate" -H "X-API-Key: $ARGON_TENANT_KEY"
+
+## Production checklist
+- [ ] Semua secret dalam Cloudflare
+- [ ] Backup D1 weekly
+- [ ] Monitor Workers AI Neurons
+- [ ] Slack/Discord alerts
+- [ ] Whitelist CORS
+- [ ] Rotate admin key quarterly
+- [ ] /root/.argon-secrets/ chmod 600
+# ARGON — BLUEPRINT (Part 6: Roadmap)
+
+## Selesai
+- [x] Chat + Agent + Swarm
+- [x] Durable Objects stateful
+- [x] Multi-tenant SaaS
+- [x] Rate limit per-tier
+- [x] Webhooks + HMAC
+- [x] Dashboard + Docs
+- [x] Admin observability
+- [x] Audit log
+- [x] Auto Git commit (Grimoire)
+- [x] Recover tenant key
+- [x] Central creds.sh
+
+## Sedang berjalan
+- [ ] OpenAPI 3.1 spec + Postman
+- [ ] SDK npm + PyPI
+- [ ] Slack/Discord admin alerts
+- [ ] Usage chart 30 hari
+- [ ] Custom domain per tenant
+
+## Backlog
+- [ ] Stripe billing
+- [ ] SSO Google/GitHub OAuth
+- [ ] Billing history + invoice PDF
+- [ ] Bulk email onboarding
+- [ ] Team management (multi-user per tenant)
+- [ ] SLA monitoring + status page
+- [ ] ToS + Privacy Policy
+
+## Commands cheatsheet
+    # Deploy
+    export CLOUDFLARE_API_TOKEN=$(cat /root/.cf-key) && cd /root/Argon && npx wrangler deploy
+
+    # Live tail
+    npx wrangler tail --format=pretty
+
+    # D1 query
+    npx wrangler d1 execute argon-db --remote --command="SELECT * FROM tenants;"
+
+    # Apply migration
+    npx wrangler d1 execute argon-db --remote --file=./migrations/XXXX.sql
+
+    # Set secret
+    echo "value" | npx wrangler secret put SECRET_NAME
+
+    # Trigger swarm
+    source /root/Argon/scripts/creds.sh
+    argon_swarm_evolve "topic"
+
+## Glossary
+- **Swarm**: 7-agent loop (Visionary→Architect→Synthesizer→Breaker→Optimizer→Judge→Scribe)
+- **Epoch**: 1 kitaran penuh swarm
+- **Grimoire**: Fail markdown di GitHub yang swarm tulis
+- **Durable Object**: Serverless stateful class
+- **Tenant**: Pelanggan SaaS
+- **RPM**: Rate per minute
+- **Quota**: Had bulanan
+- **Burst**: Had sementara untuk spike
+- **HMAC**: Hash-based Message Authentication Code
