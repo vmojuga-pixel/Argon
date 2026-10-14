@@ -1,0 +1,28 @@
+name = "argon"
+main = "src/index.js"
+compatibility_date = "2024-10-01"
+account_id = "695a620ee3223aa69b69b1e48eb91962"
+workers_dev = true
+
+[observability]
+enabled = true
+
+[ai]
+binding = "AI"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "argon-db"
+database_id = "f4352eb7-a6cd-478f-97d3-6c5904e7267a"
+
+[[kv_namespaces]]
+binding = "KV"
+id = "e950f1aca818473d9eb051924d9e1b4e"
+
+[[r2_buckets]]
+binding = "AUDIT"
+bucket_name = "argon-audit"
+
+[vars]
+APP_NAME = "Argon"
+DEFAULT_MODEL = "@cf/meta/llama-3.1-8b-instruct"
