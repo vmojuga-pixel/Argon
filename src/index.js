@@ -11,6 +11,7 @@ import { checkRateLimit, rateHeaders } from './saas/ratelimit.js';
 import { registerWebhook, listWebhooks, deleteWebhook, dispatchEvent } from './saas/webhooks.js';
 import { handleSignup, handleMe, handleRotateKey, handleRevokeKey } from './saas/signup.js';
 import { handleAdminStats, handleAdminTenants, handleAdminUsage } from './admin/stats.js';
+import { analyzePayload as reconAnalyze, renderReconUI } from './tools/recon.js';
 import { handleAdminRotateKey } from './admin/recover.js';
 
 export { SwarmBrain };
@@ -216,6 +217,25 @@ export default {
       if (!auth.ok) return Response.json({ error: auth.error }, { status: 401, headers: CORS });
       const rows = await env.DB.prepare('SELECT id, title, created_at, updated_at FROM sessions ORDER BY updated_at DESC LIMIT 50').all();
       return Response.json({ sessions: rows.results || [] }, { headers: CORS });
+    }
+
+    // ===== RECON (public UI, tenant-protected API) =====
+    if (path === '/recon' || path === '/recon/') {
+      const basic = await validateBasicAuth(request, env);
+      if (!basic.ok) return new Response('Auth required', { status: 401, headers: { 'WWW-Authenticate': 'Basic realm="Recon"' } });
+      return new Response(renderReconUI(), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+    }
+    if (path === '/api/recon' && request.method === 'POST') {
+      const auth = await authenticate(request, env);
+      if (!auth.ok) return Response.json({ error: auth.error }, { status: 401, headers: CORS });
+      if (auth.mode === 'tenant') {
+        const rl = await checkRateLimit(env, auth.tenantId, auth.plan);
+        if (!rl.ok) return Response.json({ error: 'rate limit exceeded' }, { status: 429, headers: { ...CORS, ...rateHeaders(rl) } });
+      }
+      let body = {};
+      try { body = await request.json(); } catch {}
+      const result = reconAnalyze(body.target_type || 'CODE_SNIPPET', body.payload || '');
+      return Response.json(result, { headers: CORS });
     }
 
     return new Response('Not Found', { status: 404, headers: CORS });
