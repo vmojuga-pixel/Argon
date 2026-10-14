@@ -70,7 +70,7 @@ export class OverlordSeniorDev {
 
   async pushFileToGitHub(filePath, contentText, commitMessage, appendMode = false) {
     const token = this.env.GITHUB_TOKEN;
-    const repo = this.env.GITHUB_REPO;
+    const repo = this.env.GITHUB_REPO_OVERLORD || this.env.GITHUB_REPO;
     if (!token || !repo) return { synced: false, path: filePath, reason: "GITHUB_TOKEN/REPO tiada." };
 
     const apiUrl = "https://api.github.com/repos/" + repo + "/contents/" + filePath;
@@ -123,7 +123,7 @@ export class OverlordSeniorDev {
     await this.pushFileToGitHub(docPath, readme, "[Overlord] Docs " + slug, false);
 
     const services = (await this.state.storage.get("managed_services")) || [];
-    const record = { slug, directive: taskDirective, createdAt: timestamp, lastCheckedAt: timestamp, healthStatus: "PENDING_CHECK", autoHealCount: 0, deployInfo: deployResult, gitPath: repoPath, gitSynced: gitCodeSync.synced, lastStableCode: cleanCode };
+    const record = { slug, directive: taskDirective, createdAt: timestamp, lastCheckedAt: timestamp, healthStatus: "DEPLOYED_AWAITING_PROPAGATION", autoHealCount: 0, deployInfo: deployResult, gitPath: repoPath, gitSynced: gitCodeSync.synced, lastStableCode: cleanCode };
     const idx = services.findIndex(s => s.slug === slug);
     if (idx >= 0) services[idx] = record; else services.push(record);
     await this.state.storage.put("managed_services", services);
@@ -143,10 +143,20 @@ export class OverlordSeniorDev {
       svc.lastCheckedAt = timestamp;
       if (svc.deployInfo && svc.deployInfo.deployed && svc.deployInfo.url) {
         try {
-          const r = await fetch(svc.deployInfo.url + "/health");
-          if (!r.ok) throw new Error("HTTP " + r.status);
-          svc.healthStatus = "ONLINE_HEALTHY";
-          results.push({ slug: svc.slug, action: "HEALTH_OK" });
+          const r = await fetch(svc.deployInfo.url + "/health", { cf: { cacheTtl: 0 } });
+          // 530 = subdomain propagation (bukan failure sebenar)
+          if (r.status === 530) {
+            svc.healthStatus = "PROPAGATING (530)";
+            results.push({ slug: svc.slug, action: "SKIP_530_PROPAGATING" });
+          } else if (!r.ok && r.status >= 500) {
+            throw new Error("HTTP " + r.status);
+          } else if (!r.ok) {
+            svc.healthStatus = "WARN_" + r.status;
+            results.push({ slug: svc.slug, action: "WARN_" + r.status });
+          } else {
+            svc.healthStatus = "ONLINE_HEALTHY";
+            results.push({ slug: svc.slug, action: "HEALTH_OK" });
+          }
         } catch (err) {
           svc.healthStatus = "AUTO_HEALED";
           svc.autoHealCount = (svc.autoHealCount || 0) + 1;
