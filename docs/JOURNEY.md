@@ -206,3 +206,23 @@
 - Overlord tidak boleh deploy kalau CF_API_TOKEN belum set
 - Swarm + Overlord concurrent boleh consume Workers AI Neurons cepat (monitor)
 - Generated code ada risk (jarang, tapi boleh) — semua deploy di-tag `argon-app-*` untuk isolasi
+
+---
+
+## 7. BUG FIX LOG (2026-10-15)
+
+### Bug #008 — DO env var cache
+- Simptom: `GITHUB_REPO_OVERLORD` env baru tak load lepas deploy
+- Punca: Durable Object instance cached env lama
+- Fix: Tukar `idFromName('GLOBAL_SENIOR_DEV_OVERLORD')` → `_V2`
+- Sampingan: Services count 0 dalam V2 (storage baru kosong)
+
+### Bug #009 — Overlord commit ke repo salah
+- Simptom: File masuk `buku-koding-agentic` (grimoire) bukan `Argon`
+- Punca: Satu env `GITHUB_REPO` untuk 2 tujuan
+- Fix: Pisahkan `GITHUB_REPO` (grimoire) + `GITHUB_REPO_OVERLORD` (Argon)
+
+### Bug #010 — Watchdog self-heal salah HTTP 530
+- Simptom: Worker sihat kena redeploy (overwrite)
+- Punca: Propagasi `*.workers.dev` lambat → 530 temporary
+- Fix: `SKIP_530_PROPAGATING` — jangan heal kalau 530
