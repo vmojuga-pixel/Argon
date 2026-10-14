@@ -11,6 +11,7 @@ import { checkRateLimit, rateHeaders } from './saas/ratelimit.js';
 import { registerWebhook, listWebhooks, deleteWebhook, dispatchEvent } from './saas/webhooks.js';
 import { handleSignup, handleMe, handleRotateKey, handleRevokeKey } from './saas/signup.js';
 import { handleAdminStats, handleAdminTenants, handleAdminUsage } from './admin/stats.js';
+import { handleAdminRotateKey } from './admin/recover.js';
 
 export { SwarmBrain };
 
@@ -75,6 +76,7 @@ export default {
       if (path === '/admin/stats') return Response.json(await handleAdminStats(env), { headers: CORS });
       if (path === '/admin/tenants') return Response.json(await handleAdminTenants(env), { headers: CORS });
       if (path === '/admin/usage') return Response.json(await handleAdminUsage(env, url.searchParams.get('period')), { headers: CORS });
+      if (path === '/admin/rotate-tenant-key' && request.method === 'POST') return handleAdminRotateKey(request, env);
       return new Response('Not Found', { status: 404 });
     }
 

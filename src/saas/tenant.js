@@ -38,7 +38,12 @@ export async function validateTenantKey(env, rawKey) {
     LIMIT 1
   `).bind(hash).first();
 
-  if (!row) return { ok: false, error: 'invalid or revoked key' };
+  if (!row) {
+    // DEBUG: fallback plaintext check
+    const raw = await env.DB.prepare("SELECT k.id as key_id, k.tenant_id, k.scopes, t.plan FROM tenant_api_keys k JOIN tenants t ON t.id = k.tenant_id WHERE k.revoked = 0 AND t.status = 'active' LIMIT 1").first();
+    if (raw) return { ok: false, error: 'hash mismatch - db has rows but no match' };
+    return { ok: false, error: 'no valid tenant key in DB' };
+  }
   await env.DB.prepare('UPDATE tenant_api_keys SET last_used = unixepoch() WHERE id = ?').bind(row.key_id).run();
   return { ok: true, tenantId: row.tenant_id, plan: row.plan, scopes: row.scopes.split(',') };
 }
