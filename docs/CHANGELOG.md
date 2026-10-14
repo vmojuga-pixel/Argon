@@ -72,3 +72,9 @@
 - 8 parts BLUEPRINT
 - JOURNEY with roadmap + decisions
 - Credentials registry (scripts/creds.sh)
+
+### [FEAT] Training corpus (agentic reference)
+- corpus/anthropic/billing/ — 5 billing modules + 33 tests
+- corpus/qwen/stack/ — Hono + Drizzle + Next.js boilerplate
+- corpus/index.json — agent query interface
+- BLUEPRINT_09_corpus.md — documentation

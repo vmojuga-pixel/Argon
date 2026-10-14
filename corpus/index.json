@@ -1,0 +1,30 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-10-15",
+  "purpose": "Training corpus for agentic auto-coding reference",
+  "sources": {
+    "anthropic": {
+      "manifest": "corpus/anthropic/_metadata/manifest.json",
+      "category": "billing-patterns",
+      "modules": 5,
+      "total_tests": 33,
+      "tags": ["crypto", "idempotency", "state-machine", "cas", "billing", "pricing"]
+    },
+    "qwen": {
+      "manifest": "corpus/qwen/_metadata/manifest.json",
+      "category": "full-stack-boilerplate",
+      "files": 3,
+      "tags": ["hono", "drizzle", "next.js", "api-key-auth", "usage-tracking"]
+    }
+  },
+  "quick_lookup": {
+    "signature_verification": "corpus/anthropic/001-signature/solution.ts",
+    "idempotent_webhook": "corpus/anthropic/002-idempotency/solution.ts",
+    "subscription_entitlement": "corpus/anthropic/003-entitlement/solution.ts",
+    "out_of_order_events": "corpus/anthropic/004-ordering/solution.ts",
+    "tiered_pricing": "corpus/anthropic/005-pricing/solution.ts",
+    "hono_api_boilerplate": "corpus/qwen/stack/backend/src/index.ts",
+    "drizzle_schema": "corpus/qwen/stack/backend/src/schema.ts",
+    "nextjs_dashboard": "corpus/qwen/stack/frontend/app/page.tsx"
+  }
+}

@@ -104,3 +104,19 @@
 | `src/overlord.js.bak` | Backup sebelum watchdog patch |
 | `src/overlord.js.bak2` | Backup sebelum repo routing fix |
 | `wrangler.toml.bak*` | Backup wrangler config |
+
+## `corpus/`
+| File | Purpose |
+|:---|:---|
+| `corpus/index.json` | Agent query interface |
+| `corpus/README.md` | Explanation |
+| `corpus/anthropic/_metadata/manifest.json` | 5 modules metadata |
+| `corpus/anthropic/001-signature/*` | Stripe signature verify |
+| `corpus/anthropic/002-idempotency/*` | Idempotent webhook |
+| `corpus/anthropic/003-entitlement/*` | Subscription state machine |
+| `corpus/anthropic/004-ordering/*` | CAS ordering |
+| `corpus/anthropic/005-pricing/*` | Tiered pricing |
+| `corpus/qwen/_metadata/manifest.json` | 3 files metadata |
+| `corpus/qwen/stack/backend/src/schema.ts` | Drizzle schema |
+| `corpus/qwen/stack/backend/src/index.ts` | Hono server |
+| `corpus/qwen/stack/frontend/app/page.tsx` | Next.js dashboard |

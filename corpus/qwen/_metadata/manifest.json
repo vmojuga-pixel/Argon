@@ -1,0 +1,28 @@
+{
+  "source": "qwen-review",
+  "captured_at": "2026-10-15",
+  "category": "full-stack-boilerplate",
+  "stack": {
+    "backend": ["Hono", "Drizzle ORM", "PostgreSQL", "TypeScript"],
+    "frontend": ["Next.js (App Router)", "Tailwind CSS", "React"],
+    "auth": "API-key via Bearer header + credit deduction middleware"
+  },
+  "files": [
+    {
+      "path": "corpus/qwen/stack/backend/src/schema.ts",
+      "tags": ["drizzle", "postgres", "multi-tenant", "api-key", "usage-tracking"],
+      "summary": "3 tables: users, api_keys, usage_logs"
+    },
+    {
+      "path": "corpus/qwen/stack/backend/src/index.ts",
+      "tags": ["hono", "api-key-auth", "credit-system", "middleware", "cors"],
+      "summary": "Hono server + Bearer auth + credit deduction + usage log"
+    },
+    {
+      "path": "corpus/qwen/stack/frontend/app/page.tsx",
+      "tags": ["next.js", "tailwind", "dashboard", "dark-mode", "stats-cards"],
+      "summary": "Dashboard + stats cards + API key management"
+    }
+  ],
+  "when_to_use": "Reference untuk bina API SaaS baru: auth pattern, credit system, dashboard UI."
+}
