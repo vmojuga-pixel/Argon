@@ -23,6 +23,18 @@ id = "e950f1aca818473d9eb051924d9e1b4e"
 binding = "AUDIT"
 bucket_name = "argon-audit"
 
+[[durable_objects.bindings]]
+name = "SWARM_BRAIN"
+class_name = "SwarmBrain"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["SwarmBrain"]
+
+[triggers]
+crons = ["0 */6 * * *"]
+
 [vars]
 APP_NAME = "Argon"
 DEFAULT_MODEL = "@cf/meta/llama-4-scout-17b-16e-instruct"
+GITHUB_REPO = "vmojuga-pixel/buku-koding-agentic"
