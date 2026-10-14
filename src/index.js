@@ -253,7 +253,7 @@ export default {
         const rl = await checkRateLimit(env, auth.tenantId, auth.plan);
         if (!rl.ok) return Response.json({ error: 'rate limit exceeded' }, { status: 429, headers: { ...CORS, ...rateHeaders(rl) } });
       }
-      const id = env.OVERLORD_BRAIN.idFromName('GLOBAL_SENIOR_DEV_OVERLORD');
+      const id = env.OVERLORD_BRAIN.idFromName('GLOBAL_SENIOR_DEV_OVERLORD_V2');
       return env.OVERLORD_BRAIN.get(id).fetch(request);
     }
 
@@ -262,7 +262,7 @@ export default {
 
   async scheduled(event, env, ctx) {
     // Overlord maintenance sweep (setiap cron tick)
-    ctx.waitUntil(env.OVERLORD_BRAIN.get(env.OVERLORD_BRAIN.idFromName('GLOBAL_SENIOR_DEV_OVERLORD')).fetch(new Request('https://internal/overlord/maintain', { method: 'POST' })));
+    ctx.waitUntil(env.OVERLORD_BRAIN.get(env.OVERLORD_BRAIN.idFromName('GLOBAL_SENIOR_DEV_OVERLORD_V2')).fetch(new Request('https://internal/overlord/maintain', { method: 'POST' })));
 
     const SWARMS = ['GLOBAL_CORP_SWARM', 'SWARM_RESEARCH', 'SWARM_SECURITY'];
     const pick = SWARMS[Math.floor(Date.now() / 60000) % SWARMS.length];
