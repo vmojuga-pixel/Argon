@@ -7,6 +7,7 @@ import { handleAgent } from './api/agent.js';
 import { validateApiKey, validateBasicAuth } from './auth/apikey.js';
 import { SwarmBrain } from './swarm.js';
 import { OverlordSeniorDev } from './overlord.js';
+import { renderOverlordUI } from './web/overlord-ui.js';
 import { validateTenantKey, checkQuota, incrementUsage } from './saas/tenant.js';
 import { checkRateLimit, rateHeaders } from './saas/ratelimit.js';
 import { registerWebhook, listWebhooks, deleteWebhook, dispatchEvent } from './saas/webhooks.js';
