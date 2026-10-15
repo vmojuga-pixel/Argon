@@ -1,0 +1,1 @@
+{"sector":"fintech-ai","patterns":[{"id":"fraud-velocity-engine","stack":["flink","redis","xgboost"]},{"id":"credit-underwriting-dag","stack":["airflow","feast","mlflow"]}],"verified":true}

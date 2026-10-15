@@ -1,0 +1,1 @@
+{"sector":"unified-core","patterns":[{"id":"multi-tenant-schema","stack":["postgresql","rls"]},{"id":"tenant-manager","stack":["postgresql","stripe"]}],"verified":true}
