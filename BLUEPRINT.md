@@ -516,3 +516,22 @@ Reference materials untuk agentic auto-coding. Bukan dependency — rujukan.
 - `frontend/.../topup/page.tsx` — Stripe redirect UI
 
 **Corpus fix noted**: Original Qwen boilerplate had invalid `db.$with()` chain for atomic increment. Corpus uses `sql\`col + val\`` — correct pattern.
+
+## Enterprise AI/ML Sectors — 2026-10-15
+Source: 10 job ad screenshots (Malaysia, RM8k-12k/month)
+
+### Sectors
+| Sector | Class | Job |
+|:---|:---|:---|
+| sector-1-ai-engineer | EnterpriseRAGAndGuardrailEngine | AI Engineer (PJ, RM10k) |
+| sector-2-forward-deployed | ForwardDeployedIVABridge | FDE - IVA (KL, RM8-12k) |
+| sector-3-ml-engineer | AutomatedMLPipelineEngine | ML Engineer (Bangsar South, RM8-11k) |
+
+### Files
+- `tools/sectors/enterprise_ai_sectors_grimoire.py` — runnable module
+- `corpus/sectors/enterprise_ai_sectors_grimoire.py` — corpus mirror
+- `corpus/sectors/_metadata/manifest.json` — 3 sectors + 6 topics
+
+### Wired
+- Overlord DO storage `focus_topics` updated via POST /overlord/topics
+- Swarm will next reference these topics for auto-code generation

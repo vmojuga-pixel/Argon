@@ -1,0 +1,40 @@
+{
+  "source": "job-market-scan",
+  "captured_at": "2026-10-15",
+  "category": "enterprise-ai-ml-sectors",
+  "context": "Extracted from 10 job ad screenshots (Malaysia, RM8k-12k/month)",
+  "sectors": [
+    {
+      "id": "sector-1-ai-engineer",
+      "title": "AI Engineer (RM10k)",
+      "location": "Petaling Jaya",
+      "class": "EnterpriseRAGAndGuardrailEngine",
+      "tags": ["rag", "vector-db", "embedding", "ai-safety", "guardrails", "prompt-injection", "pii-redaction", "semantic-cache", "gpu-cost-optimizer", "llm-evaluation"],
+      "summary": "RAG pipeline with deterministic vector embeddings, semantic cache, PII redaction, prompt-injection guardrails, and LLM groundedness scoring."
+    },
+    {
+      "id": "sector-2-forward-deployed-ai-engineer",
+      "title": "Forward-Deployed AI Engineer - IVA (RM8k-12k)",
+      "location": "Kuala Lumpur",
+      "class": "ForwardDeployedIVABridge",
+      "tags": ["iva", "contact-center", "crm", "order-management", "ticketing", "low-latency", "circuit-breaker", "stack-tracing"],
+      "summary": "Low-latency IVA bridge connecting CRM, order management, ticketing, and RAG with end-to-end stack tracing."
+    },
+    {
+      "id": "sector-3-ml-engineer",
+      "title": "Machine Learning Engineer (RM8k-11k)",
+      "location": "Bangsar South",
+      "class": "AutomatedMLPipelineEngine",
+      "tags": ["ml-pipeline", "data-clean", "preprocess", "train", "validate", "deploy", "drift-monitor", "auto-retrain"],
+      "summary": "Automated ML pipeline: data cleaning, gradient-descent training, validation gating, production deploy, and drift monitoring with auto-retrain trigger."
+    }
+  ],
+  "focus_topics": [
+    "Production RAG Pipeline with Deterministic Vector Embeddings, Semantic Caching & AI Safety Guardrails",
+    "Distributed Apache Spark & Kubernetes GPU Cost Optimization with Automated LLM Failure Mode Detection",
+    "Low-Latency Intelligent Virtual Assistant (IVA) API Gateway connecting CRM, Order Management & Ticketing",
+    "Full-Stack AI Systems Debugging: Real-Time Telemetry from API Latency to LLM Reasoning Fallbacks",
+    "Automated Multi-Source Data Cleaning, Normalization, Model Validation & Zero-Downtime Production Deployment",
+    "Real-Time Machine Learning Model Drift Detection & Autonomous Self-Retraining Pipeline"
+  ]
+}

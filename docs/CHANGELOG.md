@@ -97,3 +97,12 @@
 - Auto-deploy URL: https://autocreate-7001.vmojuga.workers.dev
 - Guardrail verified: reject other-user/* namespace
 - API: /omni/repos, /omni/repos/register, /omni/repos/ensure
+
+### [FEAT] Enterprise AI/ML sectors (job market scan)
+- tools/sectors/enterprise_ai_sectors_grimoire.py — 3 classes:
+  - EnterpriseRAGAndGuardrailEngine (AI Engineer RM10k)
+  - ForwardDeployedIVABridge (Forward-Deployed AI Engineer RM8-12k)
+  - AutomatedMLPipelineEngine (ML Engineer RM8-11k)
+- corpus/sectors/ — mirror + metadata
+- 6 ENTERPRISE_SECTOR_TOPICS wired to Overlord focus_topics
+- Context: extracted from 10 job ad screenshots Malaysia
