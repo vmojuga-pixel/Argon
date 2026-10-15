@@ -142,3 +142,9 @@
 - docs/swarm-output/k8s/k8s-production.yaml — Production K8s
 - corpus/go/ — mirror + metadata
 - 5 new focus topics wired (25 total)
+
+### [FEAT] Fasa 2 — Status + Admin alerts + Usage chart
+- src/web/status.js — public status page (/status) auto-refresh 30s
+- /api/status — JSON health (db, kv, r2, ai, do)
+- src/overlord.js — sendAdminAlert() webhook hook on self-heal
+- src/web/usage-chart.js — usage bar chart helper

@@ -163,6 +163,7 @@ export class OverlordSeniorDev {
           await this.deployWorkerToCloudflare(svc.slug, svc.lastStableCode);
           results.push({ slug: svc.slug, action: "SELF_HEAL: " + err.message });
           await this.logActivity("AUTO_SELF_HEAL", svc.slug + " redeployed");
+          await this.sendAdminAlert("service_self_heal", `Service ${svc.slug} auto-redeployed`, { slug: svc.slug, error: err.message, heal_count: svc.autoHealCount });
         }
       } else {
         svc.healthStatus = "SANDBOX_OK";
@@ -214,6 +215,22 @@ export class OverlordSeniorDev {
     await this.state.storage.put("activity_logs", logs);
   }
 
+  async sendAdminAlert(event, message, meta = {}) {
+    const webhookUrl = this.env.ADMIN_ALERT_WEBHOOK;
+    if (!webhookUrl) return { sent: false, reason: 'ADMIN_ALERT_WEBHOOK not set' };
+    const payload = { event, message, meta, ts: new Date().toISOString(), env: this.env.APP_NAME || 'Argon' };
+    try {
+      const res = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { sent: res.ok, status: res.status };
+    } catch (e) {
+      return { sent: false, reason: e.message };
+    }
+  }
+
   async fetch(request) {
     const url = new URL(request.url);
     const cors = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET, POST, OPTIONS", "Access-Control-Allow-Headers": "Content-Type, X-API-Key" };
@@ -248,3 +265,5 @@ export class OverlordSeniorDev {
     return new Response("Overlord Senior Dev Active", { status: 200, headers: cors });
   }
 }
+
+// Alert dispatcher helper (append at end of class — via global)

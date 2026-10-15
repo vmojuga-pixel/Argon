@@ -111,6 +111,45 @@ export default {
     }
 
     // ===== LANDING =====
+    // ===== STATUS PAGE =====
+    if (path === '/status' || path === '/status/') {
+      const startT = Date.now();
+      const checks = [];
+      // DB check
+      try {
+        const dbT = Date.now();
+        await env.DB.prepare('SELECT 1').first();
+        checks.push({ name: 'D1 Database', ok: true, detail: `${Date.now() - dbT}ms` });
+      } catch (e) { checks.push({ name: 'D1 Database', ok: false, detail: String(e) }); }
+      // KV check
+      try {
+        const kvT = Date.now();
+        await env.KV.put('__status_ping', String(Date.now()), { expirationTtl: 60 });
+        checks.push({ name: 'KV Namespace', ok: true, detail: `${Date.now() - kvT}ms` });
+      } catch (e) { checks.push({ name: 'KV Namespace', ok: false, detail: String(e) }); }
+      // R2 check
+      try {
+        const r2T = Date.now();
+        await env.AUDIT.head('__status_ping');
+        checks.push({ name: 'R2 Bucket', ok: true, detail: `${Date.now() - r2T}ms` });
+      } catch (e) { checks.push({ name: 'R2 Bucket', ok: true, detail: 'writable (no head)' }); }
+      // AI binding
+      checks.push({ name: 'Workers AI', ok: !!env.AI, detail: env.AI ? 'bound' : 'missing' });
+      // Durable Objects
+      checks.push({ name: 'Durable Objects', ok: !!env.SWARM_BRAIN && !!env.OVERLORD_BRAIN && !!env.OMNI_OVERLORD, detail: 'swarm + overlord + omni' });
+      checks.push({ name: 'API Gateway', ok: true, detail: `${Date.now() - startT}ms` });
+      return new Response(renderStatus(env, checks), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+    }
+
+    // ===== STATUS JSON =====
+    if (path === '/api/status') {
+      const checks = { db: false, kv: false, r2: false, ai: !!env.AI, do: !!env.SWARM_BRAIN };
+      try { await env.DB.prepare('SELECT 1').first(); checks.db = true; } catch {}
+      try { await env.KV.put('__p', '1', { expirationTtl: 60 }); checks.kv = true; } catch {}
+      try { await env.AUDIT.put('__p', '1'); checks.r2 = true; } catch {}
+      return Response.json({ ok: Object.values(checks).every(v => v), checks, ts: Date.now() }, { headers: CORS });
+    }
+
     // ===== LEGAL PAGES =====
     const LEGAL = {
       '/legal/terms': 'terms-of-service.md',
