@@ -1,3 +1,5 @@
+import { welcomeEmailHtml, welcomeEmailText } from '../emails/welcome.js';
+import { sendEmail } from '../emails/sender.js';
 import { createTenant, generateTenantKey } from './tenant.js';
 
 export async function handleSignup(request, env) {
@@ -18,6 +20,17 @@ export async function handleSignup(request, env) {
   if (existing) return Response.json({ error: 'email already registered' }, { status: 409 });
 
   const result = await createTenant(env, { email, company, plan });
+
+  // Send welcome email (non-blocking)
+  try {
+    await sendEmail(env, {
+      to: email,
+      subject: "Welcome to Argon — your API key",
+      html: welcomeEmailHtml(email, result.api_key, plan),
+      text: welcomeEmailText(email, result.api_key, plan)
+    });
+  } catch (e) { console.log("welcome email failed:", e.message); }
+
   return Response.json({
     ok: true,
     tenant_id: result.tenant_id,

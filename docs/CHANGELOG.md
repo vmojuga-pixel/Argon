@@ -148,3 +148,11 @@
 - /api/status — JSON health (db, kv, r2, ai, do)
 - src/overlord.js — sendAdminAlert() webhook hook on self-heal
 - src/web/usage-chart.js — usage bar chart helper
+
+### [FEAT] Fasa 4 — Email onboarding + Custom domain
+- src/emails/welcome.js — welcome email HTML + text
+- src/emails/sender.js — Resend API integration (skip if key missing)
+- src/saas/signup.js — welcome email on signup
+- src/custom-domain.js — resolve tenant from Host header
+- migrations/0004_custom_domain.sql — custom_domain column
+- /signup GET → 302 redirect

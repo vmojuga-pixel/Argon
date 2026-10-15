@@ -87,3 +87,19 @@
 - gRPC proto contract
 - K8s production manifest
 - 25 focus topics total
+
+## Session #009 — 2026-10-15 (late evening)
+**Focus:** Fasa 4 (Email + Custom domain)
+
+**Selesai:**
+- Welcome email template + Resend sender
+- Signup email hook (non-blocking)
+- Custom domain resolver (Host → tenant)
+- DB migration custom_domain
+- /signup GET redirect
+
+**Total Sistem:**
+- 23 routes verified (all 200)
+- 16 AI/ML sectors + 3 Go modules
+- 25 focus topics rotating
+- Overlord epoch #43+
