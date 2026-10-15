@@ -5,6 +5,9 @@ import { renderDocs } from './web/docs.js';
 import { handleChat } from './api/chat.js';
 import { handleAgent } from './api/agent.js';
 import { validateApiKey, validateBasicAuth } from './auth/apikey.js';
+import { createSession, validateSessionOrBasic, verifyLogin, sessionCookieHeader, clearCookieHeader } from './auth/session.js';
+import { renderLogin } from './web/login.js';
+import { renderPublicLanding } from './web/landing-public.js';
 import { SwarmBrain } from './swarm.js';
 import { OverlordSeniorDev } from './overlord.js';
 import { OmniOverlordEngine } from './omni-overlord.js';
@@ -108,10 +111,33 @@ export default {
     }
 
     // ===== LANDING =====
+    // ===== PUBLIC LANDING + LOGIN =====
     if (path === '/' || path === '/landing') {
-      const basic = await validateBasicAuth(request, env);
-      if (!basic.ok) return new Response('Auth required', { status: 401, headers: { 'WWW-Authenticate': 'Basic realm="Argon"' } });
-      return new Response(renderLanding(env), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+      const sess = await validateSessionOrBasic(request, env);
+      return new Response(renderPublicLanding(env, sess.ok), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+    }
+    if (path === '/login') {
+      const err = url.searchParams.get('error') || '';
+      return new Response(renderLogin(err), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+    }
+    if (path === '/api/auth/login' && request.method === 'POST') {
+      let body = {};
+      try { body = await request.json(); } catch {}
+      const user = (body.user || '').trim();
+      const pass = (body.pass || '');
+      const ok = await verifyLogin(env, user, pass);
+      if (!ok) return Response.json({ ok: false, error: 'Invalid credentials' }, { status: 401, headers: CORS });
+      const token = await createSession(env, user);
+      return new Response(JSON.stringify({ ok: true, redirect: body.redirect || '/omni-ui' }), {
+        status: 200,
+        headers: { ...CORS, 'Content-Type': 'application/json', 'Set-Cookie': sessionCookieHeader(token) }
+      });
+    }
+    if (path === '/api/auth/logout' && request.method === 'POST') {
+      return new Response(JSON.stringify({ ok: true }), {
+        status: 200,
+        headers: { ...CORS, 'Content-Type': 'application/json', 'Set-Cookie': clearCookieHeader() }
+      });
     }
 
     // ===== TENANT SELF-SERVICE =====
@@ -244,8 +270,8 @@ export default {
 
     // ===== OVERLORD (Tier-1 Senior Dev) =====
     if (path === '/overlord-ui' || path === '/overlord-ui/') {
-      const basic = await validateBasicAuth(request, env);
-      if (!basic.ok) return new Response('Auth required', { status: 401, headers: { 'WWW-Authenticate': 'Basic realm="Overlord UI"' } });
+      const sess = await validateSessionOrBasic(request, env);
+      if (!sess.ok) return Response.redirect(url.origin + '/login?error=' + encodeURIComponent('Auth required') + '&redirect=' + encodeURIComponent(path), 302);
       return new Response(renderOverlordUI(), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
     if (path.startsWith('/overlord')) {
@@ -272,8 +298,8 @@ export default {
     }
 
     if (path === '/omni-ui' || path === '/omni-ui/') {
-      const basic = await validateBasicAuth(request, env);
-      if (!basic.ok) return new Response('Auth required', { status: 401, headers: { 'WWW-Authenticate': 'Basic realm="Omni UI"' } });
+      const sess = await validateSessionOrBasic(request, env);
+      if (!sess.ok) return Response.redirect(url.origin + '/login?error=' + encodeURIComponent('Auth required') + '&redirect=' + encodeURIComponent(path), 302);
       return new Response(renderOmniUI(), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
 
