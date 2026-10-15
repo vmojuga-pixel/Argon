@@ -54,3 +54,13 @@
 - DO storage limit (128 KB per key) — untuk lastStableCode panjang
 - Workers AI Neuron budget (monitor kalau cron 15min)
 - Webhook signature verification hanya kalau customer register
+
+## Auto-Create Repo — 2026-10-15
+- Repo default allowlist: prefix `vmojuga-pixel/*` (SIR's namespace)
+- Extra allowlist: env `OMNI_ALLOWED_REPOS` + DO storage `extra_allowlist`
+- Auto-create: `ensureRepoExists()` — check via API, create if 404
+- Endpoints:
+  - GET /omni/repos — list allowlist
+  - POST /omni/repos/register — add repo to dynamic allowlist
+  - POST /omni/repos/ensure — create repo if missing
+- Guardrail: reject repo di luar owner namespace

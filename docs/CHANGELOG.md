@@ -83,3 +83,10 @@
 - anthropic/auth/ — 5 auth modules, 49 tests
 - qwen/stack/ — drizzle config, db pool, secure key gen, stripe routes, topup UI
 - Fixed bug: Qwen stripe.ts invalid Drizzle increment → sql`` pattern
+
+### [FEAT] Omni-Overlord auto-create repo + dynamic allowlist
+- repoAllowed() → async: env namespace prefix + env extra + DO storage
+- ensureRepoExists() — auto-create repo via GitHub API kalau belum ada
+- addRepoToAllowlist() — register repo baru dalam DO storage
+- New routes: /omni/repos, /omni/repos/register, /omni/repos/ensure
+- Guardrail: repo wajib prefix owner namespace (vmojuga-pixel/*)
