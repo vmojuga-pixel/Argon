@@ -111,6 +111,31 @@ export default {
     }
 
     // ===== LANDING =====
+    // ===== LEGAL PAGES =====
+    const LEGAL = {
+      '/legal/terms': 'terms-of-service.md',
+      '/legal/privacy': 'privacy-policy.md',
+      '/legal/aup': 'acceptable-use-policy.md',
+      '/legal/cookies': 'cookie-policy.md',
+      '/terms': 'terms-of-service.md',
+      '/privacy': 'privacy-policy.md',
+    };
+    if (LEGAL[path]) {
+      // Serve embedded HTML version (no file read at edge)
+      if (path === '/legal/terms' || path === '/terms') {
+        return new Response(renderLegal('Terms of Service', TERMS_HTML), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+      }
+      if (path === '/legal/privacy' || path === '/privacy') {
+        return new Response(renderLegal('Privacy Policy', PRIVACY_HTML), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+      }
+      if (path === '/legal/aup') {
+        return new Response(renderLegal('Acceptable Use Policy', AUP_HTML), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+      }
+      if (path === '/legal/cookies') {
+        return new Response(renderLegal('Cookie Policy', COOKIE_HTML), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+      }
+    }
+
     // ===== PUBLIC LANDING + LOGIN =====
     if (path === '/' || path === '/landing') {
       const sess = await validateSessionOrBasic(request, env);

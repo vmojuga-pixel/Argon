@@ -1,0 +1,35 @@
+{
+  "name": "@argon/sdk",
+  "version": "2.0.0",
+  "description": "Official TypeScript SDK for the Argon AI API platform — chat, agent, swarm, omni",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "README.md", "LICENSE"],
+  "scripts": {
+    "build": "tsc",
+    "test": "node --test dist/**/*.test.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": ["argon", "ai", "llm", "agent", "swarm", "api", "typescript"],
+  "author": "vmojuga-pixel",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vmojuga-pixel/Argon.git",
+    "directory": "sdk/npm"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}
