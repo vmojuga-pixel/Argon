@@ -235,3 +235,17 @@
   2. Onboard northerncoastgroup.com
   3. Set EMAIL_FROM
   4. OR: set RESEND_API_KEY (5 min)
+
+## Mission-Critical Patterns (2026-10-15)
+Extracted from private MDSI repo (sanitized). Generic reusable patterns:
+1. Multi-echelon scaling (Tier-1/2/3)
+2. SHA-256 hash-chain audit ledger
+3. Two-person cryptographic HITL gate
+4. DDIL mesh autonomy
+5. RK4 + proportional navigation physics
+6. Radar burn-through (J/S ratio)
+7. Entity-link ontology graph
+8. Sensor-to-shooter pairing
+9. Multi-modal command router
+
+Location: corpus/sectors/defense-patterns/

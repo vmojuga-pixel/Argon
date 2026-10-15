@@ -162,3 +162,9 @@
 - workers.dev tak boleh onboard; perlu custom domain + GA access
 - Deferred — signup jalan tanpa email (log only)
 - Fallback ready: set RESEND_API_KEY bila ready
+
+### [FEAT] Mission-critical patterns corpus (sanitized from MDSI)
+- corpus/sectors/defense-patterns/mission_critical_patterns.py
+- 8 abstract patterns: multi-echelon, hash-chain, two-person-gate, DDIL mesh, RK4+PN, radar burn-through, ontology graph, sensor-to-shooter, command router
+- Generic for high-reliability systems (not defense-specific)
+- 8 focus topics wired to Overlord
