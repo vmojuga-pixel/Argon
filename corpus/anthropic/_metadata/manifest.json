@@ -8,7 +8,15 @@
       "path": "corpus/anthropic/001-signature/solution.ts",
       "tests": "corpus/anthropic/001-signature/solution.test.ts",
       "test_count": 8,
-      "tags": ["crypto", "hmac", "stripe", "webhook", "signature-verification", "timing-safe", "replay-prevention"],
+      "tags": [
+        "crypto",
+        "hmac",
+        "stripe",
+        "webhook",
+        "signature-verification",
+        "timing-safe",
+        "replay-prevention"
+      ],
       "summary": "Verify Stripe webhook signature using HMAC-SHA256 with timestamp tolerance + rotation support.",
       "when_to_use": "Any inbound webhook that requires authenticity. Reusable for GitHub, Slack, custom HMAC."
     },
@@ -17,7 +25,13 @@
       "path": "corpus/anthropic/002-idempotency/solution.ts",
       "tests": "corpus/anthropic/002-idempotency/solution.test.ts",
       "test_count": 4,
-      "tags": ["idempotency", "webhook", "claim-release", "concurrent-delivery", "state-machine"],
+      "tags": [
+        "idempotency",
+        "webhook",
+        "claim-release",
+        "concurrent-delivery",
+        "state-machine"
+      ],
       "summary": "Idempotent webhook processing with atomic claim/release so retries don't double-process.",
       "when_to_use": "Any webhook handler + any endpoint that must be safe under retry."
     },
@@ -26,8 +40,14 @@
       "path": "corpus/anthropic/003-entitlement/solution.ts",
       "tests": "corpus/anthropic/003-entitlement/solution.test.ts",
       "test_count": 6,
-      "tags": ["subscription", "state-machine", "grace-period", "fail-closed", "access-control"],
-      "summary": "Map subscription status → entitlement (active/trial/grace/canceled_until_period_end/none).",
+      "tags": [
+        "subscription",
+        "state-machine",
+        "grace-period",
+        "fail-closed",
+        "access-control"
+      ],
+      "summary": "Map subscription status \u2192 entitlement (active/trial/grace/canceled_until_period_end/none).",
       "when_to_use": "Gating any paid feature. Fail-closed on unknown status."
     },
     {
@@ -35,7 +55,13 @@
       "path": "corpus/anthropic/004-ordering/solution.ts",
       "tests": "corpus/anthropic/004-ordering/solution.test.ts",
       "test_count": 7,
-      "tags": ["cas", "compare-and-swap", "out-of-order", "race-condition", "eventual-consistency"],
+      "tags": [
+        "cas",
+        "compare-and-swap",
+        "out-of-order",
+        "race-condition",
+        "eventual-consistency"
+      ],
       "summary": "Apply out-of-order events with monotonic lastEventCreated + CAS retry loop.",
       "when_to_use": "Any state where events can arrive unordered and newer must win."
     },
@@ -44,9 +70,97 @@
       "path": "corpus/anthropic/005-pricing/solution.ts",
       "tests": "corpus/anthropic/005-pricing/solution.test.ts",
       "test_count": 8,
-      "tags": ["pricing", "tiered", "graduated", "integer-money", "tax", "invoice"],
-      "summary": "Graduated tiered pricing + flat fee + tax — all in integer cents, no float drift.",
+      "tags": [
+        "pricing",
+        "tiered",
+        "graduated",
+        "integer-money",
+        "tax",
+        "invoice"
+      ],
+      "summary": "Graduated tiered pricing + flat fee + tax \u2014 all in integer cents, no float drift.",
       "when_to_use": "Any usage-based billing. Never use float for money."
+    },
+    {
+      "id": "001-password",
+      "path": "corpus/anthropic/auth/001-password/solution.ts",
+      "test_count": 9,
+      "tags": [
+        "crypto",
+        "scrypt",
+        "password-hashing",
+        "timing-safe",
+        "nfkc-normalization",
+        "rehash",
+        "dos-bounds"
+      ],
+      "summary": "Scrypt password hashing with self-describing params, DoS-bounded params, Unicode NFKC normalization, and rehash detection.",
+      "when_to_use": "Any user authentication. Store self-describing hash so params can evolve."
+    },
+    {
+      "id": "002-jwt",
+      "path": "corpus/anthropic/auth/002-jwt/solution.ts",
+      "test_count": 11,
+      "tags": [
+        "jwt",
+        "hs256",
+        "algorithm-pinning",
+        "timing-safe",
+        "clock-skew",
+        "iss-aud",
+        "nbf"
+      ],
+      "summary": "HS256 JWT sign/verify with algorithm pinning (no alg=none), clock skew, nbf, issuer/audience, min-secret length.",
+      "when_to_use": "Stateless auth. Never trust token's alg header \u2014 pin it."
+    },
+    {
+      "id": "003-throttle",
+      "path": "corpus/anthropic/auth/003-throttle/solution.ts",
+      "test_count": 10,
+      "tags": [
+        "rate-limit",
+        "brute-force",
+        "sliding-window",
+        "lockout",
+        "nfkc-normalization"
+      ],
+      "summary": "Login throttle: sliding-window failures + lockout + normalization so attacker cannot dodge via casing/unicode.",
+      "when_to_use": "Login, password reset, OTP, any brute-force surface."
+    },
+    {
+      "id": "004-reset",
+      "path": "corpus/anthropic/auth/004-reset/solution.ts",
+      "test_count": 10,
+      "tags": [
+        "password-reset",
+        "single-use",
+        "atomic-claim",
+        "no-oracle",
+        "sha256-hash-storage",
+        "entropy"
+      ],
+      "summary": "Password reset token: 32-byte URL-safe token, hash stored, atomic mark-used, one live token per user, identical error for every failure.",
+      "when_to_use": "Password reset, email verification, magic links."
+    },
+    {
+      "id": "005-rbac",
+      "path": "corpus/anthropic/auth/005-rbac/solution.ts",
+      "test_count": 9,
+      "tags": [
+        "rbac",
+        "fail-closed",
+        "privilege-escalation",
+        "last-owner",
+        "cross-org",
+        "matrix"
+      ],
+      "summary": "RBAC owner/admin/member/viewer with deny-by-default, last-owner protection, cross-org isolation, anti-self-promotion.",
+      "when_to_use": "Multi-tenant auth. Deny-by-default pattern."
     }
-  ]
+  ],
+  "total_tests": 82,
+  "subcategories": {
+    "billing": 5,
+    "auth": 5
+  }
 }

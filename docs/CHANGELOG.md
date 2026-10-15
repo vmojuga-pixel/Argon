@@ -78,3 +78,8 @@
 - corpus/qwen/stack/ — Hono + Drizzle + Next.js boilerplate
 - corpus/index.json — agent query interface
 - BLUEPRINT_09_corpus.md — documentation
+
+### [FEAT] Corpus expansion (auth + qwen extension)
+- anthropic/auth/ — 5 auth modules, 49 tests
+- qwen/stack/ — drizzle config, db pool, secure key gen, stripe routes, topup UI
+- Fixed bug: Qwen stripe.ts invalid Drizzle increment → sql`` pattern

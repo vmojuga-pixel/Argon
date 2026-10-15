@@ -6,15 +6,32 @@
     "anthropic": {
       "manifest": "corpus/anthropic/_metadata/manifest.json",
       "category": "billing-patterns",
-      "modules": 5,
-      "total_tests": 33,
-      "tags": ["crypto", "idempotency", "state-machine", "cas", "billing", "pricing"]
+      "modules": 10,
+      "total_tests": 82,
+      "tags": [
+        "crypto",
+        "idempotency",
+        "state-machine",
+        "cas",
+        "billing",
+        "pricing",
+        "auth",
+        "jwt",
+        "rbac",
+        "throttle"
+      ]
     },
     "qwen": {
       "manifest": "corpus/qwen/_metadata/manifest.json",
       "category": "full-stack-boilerplate",
-      "files": 3,
-      "tags": ["hono", "drizzle", "next.js", "api-key-auth", "usage-tracking"]
+      "files": 8,
+      "tags": [
+        "hono",
+        "drizzle",
+        "next.js",
+        "api-key-auth",
+        "usage-tracking"
+      ]
     }
   },
   "quick_lookup": {
@@ -25,6 +42,15 @@
     "tiered_pricing": "corpus/anthropic/005-pricing/solution.ts",
     "hono_api_boilerplate": "corpus/qwen/stack/backend/src/index.ts",
     "drizzle_schema": "corpus/qwen/stack/backend/src/schema.ts",
-    "nextjs_dashboard": "corpus/qwen/stack/frontend/app/page.tsx"
+    "nextjs_dashboard": "corpus/qwen/stack/frontend/app/page.tsx",
+    "password_hash": "corpus/anthropic/auth/001-password/solution.ts",
+    "jwt_hs256": "corpus/anthropic/auth/002-jwt/solution.ts",
+    "login_throttle": "corpus/anthropic/auth/003-throttle/solution.ts",
+    "password_reset": "corpus/anthropic/auth/004-reset/solution.ts",
+    "rbac_matrix": "corpus/anthropic/auth/005-rbac/solution.ts",
+    "stripe_checkout_webhook": "corpus/qwen/stack/backend/src/routes/stripe.ts",
+    "secure_api_key_gen": "corpus/qwen/stack/backend/src/utils/generateKey.ts",
+    "drizzle_pg_pool": "corpus/qwen/stack/backend/src/db.ts",
+    "stripe_topup_ui": "corpus/qwen/stack/frontend/app/dashboard/topup/page.tsx"
   }
 }

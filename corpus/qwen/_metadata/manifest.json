@@ -3,26 +3,103 @@
   "captured_at": "2026-10-15",
   "category": "full-stack-boilerplate",
   "stack": {
-    "backend": ["Hono", "Drizzle ORM", "PostgreSQL", "TypeScript"],
-    "frontend": ["Next.js (App Router)", "Tailwind CSS", "React"],
+    "backend": [
+      "Hono",
+      "Drizzle ORM",
+      "PostgreSQL",
+      "TypeScript"
+    ],
+    "frontend": [
+      "Next.js (App Router)",
+      "Tailwind CSS",
+      "React"
+    ],
     "auth": "API-key via Bearer header + credit deduction middleware"
   },
   "files": [
     {
       "path": "corpus/qwen/stack/backend/src/schema.ts",
-      "tags": ["drizzle", "postgres", "multi-tenant", "api-key", "usage-tracking"],
+      "tags": [
+        "drizzle",
+        "postgres",
+        "multi-tenant",
+        "api-key",
+        "usage-tracking"
+      ],
       "summary": "3 tables: users, api_keys, usage_logs"
     },
     {
       "path": "corpus/qwen/stack/backend/src/index.ts",
-      "tags": ["hono", "api-key-auth", "credit-system", "middleware", "cors"],
+      "tags": [
+        "hono",
+        "api-key-auth",
+        "credit-system",
+        "middleware",
+        "cors"
+      ],
       "summary": "Hono server + Bearer auth + credit deduction + usage log"
     },
     {
       "path": "corpus/qwen/stack/frontend/app/page.tsx",
-      "tags": ["next.js", "tailwind", "dashboard", "dark-mode", "stats-cards"],
+      "tags": [
+        "next.js",
+        "tailwind",
+        "dashboard",
+        "dark-mode",
+        "stats-cards"
+      ],
       "summary": "Dashboard + stats cards + API key management"
+    },
+    {
+      "path": "corpus/qwen/stack/backend/drizzle.config.ts",
+      "tags": [
+        "drizzle-kit",
+        "migration"
+      ],
+      "summary": "Drizzle Kit config"
+    },
+    {
+      "path": "corpus/qwen/stack/backend/src/db.ts",
+      "tags": [
+        "pg",
+        "connection-pool",
+        "drizzle",
+        "tuned"
+      ],
+      "summary": "Postgres pool (max=10, idle=30s, timeout=2s)"
+    },
+    {
+      "path": "corpus/qwen/stack/backend/src/utils/generateKey.ts",
+      "tags": [
+        "crypto",
+        "api-key",
+        "sha256",
+        "secure-random"
+      ],
+      "summary": "API key gen: 32B random + SHA-256 hash before store"
+    },
+    {
+      "path": "corpus/qwen/stack/backend/src/routes/stripe.ts",
+      "tags": [
+        "stripe",
+        "webhook",
+        "checkout",
+        "atomic-increment",
+        "hmac"
+      ],
+      "summary": "Stripe checkout + webhook with atomic credit topup (corpus fix: sql`col + val` not db.$with chain)"
+    },
+    {
+      "path": "corpus/qwen/stack/frontend/app/dashboard/topup/page.tsx",
+      "tags": [
+        "next.js",
+        "stripe-checkout",
+        "topup",
+        "dark-mode"
+      ],
+      "summary": "Topup UI with Stripe redirect"
     }
   ],
-  "when_to_use": "Reference untuk bina API SaaS baru: auth pattern, credit system, dashboard UI."
+  "when_to_use": "Reference untuk bina API SaaS baru: auth pattern, credit system, dashboard UI.",
+  "notes": "The stripe.ts file includes an annotated fix for the original Qwen boilerplate's invalid Drizzle increment syntax."
 }

@@ -28,3 +28,24 @@ Reference materials untuk agentic auto-coding. Bukan dependency — rujukan.
 - Reference only (no import, no dependency)
 - Update bila ada pattern baru
 - Test count tracked untuk detect regression
+
+## Update 2026-10-15 (part 2)
+
+### anthropic/auth/ — 5 modules, 49 tests
+| Module | Tests | Pattern |
+|:---|:---|:---|
+| 001-password | 9 | Scrypt + NFKC + DoS bounds + rehash |
+| 002-jwt | 11 | HS256 pinned + skew + iss/aud + nbf |
+| 003-throttle | 10 | Login lockout sliding window |
+| 004-reset | 10 | Single-use reset + atomic claim |
+| 005-rbac | 9 | Owner/admin/member/viewer fail-closed |
+
+**Total anthropic**: 10 modules, 82 tests (billing 33 + auth 49)
+
+### qwen/stack/ extension
+- `drizzle.config.ts`, `src/db.ts` — Postgres pool
+- `src/utils/generateKey.ts` — secure API key gen
+- `src/routes/stripe.ts` — checkout + webhook (**corpus-fixed** Drizzle syntax)
+- `frontend/.../topup/page.tsx` — Stripe redirect UI
+
+**Corpus fix noted**: Original Qwen boilerplate had invalid `db.$with()` chain for atomic increment. Corpus uses `sql\`col + val\`` — correct pattern.
