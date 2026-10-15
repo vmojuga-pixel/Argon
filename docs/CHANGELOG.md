@@ -133,3 +133,12 @@
   - KnowledgeTransferAndRunbookGenerator (handover blueprint)
   - NativeCppKernelBridge (Python-to-C++ sub-ms FFI)
 - corpus/sectors/ updated: 16 sectors, 20 focus topics wired
+
+### [FEAT] Go systems engineering + gRPC + K8s (low-level modules)
+- tools/go/network_storage_engine.go — DNS (RFC 1035), Redis RESP, JSON parser
+- tools/go/distributed_saga_sharding.go — Consistent hashing + SAGA + LB
+- tools/go/security_api_engine.go — AES-256-GCM + CSRF + cursor pagination
+- proto/enterprise_service.proto — gRPC contract
+- docs/swarm-output/k8s/k8s-production.yaml — Production K8s
+- corpus/go/ — mirror + metadata
+- 5 new focus topics wired (25 total)

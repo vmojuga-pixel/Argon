@@ -1,0 +1,31 @@
+syntax = "proto3";
+package enterprise.v1;
+option go_package = "./pb";
+
+service TransactionService {
+  rpc ProcessPayment (PaymentRequest) returns (PaymentResponse);
+  rpc StreamTelemetry (TelemetryRequest) returns (stream TelemetryEvent);
+}
+
+message PaymentRequest {
+  string idempotency_key = 1;
+  string account_id = 2;
+  int64 amount_cents = 3;
+  string currency = 4;
+}
+
+message PaymentResponse {
+  string transaction_id = 1;
+  string status = 2;
+  int64 processed_at_unix = 3;
+}
+
+message TelemetryRequest {
+  string service_node = 1;
+}
+
+message TelemetryEvent {
+  string trace_id = 1;
+  double cpu_load = 2;
+  uint64 memory_bytes = 3;
+}

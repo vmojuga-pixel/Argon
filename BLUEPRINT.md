@@ -578,3 +578,16 @@ Source: 10 job ad screenshots (Malaysia, RM8k-12k/month)
 ### Total
 - 16 sectors (v1 3 + v2 4 + v3 4 + v4 5)
 - 20 focus topics wired to Overlord
+
+## Go Systems + Infra (2026-10-15)
+### Files
+| File | Tags | Summary |
+|:---|:---|:---|
+| network_storage_engine.go | dns, resp, json | RFC 1035 + Redis + recursive descent JSON |
+| distributed_saga_sharding.go | hashing, saga, lb | Consistent hash + 2PC + least-conn |
+| security_api_engine.go | aes-gcm, csrf, cursor | Encrypted vault + HMAC + pagination |
+| enterprise_service.proto | grpc, protobuf | TransactionService + streaming |
+| k8s-production.yaml | k8s, hpa, netpol | Zero-downtime + autoscale + firewall |
+
+### Total topics
+25 (20 AI/ML + 5 Go systems)

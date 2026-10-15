@@ -1,0 +1,36 @@
+{
+  "source": "low-level-systems",
+  "captured_at": "2026-10-15",
+  "category": "go-systems-engineering",
+  "language": "Go (standard library only, zero external deps)",
+  "files": [
+    {
+      "id": "go-1-network-storage",
+      "path": "corpus/go/network_storage_engine.go",
+      "tags": ["dns", "rfc1035", "udp", "binary", "redis", "resp-protocol", "tcp", "json-parser", "recursive-descent", "lexer"],
+      "summary": "From-scratch: DNS resolver (RFC 1035 UDP binary), Redis RESP server (TCP), JSON parser (recursive descent)."
+    },
+    {
+      "id": "go-2-distributed-saga",
+      "path": "corpus/go/distributed_saga_sharding.go",
+      "tags": ["consistent-hashing", "crc32", "virtual-nodes", "sharding", "saga", "compensating-transaction", "load-balancer", "least-connections"],
+      "summary": "Consistent hashing shard manager + SAGA orchestrator + least-connections load balancer."
+    },
+    {
+      "id": "go-3-security-api",
+      "path": "corpus/go/security_api_engine.go",
+      "tags": ["aes-256-gcm", "secret-vault", "csrf", "hmac-sha256", "cursor-pagination", "base64"],
+      "summary": "AES-256-GCM secret vault + CSRF HMAC tokens + cursor-based pagination."
+    }
+  ],
+  "proto": {
+    "path": "corpus/go/enterprise_service.proto",
+    "tags": ["grpc", "protobuf", "http2", "streaming", "rpc"],
+    "summary": "gRPC TransactionService + streaming TelemetryEvent."
+  },
+  "k8s": {
+    "path": "corpus/go/k8s-production.yaml",
+    "tags": ["kubernetes", "rolling-update", "hpa", "network-policy", "security-context", "non-root"],
+    "summary": "Production K8s: 3 replicas, Zero-Downtime, HPA 3-20, NetworkPolicy, readOnlyRootFilesystem."
+  }
+}
