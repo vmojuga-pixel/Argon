@@ -90,3 +90,10 @@
 - addRepoToAllowlist() — register repo baru dalam DO storage
 - New routes: /omni/repos, /omni/repos/register, /omni/repos/ensure
 - Guardrail: repo wajib prefix owner namespace (vmojuga-pixel/*)
+
+### [VERIFIED] Omni-Overlord auto-create repo — 2026-10-15
+- Test: vmojuga-pixel/omni-autobuild-7001
+- Result: repo created + 5 files committed + LIVE_E2E deploy
+- Auto-deploy URL: https://autocreate-7001.vmojuga.workers.dev
+- Guardrail verified: reject other-user/* namespace
+- API: /omni/repos, /omni/repos/register, /omni/repos/ensure
