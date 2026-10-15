@@ -1,0 +1,22 @@
+{
+  "source": "gemini-unicorn-os-blueprint",
+  "captured_at": "2026-10-15",
+  "category": "advanced-production-systems",
+  "patterns": [
+    {"id": "halaltech-verification", "file": "halaltech.md",
+     "tags": ["yolo", "easyocr", "jakim", "halal", "multi-modal", "cv", "traceability"]},
+    {"id": "ai-war-inference", "file": "ai-war.md",
+     "tags": ["vllm", "speculative-decoding", "awq", "quantization", "dpo", "lora", "peft"]},
+    {"id": "billing-engine", "file": "billing-engine.md",
+     "tags": ["stripe", "subscription", "metered", "idempotency", "webhook", "aggregator"]}
+  ],
+  "focus_topics": [
+    "HalalTech Multi-Modal Verification: YOLO + EasyOCR + LLM for JAKIM Cert Cross-Reference",
+    "Speculative Decoding with vLLM: Draft (8B) + Target (70B-AWQ) for 2-3x Throughput",
+    "AWQ 4-bit Quantization: Run 70B Models on 2x Consumer GPUs (5x Margin vs OpenAI)",
+    "DPO Fine-Tuning with TRL + PEFT LoRA for Domain-Specific AI (Halal, Local Adat)",
+    "Stripe Metered Billing with Idempotency Key to Prevent Double-Charge on Retry",
+    "Stripe Webhook Signature Verification (Source of Truth) for Tenant Status Updates",
+    "Daily Usage Aggregator Cron: 1M IoT Events => 1 Stripe API Call per Tenant"
+  ]
+}
