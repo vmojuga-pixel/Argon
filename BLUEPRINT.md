@@ -535,3 +535,20 @@ Source: 10 job ad screenshots (Malaysia, RM8k-12k/month)
 ### Wired
 - Overlord DO storage `focus_topics` updated via POST /overlord/topics
 - Swarm will next reference these topics for auto-code generation
+
+## Grimoire V2 — Advanced Enterprise Sectors (2026-10-15)
+### Sectors
+| ID | Class | Job Requirement |
+|:---|:---|:---|
+| sector-4-distributed-spark | SparkStyleDistributedDataset | Apache Spark / distributed |
+| sector-5-multi-llm-gpu | MultiLLMAndGPUOrchestrator | LLM APIs + GPU orchestration |
+| sector-6-vendor-audit | VendorCodebaseAuditor | Vendor codebase audit |
+| sector-7-cross-stack-debugger | CrossStackAIDebugger | Debug across stack |
+
+### Files
+- `tools/sectors/enterprise_advanced_grimoire_v2.py`
+- `corpus/sectors/enterprise_advanced_grimoire_v2.py`
+- `docs/swarm-output/infra/k8s-ai-gpu-deployment.yaml`
+
+### Total
+- 7 sectors (v1 3 + v2 4), 10 focus topics

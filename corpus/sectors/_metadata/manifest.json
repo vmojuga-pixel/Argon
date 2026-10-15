@@ -9,7 +9,18 @@
       "title": "AI Engineer (RM10k)",
       "location": "Petaling Jaya",
       "class": "EnterpriseRAGAndGuardrailEngine",
-      "tags": ["rag", "vector-db", "embedding", "ai-safety", "guardrails", "prompt-injection", "pii-redaction", "semantic-cache", "gpu-cost-optimizer", "llm-evaluation"],
+      "tags": [
+        "rag",
+        "vector-db",
+        "embedding",
+        "ai-safety",
+        "guardrails",
+        "prompt-injection",
+        "pii-redaction",
+        "semantic-cache",
+        "gpu-cost-optimizer",
+        "llm-evaluation"
+      ],
       "summary": "RAG pipeline with deterministic vector embeddings, semantic cache, PII redaction, prompt-injection guardrails, and LLM groundedness scoring."
     },
     {
@@ -17,7 +28,16 @@
       "title": "Forward-Deployed AI Engineer - IVA (RM8k-12k)",
       "location": "Kuala Lumpur",
       "class": "ForwardDeployedIVABridge",
-      "tags": ["iva", "contact-center", "crm", "order-management", "ticketing", "low-latency", "circuit-breaker", "stack-tracing"],
+      "tags": [
+        "iva",
+        "contact-center",
+        "crm",
+        "order-management",
+        "ticketing",
+        "low-latency",
+        "circuit-breaker",
+        "stack-tracing"
+      ],
       "summary": "Low-latency IVA bridge connecting CRM, order management, ticketing, and RAG with end-to-end stack tracing."
     },
     {
@@ -25,8 +45,74 @@
       "title": "Machine Learning Engineer (RM8k-11k)",
       "location": "Bangsar South",
       "class": "AutomatedMLPipelineEngine",
-      "tags": ["ml-pipeline", "data-clean", "preprocess", "train", "validate", "deploy", "drift-monitor", "auto-retrain"],
+      "tags": [
+        "ml-pipeline",
+        "data-clean",
+        "preprocess",
+        "train",
+        "validate",
+        "deploy",
+        "drift-monitor",
+        "auto-retrain"
+      ],
       "summary": "Automated ML pipeline: data cleaning, gradient-descent training, validation gating, production deploy, and drift monitoring with auto-retrain trigger."
+    },
+    {
+      "id": "sector-4-distributed-spark",
+      "title": "Distributed Computing / Apache Spark",
+      "class": "SparkStyleDistributedDataset",
+      "tags": [
+        "spark",
+        "mapreduce",
+        "partition",
+        "consistent-hashing",
+        "rdd",
+        "big-data"
+      ],
+      "summary": "Spark-style RDD with consistent-hash partitioning, map/filter, and reduceByKey two-phase aggregation."
+    },
+    {
+      "id": "sector-5-multi-llm-gpu",
+      "title": "Multi-Provider LLM Router & GPU Orchestrator",
+      "class": "MultiLLMAndGPUOrchestrator",
+      "tags": [
+        "llm-router",
+        "openai",
+        "claude",
+        "edge-llama",
+        "gpu-bin-packing",
+        "cost-optimizer",
+        "failover"
+      ],
+      "summary": "Route to cheapest capable provider + GPU Best-Fit Bin Packing allocator for VRAM cost optimization."
+    },
+    {
+      "id": "sector-6-vendor-audit",
+      "title": "Vendor Codebase Auditor (AST)",
+      "class": "VendorCodebaseAuditor",
+      "tags": [
+        "ast",
+        "audit",
+        "cyclomatic-complexity",
+        "security",
+        "vendor-transition",
+        "knowledge-transfer"
+      ],
+      "summary": "AST-based vendor code audit: complexity, doc gaps, bare except, eval/exec risk, commercial readiness score."
+    },
+    {
+      "id": "sector-7-cross-stack-debugger",
+      "title": "Cross-Stack AI Systems Debugger",
+      "class": "CrossStackAIDebugger",
+      "tags": [
+        "observability",
+        "root-cause",
+        "infrastructure",
+        "api",
+        "llm-reasoning",
+        "json-schema-drift"
+      ],
+      "summary": "Classify production incidents into Layer 1 (Infra/Network), Layer 2 (API/DB), or Layer 3 (LLM Reasoning/Schema)."
     }
   ],
   "focus_topics": [
@@ -35,6 +121,13 @@
     "Low-Latency Intelligent Virtual Assistant (IVA) API Gateway connecting CRM, Order Management & Ticketing",
     "Full-Stack AI Systems Debugging: Real-Time Telemetry from API Latency to LLM Reasoning Fallbacks",
     "Automated Multi-Source Data Cleaning, Normalization, Model Validation & Zero-Downtime Production Deployment",
-    "Real-Time Machine Learning Model Drift Detection & Autonomous Self-Retraining Pipeline"
-  ]
+    "Real-Time Machine Learning Model Drift Detection & Autonomous Self-Retraining Pipeline",
+    "Apache Spark MapReduce Partition Engine with Consistent Hashing & Two-Phase Aggregation",
+    "Multi-Provider LLM Router (OpenAI/Claude/Edge) with GPU Bin-Packing Cost Optimizer & Automatic Failover",
+    "AST Vendor Codebase Auditor: Cyclomatic Complexity, Doc Gaps, Security Risk & Commercial Readiness Scoring",
+    "Cross-Stack AI Systems Debugger: Root-Cause Classifier across Infrastructure, API, and LLM Reasoning Layers"
+  ],
+  "v2_module": "tools/sectors/enterprise_advanced_grimoire_v2.py",
+  "k8s_manifest": "docs/swarm-output/infra/k8s-ai-gpu-deployment.yaml",
+  "total_classes": 7
 }

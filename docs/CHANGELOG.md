@@ -106,3 +106,13 @@
 - corpus/sectors/ — mirror + metadata
 - 6 ENTERPRISE_SECTOR_TOPICS wired to Overlord focus_topics
 - Context: extracted from 10 job ad screenshots Malaysia
+
+### [FEAT] Grimoire V2 — advanced enterprise sectors
+- tools/sectors/enterprise_advanced_grimoire_v2.py (4 classes):
+  - SparkStyleDistributedDataset (Spark MapReduce RDD)
+  - MultiLLMAndGPUOrchestrator (router + GPU bin-packing)
+  - VendorCodebaseAuditor (AST audit)
+  - CrossStackAIDebugger (infra/API/LLM root-cause)
+- docs/swarm-output/infra/k8s-ai-gpu-deployment.yaml (Docker + K8s GPU + HPA)
+- corpus/sectors/ updated: 7 sectors total, 10 focus topics
+- 4 new topics wired to Overlord focus_topics
