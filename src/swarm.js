@@ -1,3 +1,4 @@
+import { checkAIQuota, recordAIUsage } from './tools/quota-guard.js';
 const MODEL = "@cf/meta/llama-4-scout-17b-16e-instruct";
 const GRIMOIRE_FILE = "CODING_GRIMOIRE.md";
 const MAX_HISTORY = 25;
@@ -7,6 +8,14 @@ export class SwarmBrain {
 
   async invokeAgentBrain(systemPrompt, userPrompt) {
     if (!this.env.AI) return this.deterministicHeuristicEngine(systemPrompt);
+
+    // Free-tier quota guard
+    const q = await checkAIQuota(this.env);
+    if (!q.allowed) {
+      console.log("[QUOTA] Daily AI limit reached:", q.used, "/", q.limit);
+      return this.deterministicHeuristicEngine(systemPrompt);
+    }
+
     try {
       const r = await this.env.AI.run(MODEL, {
         messages: [
@@ -17,6 +26,7 @@ export class SwarmBrain {
         max_tokens: 250
       });
       const out = r.response || r.result || r.text || "";
+      this.env.KV && (await recordAIUsage(this.env, 30));
       return out.trim() || this.deterministicHeuristicEngine(systemPrompt);
     } catch (err) {
       console.log("[AI-FALLBACK]", err.message);
