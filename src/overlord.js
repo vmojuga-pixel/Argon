@@ -193,13 +193,15 @@ export class OverlordSeniorDev {
     const epoch = (await this.state.storage.get("epoch")) || 0;
     const services = (await this.state.storage.get("managed_services")) || [];
     const logs = (await this.state.storage.get("activity_logs")) || [];
+    const focusTopics = (await this.state.storage.get("focus_topics")) || [];
     const healthy = services.filter(s => /OK|HEALTHY/.test(s.healthStatus)).length;
     const heals = services.reduce((a, s) => a + (s.autoHealCount || 0), 0);
     return {
       reportTimestamp: new Date().toISOString(),
       sirQuery: question || "Full status",
-      summaryForSir: "SIR, Overlord berjalan 24/7. " + services.length + " servis diurus (" + healthy + " sihat, " + heals + " auto-heal). Epoch #" + epoch + ".",
-      metrics: { totalEpoch: epoch, activeServicesCount: services.length, healthyServicesCount: healthy, totalAutoHealsExecuted: heals, cronSchedule: "0 */6 * * *" },
+      summaryForSir: "SIR, Overlord berjalan 24/7. " + services.length + " servis diurus (" + healthy + " sihat, " + heals + " auto-heal). Epoch #" + epoch + ". Focus topics: " + focusTopics.length + ".",
+      metrics: { totalEpoch: epoch, activeServicesCount: services.length, healthyServicesCount: healthy, totalAutoHealsExecuted: heals, focusTopicsCount: focusTopics.length, cronSchedule: "0 */6 * * *" },
+      focusTopics: focusTopics,
       activeServices: services,
       recentLogs: logs.slice(-15).reverse()
     };
