@@ -1,0 +1,1 @@
+{"sector":"travel-tech","patterns":[{"id":"multi-agent-booking-engine","category":"multi-agent","stack":["langgraph","openai","gds-api"],"difficulty":"advanced"}],"verified":true}

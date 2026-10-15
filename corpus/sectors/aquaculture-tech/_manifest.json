@@ -1,0 +1,1 @@
+{"sector":"aquaculture-tech","patterns":[{"id":"ras-control-system","category":"control-system","stack":["fastapi","iot","control-theory"],"difficulty":"advanced"}],"verified":true}

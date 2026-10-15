@@ -1,0 +1,1 @@
+{"sector":"livestock-tech","patterns":[{"id":"poultry-welfare-cv","category":"computer-vision","stack":["opencv","yolo","fastapi"],"difficulty":"advanced"}],"verified":true}

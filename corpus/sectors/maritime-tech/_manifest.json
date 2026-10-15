@@ -1,0 +1,1 @@
+{"sector":"maritime-tech","patterns":[{"id":"vessel-digital-twin","category":"predictive-maintenance","stack":["sklearn","fastapi","iot"],"difficulty":"advanced"}],"verified":true}
