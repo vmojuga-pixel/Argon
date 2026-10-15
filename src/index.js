@@ -7,7 +7,9 @@ import { handleAgent } from './api/agent.js';
 import { validateApiKey, validateBasicAuth } from './auth/apikey.js';
 import { SwarmBrain } from './swarm.js';
 import { OverlordSeniorDev } from './overlord.js';
+import { OmniOverlordEngine } from './omni-overlord.js';
 import { renderOverlordUI } from './web/overlord-ui.js';
+import { renderOmniUI } from './web/omni-ui.js';
 import { validateTenantKey, checkQuota, incrementUsage } from './saas/tenant.js';
 import { checkRateLimit, rateHeaders } from './saas/ratelimit.js';
 import { registerWebhook, listWebhooks, deleteWebhook, dispatchEvent } from './saas/webhooks.js';
@@ -16,7 +18,7 @@ import { handleAdminStats, handleAdminTenants, handleAdminUsage } from './admin/
 import { analyzePayload as reconAnalyze, renderReconUI } from './tools/recon.js';
 import { handleAdminRotateKey } from './admin/recover.js';
 
-export { SwarmBrain, OverlordSeniorDev };
+export { SwarmBrain, OverlordSeniorDev, OmniOverlordEngine };
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -257,12 +259,31 @@ export default {
       return env.OVERLORD_BRAIN.get(id).fetch(request);
     }
 
+    // ===== OMNI-OVERLORD (Universal multi-repo) =====
+    if (path.startsWith('/omni/')) {
+      const auth = await authenticate(request, env);
+      if (!auth.ok) return Response.json({ error: auth.error }, { status: 401, headers: CORS });
+      if (auth.mode === 'tenant') {
+        const rl = await checkRateLimit(env, auth.tenantId, auth.plan);
+        if (!rl.ok) return Response.json({ error: 'rate limit exceeded' }, { status: 429, headers: { ...CORS, ...rateHeaders(rl) } });
+      }
+      const id = env.OMNI_OVERLORD.idFromName('GLOBAL_OMNI_OVERLORD');
+      return env.OMNI_OVERLORD.get(id).fetch(request);
+    }
+
+    if (path === '/omni-ui' || path === '/omni-ui/') {
+      const basic = await validateBasicAuth(request, env);
+      if (!basic.ok) return new Response('Auth required', { status: 401, headers: { 'WWW-Authenticate': 'Basic realm="Omni UI"' } });
+      return new Response(renderOmniUI(), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+    }
+
     return new Response('Not Found', { status: 404, headers: CORS });
   },
 
   async scheduled(event, env, ctx) {
     // Overlord maintenance sweep (setiap cron tick)
     ctx.waitUntil(env.OVERLORD_BRAIN.get(env.OVERLORD_BRAIN.idFromName('GLOBAL_SENIOR_DEV_OVERLORD_V2')).fetch(new Request('https://internal/overlord/maintain', { method: 'POST' })));
+    ctx.waitUntil(env.OMNI_OVERLORD.get(env.OMNI_OVERLORD.idFromName('GLOBAL_OMNI_OVERLORD')).fetch(new Request('https://internal/omni/watchdog', { method: 'POST' })));
 
     const SWARMS = ['GLOBAL_CORP_SWARM', 'SWARM_RESEARCH', 'SWARM_SECURITY'];
     const pick = SWARMS[Math.floor(Date.now() / 60000) % SWARMS.length];

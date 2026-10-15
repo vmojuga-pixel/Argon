@@ -31,6 +31,10 @@ class_name = "SwarmBrain"
 name = "OVERLORD_BRAIN"
 class_name = "OverlordSeniorDev"
 
+[[durable_objects.bindings]]
+name = "OMNI_OVERLORD"
+class_name = "OmniOverlordEngine"
+
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["SwarmBrain"]
@@ -38,6 +42,10 @@ new_sqlite_classes = ["SwarmBrain"]
 [[migrations]]
 tag = "v2"
 new_sqlite_classes = ["OverlordSeniorDev"]
+
+[[migrations]]
+tag = "v3"
+new_sqlite_classes = ["OmniOverlordEngine"]
 
 [triggers]
 crons = ["*/15 * * * *"]
@@ -47,3 +55,4 @@ APP_NAME = "Argon"
 DEFAULT_MODEL = "@cf/meta/llama-4-scout-17b-16e-instruct"
 GITHUB_REPO = "vmojuga-pixel/buku-koding-agentic"
 GITHUB_REPO_OVERLORD = "vmojuga-pixel/Argon"
+OMNI_ALLOWED_REPOS = "vmojuga-pixel/Argon,vmojuga-pixel/buku-koding-agentic,argon-app-hello,argon-app-x1792009044,argon-app-t1792008904,argon-app-v1792008715,argon-app-demo1792008991"
