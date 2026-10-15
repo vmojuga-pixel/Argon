@@ -20,6 +20,9 @@ import { handleSignup, handleMe, handleRotateKey, handleRevokeKey } from './saas
 import { handleAdminStats, handleAdminTenants, handleAdminUsage } from './admin/stats.js';
 import { analyzePayload as reconAnalyze, renderReconUI } from './tools/recon.js';
 import { handleAdminRotateKey } from './admin/recover.js';
+import { renderStatus } from './web/status.js';
+import { renderLegal, TERMS_HTML, PRIVACY_HTML, AUP_HTML, COOKIE_HTML } from './web/legal.js';
+import { generateSDKForSector, listSectors } from './tools/sdk-gen.js';
 
 export { SwarmBrain, OverlordSeniorDev, OmniOverlordEngine };
 
@@ -111,6 +114,17 @@ export default {
     }
 
     // ===== LANDING =====
+    // ===== SDK GEN =====
+    if (path === '/api/sdk-sectors' && request.method === 'GET') {
+      return Response.json({ sectors: listSectors() }, { headers: CORS });
+    }
+    if (path.startsWith('/api/sdk-gen/') && request.method === 'GET') {
+      const sector = path.slice('/api/sdk-gen/'.length);
+      const snippets = generateSDKForSector(sector);
+      if (!snippets) return Response.json({ error: 'unknown sector', valid: listSectors() }, { status: 404, headers: CORS });
+      return Response.json({ sector, snippets }, { headers: CORS });
+    }
+
     // ===== STATUS PAGE =====
     if (path === '/status' || path === '/status/') {
       const startT = Date.now();

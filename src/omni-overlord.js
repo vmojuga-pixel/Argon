@@ -439,6 +439,18 @@ export class OmniOverlordEngine {
   }
 
   // ---- 7. FETCH ROUTER ----
+  async autoPickTopic() {
+    // Rotate through focus_topics based on epoch
+    const epoch = (await this.state.storage.get("topic_rotation_epoch")) || 0;
+    const topics = (await this.state.storage.get("focus_topics")) || [];
+    if (topics.length === 0) {
+      return { topic: "Full-stack SaaS platform with multi-tenant isolation", source: "default" };
+    }
+    const topic = topics[epoch % topics.length];
+    await this.state.storage.put("topic_rotation_epoch", epoch + 1);
+    return { topic, source: "grimoire_focus_topics", index: epoch % topics.length, total: topics.length };
+  }
+
   async fetch(request) {
     const url = new URL(request.url);
     const cors = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET, POST, OPTIONS", "Access-Control-Allow-Headers": "Content-Type" };
@@ -448,11 +460,94 @@ export class OmniOverlordEngine {
       let body = {}; try { body = await request.json(); } catch {}
       return Response.json(await this.scanAnyRepository(body.targetRepo, body.branch || "main"), { headers: cors });
     }
+    // SSE live build progress
+    if (url.pathname === "/omni/execute-stream" && request.method === "GET") {
+      const repo = url.searchParams.get("repo") || "";
+      const branch = url.searchParams.get("branch") || "main";
+      const slug = url.searchParams.get("slug") || null;
+      const directive = url.searchParams.get("directive") || "";
+      if (!repo || !directive) {
+        return new Response("data: " + JSON.stringify({ error: "repo + directive required" }) + "\n\n", {
+          status: 400, headers: { ...cors, "Content-Type": "text/event-stream" }
+        });
+      }
+      const self = this;
+      const stream = new ReadableStream({
+        async start(controller) {
+          const enc = new TextEncoder();
+          const send = (obj) => { try { controller.enqueue(enc.encode("data: " + JSON.stringify(obj) + "\n\n")); } catch {} };
+          try {
+            send({ step: "start", msg: "Allowlist check" });
+            if (!await self.repoAllowed(repo)) { send({ step: "error", msg: "repo not in allowlist" }); controller.close(); return; }
+
+            send({ step: "ensure", msg: "Ensuring repo exists" });
+            const ensure = await self.ensureRepoExists(repo, false);
+            if (!ensure.ok) { send({ step: "error", msg: ensure.error }); controller.close(); return; }
+            send({ step: "ensure_done", existed: ensure.existed, branch: ensure.default_branch || branch });
+            const effBranch = ensure.existed ? branch : (ensure.default_branch || branch);
+            if (!ensure.existed) await new Promise(r => setTimeout(r, 1500));
+
+            send({ step: "scan", msg: "Scanning repo tree" });
+            const scan = await self.scanAnyRepository(repo, effBranch);
+            send({ step: "scan_done", fileCount: scan.fileCount, stack: scan.detectedStack });
+
+            send({ step: "synth", msg: "Synthesizing full-stack app" });
+            const appSlug = (slug || "fullstack-" + Math.random().toString(36).substring(2, 7)).toLowerCase().replace(/[^a-z0-9-]/g, "-");
+            const bundle = await self.synthesizeEndToEndFullStackApp(directive, appSlug, scan);
+            send({ step: "synth_done", appSlug, fileCount: bundle.filesToCommit.length, files: bundle.filesToCommit.map(f => f.path) });
+
+            send({ step: "commit", msg: "Atomic git commit" });
+            const git = await self.atomicMultiFileCommit(repo, effBranch, bundle.filesToCommit, "[Omni-Overlord E2E] auto-build '" + appSlug + "'");
+            send({ step: "commit_done", committed: git.committed, mode: git.mode, sha: git.commitSha });
+
+            send({ step: "deploy", msg: "Deploying to CF edge" });
+            const deploy = await self.deployToCloudflareEdge(appSlug, bundle.workerCode);
+            send({ step: "deploy_done", deployed: deploy.deployed, mode: deploy.mode, url: deploy.liveUrl });
+
+            // Register
+            const registry = (await self.state.storage.get("universal_projects")) || [];
+            const record = {
+              appSlug, targetRepo: repo, branch: effBranch, directive, createdAt: new Date().toISOString(),
+              lastCheckedAt: new Date().toISOString(), healthStatus: "PENDING_CHECK", autoHealCount: 0,
+              repoAutoCreated: !ensure.existed, repoScanSummary: { existingFilesCount: scan.fileCount, detectedStack: scan.detectedStack },
+              gitCommit: git, deployment: deploy, generatedFiles: bundle.filesToCommit.map(f => f.path), previewWorkerCode: bundle.workerCode
+            };
+            const idx = registry.findIndex(p => p.appSlug === appSlug && p.targetRepo === repo);
+            if (idx >= 0) registry[idx] = record; else registry.unshift(record);
+            await self.state.storage.put("universal_projects", registry);
+
+            send({ step: "complete", record: { appSlug, liveUrl: deploy.liveUrl, commitSha: git.commitSha } });
+          } catch (e) {
+            send({ step: "error", msg: e.message });
+          }
+          try { controller.close(); } catch {}
+        }
+      });
+      return new Response(stream, {
+        headers: { ...cors, "Content-Type": "text/event-stream", "Cache-Control": "no-cache", "Connection": "keep-alive" }
+      });
+    }
+
     if (url.pathname === "/omni/execute" && request.method === "POST") {
       let body = {}; try { body = await request.json(); } catch {}
       if (!body.directive) return Response.json({ error: "directive required" }, { status: 400, headers: cors });
       return Response.json(await this.executeUniversalRepoCommand(body), { headers: cors });
     }
+    if (url.pathname === "/omni/auto-pick" && request.method === "GET") {
+      return Response.json(await this.autoPickTopic(), { headers: cors });
+    }
+    if (url.pathname === "/omni/auto-build" && request.method === "POST") {
+      let body = {};
+      try { body = await request.json(); } catch {}
+      const pick = await this.autoPickTopic();
+      const directive = body.directive || pick.topic;
+      const repo = body.targetRepo;
+      const slug = body.slug || ("auto-" + Date.now().toString(36).slice(-5));
+      if (!repo) return Response.json({ error: "targetRepo required" }, { status: 400, headers: cors });
+      const record = await this.executeUniversalRepoCommand({ targetRepo: repo, directive, slug, branch: body.branch || "main" });
+      return Response.json({ ...record, auto_topic: pick }, { headers: cors });
+    }
+
     if (url.pathname === "/omni/watchdog" && request.method === "POST") {
       return Response.json(await this.runUniversalWatchdogSweep(), { headers: cors });
     }
