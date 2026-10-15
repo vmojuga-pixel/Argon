@@ -1,0 +1,28 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "omni-e2e-6101 API",
+    "version": "1.0.0",
+    "description": "Full stack demo untuk test E2E build"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Watchdog health"
+      }
+    },
+    "/api/items": {
+      "get": {
+        "summary": "List records"
+      },
+      "post": {
+        "summary": "Create record"
+      }
+    },
+    "/api/items/{id}": {
+      "delete": {
+        "summary": "Delete record"
+      }
+    }
+  }
+}
