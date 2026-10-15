@@ -23,13 +23,14 @@ export async function handleSignup(request, env) {
 
   // Send welcome email (non-blocking)
   try {
-    await sendEmail(env, {
+    const emailResult = await sendEmail(env, {
       to: email,
       subject: "Welcome to Argon — your API key",
       html: welcomeEmailHtml(email, result.api_key, plan),
       text: welcomeEmailText(email, result.api_key, plan)
     });
-  } catch (e) { console.log("welcome email failed:", e.message); }
+    console.log("[SIGNUP_EMAIL] " + JSON.stringify(emailResult));
+  } catch (e) { console.log("[SIGNUP_EMAIL] exception: " + e.message); }
 
   return Response.json({
     ok: true,

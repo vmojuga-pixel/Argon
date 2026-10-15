@@ -226,3 +226,12 @@
 - Simptom: Worker sihat kena redeploy (overwrite)
 - Punca: Propagasi `*.workers.dev` lambat → 530 temporary
 - Fix: `SKIP_530_PROPAGATING` — jangan heal kalau 530
+
+### Deferred — Email onboarding
+- Status: code ready, service activation skipped
+- Reason: CF Email Sending masih public beta + workers.dev tak eligible
+- To enable later:
+  1. Dashboard → Compute & AI → Email → Email Sending
+  2. Onboard northerncoastgroup.com
+  3. Set EMAIL_FROM
+  4. OR: set RESEND_API_KEY (5 min)

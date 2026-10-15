@@ -117,6 +117,26 @@ export default {
     }
 
     // ===== LANDING =====
+    if (path === '/api/debug/email' && request.method === 'POST') {
+      const auth = await authenticate(request, env);
+      if (!auth.ok) return Response.json({ error: auth.error }, { status: 401, headers: CORS });
+      let body = {};
+      try { body = await request.json(); } catch {}
+      const { sendEmail } = await import('./emails/sender.js');
+      const result = await sendEmail(env, {
+        to: body.to || 'test@example.com',
+        subject: 'Argon debug test',
+        html: '<h1>Debug</h1><p>Test from Argon.</p>',
+        text: 'Debug test from Argon.'
+      });
+      return Response.json({
+        env_has_email: !!env.EMAIL,
+        email_from: env.EMAIL_FROM || '(default)',
+        result: result,
+        ts: Date.now()
+      }, { headers: CORS });
+    }
+
     // ===== SDK GEN =====
     if (path === '/api/sdk-sectors' && request.method === 'GET') {
       return Response.json({ sectors: listSectors() }, { headers: CORS });

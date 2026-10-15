@@ -156,3 +156,9 @@
 - src/custom-domain.js — resolve tenant from Host header
 - migrations/0004_custom_domain.sql — custom_domain column
 - /signup GET → 302 redirect
+
+### [SKIP] Email Sending domain onboard (beta)
+- CF Email Sending: E_SENDER_DOMAIN_NOT_CONFIGURED
+- workers.dev tak boleh onboard; perlu custom domain + GA access
+- Deferred — signup jalan tanpa email (log only)
+- Fallback ready: set RESEND_API_KEY bila ready
