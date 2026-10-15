@@ -85,3 +85,16 @@ Source: 10 job ad screenshots (Malaysia, RM8k-12k/month)
 
 ### Total
 - 7 sectors (v1 3 + v2 4), 10 focus topics
+
+## Grimoire V3 — Master Edition (2026-10-15)
+### Classes
+| ID | Class | Job Requirement |
+|:---|:---|:---|
+| sector-8-lora | LoRAFineTuningEngine | Fine-tune LLMs |
+| sector-9-hybrid-rrf | HybridRRFSearchEngine | RAG + semantic |
+| sector-10-cec-ivr-iva | PolyglotIVAContactCenterEngine | CEC/IVR/IVA + SQL/NoSQL |
+| sector-11-canary | AutomatedCanaryDeploymentGate | CI/CD + failure modes |
+
+### Total
+- 11 sectors (v1 3 + v2 4 + v3 4)
+- 10 focus topics wired to Overlord

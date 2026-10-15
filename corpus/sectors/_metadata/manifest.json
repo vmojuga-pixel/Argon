@@ -113,6 +113,68 @@
         "json-schema-drift"
       ],
       "summary": "Classify production incidents into Layer 1 (Infra/Network), Layer 2 (API/DB), or Layer 3 (LLM Reasoning/Schema)."
+    },
+    {
+      "id": "sector-8-lora-finetuning",
+      "title": "LoRA Fine-Tuning & Failure Mode Evaluator",
+      "class": "LoRAFineTuningEngine",
+      "tags": [
+        "lora",
+        "fine-tuning",
+        "low-rank",
+        "peft",
+        "vram-optimization",
+        "failure-modes",
+        "hallucination-detect"
+      ],
+      "summary": "LoRA low-rank matrix fine-tuning (W_0 + B*A) + 4 LLM failure mode detectors (refusal, repetition, hallucination, truncation)."
+    },
+    {
+      "id": "sector-9-hybrid-rrf",
+      "title": "Hybrid BM25 + Dense Vector RRF",
+      "class": "HybridRRFSearchEngine",
+      "tags": [
+        "bm25",
+        "okapi",
+        "rrf",
+        "hybrid-search",
+        "dense-vector",
+        "reciprocal-rank-fusion",
+        "rag"
+      ],
+      "summary": "Reciprocal Rank Fusion of Okapi BM25 lexical + dense vector cosine for best-of-both retrieval."
+    },
+    {
+      "id": "sector-10-cec-ivr-iva",
+      "title": "CEC/IVR/IVA Voice State Machine + Polyglot SQL/NoSQL",
+      "class": "PolyglotIVAContactCenterEngine",
+      "tags": [
+        "cec",
+        "ivr",
+        "iva",
+        "barge-in",
+        "dtmf",
+        "warm-transfer",
+        "sqlite-acid",
+        "nosql-document-store",
+        "polyglot-persistence"
+      ],
+      "summary": "SQLite ACID JOIN for orders + NoSQL document store for voice session state, with barge-in and warm transfer."
+    },
+    {
+      "id": "sector-11-canary-cicd",
+      "title": "Canary CI/CD Deployment Gate",
+      "class": "AutomatedCanaryDeploymentGate",
+      "tags": [
+        "canary",
+        "cicd",
+        "traffic-split",
+        "auto-rollback",
+        "sla-gate",
+        "hallucination-rate",
+        "p95-latency"
+      ],
+      "summary": "Automated gate: promote canary to 100% or auto-rollback based on accuracy >= 90%, hallucination <= 2%, latency SLA."
     }
   ],
   "focus_topics": [
@@ -125,9 +187,15 @@
     "Apache Spark MapReduce Partition Engine with Consistent Hashing & Two-Phase Aggregation",
     "Multi-Provider LLM Router (OpenAI/Claude/Edge) with GPU Bin-Packing Cost Optimizer & Automatic Failover",
     "AST Vendor Codebase Auditor: Cyclomatic Complexity, Doc Gaps, Security Risk & Commercial Readiness Scoring",
-    "Cross-Stack AI Systems Debugger: Root-Cause Classifier across Infrastructure, API, and LLM Reasoning Layers"
+    "Cross-Stack AI Systems Debugger: Root-Cause Classifier across Infrastructure, API, and LLM Reasoning Layers",
+    "LoRA Low-Rank Adaptation Fine-Tuning with VRAM Optimization & 4-Type LLM Failure Mode Detection",
+    "Hybrid BM25 + Dense Vector Reciprocal Rank Fusion (RRF) Search for RAG",
+    "CEC/IVR/IVA Real-Time Voice Barge-In State Machine with Warm Transfer to Human Agent",
+    "Polyglot SQL (ACID) + NoSQL Document Session Store with Idempotent Transaction Engine",
+    "Automated Canary CI/CD Deployment Gate with Traffic Split & Self-Rollback on SLA Breach"
   ],
   "v2_module": "tools/sectors/enterprise_advanced_grimoire_v2.py",
   "k8s_manifest": "docs/swarm-output/infra/k8s-ai-gpu-deployment.yaml",
-  "total_classes": 7
+  "total_classes": 11,
+  "v3_module": "tools/sectors/enterprise_master_grimoire_v3.py"
 }

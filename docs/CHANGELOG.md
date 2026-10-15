@@ -116,3 +116,11 @@
 - docs/swarm-output/infra/k8s-ai-gpu-deployment.yaml (Docker + K8s GPU + HPA)
 - corpus/sectors/ updated: 7 sectors total, 10 focus topics
 - 4 new topics wired to Overlord focus_topics
+
+### [FEAT] Grimoire V3 (Master Edition) — advanced AI/ML systems
+- tools/sectors/enterprise_master_grimoire_v3.py (4 classes):
+  - LoRAFineTuningEngine — LoRA + failure mode detection
+  - HybridRRFSearchEngine — BM25 + dense vector RRF
+  - PolyglotIVAContactCenterEngine — CEC/IVR/IVA + SQLite ACID + NoSQL
+  - AutomatedCanaryDeploymentGate — CI/CD promote/rollback
+- corpus/sectors/ updated: 11 sectors, 10 focus topics wired
