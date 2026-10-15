@@ -440,15 +440,31 @@ export class OmniOverlordEngine {
 
   // ---- 7. FETCH ROUTER ----
   async autoPickTopic() {
-    // Rotate through focus_topics based on epoch
     const epoch = (await this.state.storage.get("topic_rotation_epoch")) || 0;
-    const topics = (await this.state.storage.get("focus_topics")) || [];
+    let topics = (await this.state.storage.get("focus_topics")) || [];
     if (topics.length === 0) {
-      return { topic: "Full-stack SaaS platform with multi-tenant isolation", source: "default" };
+      const envTopics = (this.env.OMNI_FOCUS_TOPICS || "").split("|").map(function(s) { return s.trim(); }).filter(Boolean);
+      if (envTopics.length > 0) {
+        topics = envTopics;
+      } else {
+        topics = [
+          "Full-stack SaaS platform with multi-tenant isolation and usage metering",
+          "Real-time dashboard with SSE streaming and Tailwind dark mode",
+          "CRUD API with pagination, filtering, and atomic transactions",
+          "Webhook receiver with HMAC signature verification and idempotency",
+          "AI-powered chat interface with tool-calling agents",
+          "Rate-limited API gateway with token bucket and quota tracking",
+          "Multi-repo auto-coder with atomic git commit and auto-deploy",
+          "Observability dashboard with p50/p95/p99 latency telemetry",
+          "Compliance audit ledger with SHA-256 hash-chain integrity",
+          "Hybrid search engine with BM25 + dense vector RRF fusion"
+        ];
+      }
+      await this.state.storage.put("focus_topics", topics);
     }
     const topic = topics[epoch % topics.length];
     await this.state.storage.put("topic_rotation_epoch", epoch + 1);
-    return { topic, source: "grimoire_focus_topics", index: epoch % topics.length, total: topics.length };
+    return { topic: topic, source: "omni_focus_topics", index: epoch % topics.length, total: topics.length };
   }
 
   async fetch(request) {
