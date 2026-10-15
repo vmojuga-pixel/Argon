@@ -124,3 +124,12 @@
   - PolyglotIVAContactCenterEngine — CEC/IVR/IVA + SQLite ACID + NoSQL
   - AutomatedCanaryDeploymentGate — CI/CD promote/rollback
 - corpus/sectors/ updated: 11 sectors, 10 focus topics wired
+
+### [FEAT] Grimoire V4 — ecosystem peripheral layers
+- tools/sectors/enterprise_ecosystem_grimoire_v4.py (5 classes):
+  - LegalComplianceAndRiskGovernance (SHA-256 hash-chain)
+  - CommercialOnboardingAndMeteringEngine (multi-tenant SaaS)
+  - AnalyticsAndOperationsKPIEngine (p50/p95/p99 + KPI)
+  - KnowledgeTransferAndRunbookGenerator (handover blueprint)
+  - NativeCppKernelBridge (Python-to-C++ sub-ms FFI)
+- corpus/sectors/ updated: 16 sectors, 20 focus topics wired

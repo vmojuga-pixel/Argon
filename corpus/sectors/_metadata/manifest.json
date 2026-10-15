@@ -175,6 +175,84 @@
         "p95-latency"
       ],
       "summary": "Automated gate: promote canary to 100% or auto-rollback based on accuracy >= 90%, hallucination <= 2%, latency SLA."
+    },
+    {
+      "id": "sector-12-legal-compliance",
+      "title": "Legal, Compliance & Risk Governance",
+      "class": "LegalComplianceAndRiskGovernance",
+      "tags": [
+        "legal",
+        "compliance",
+        "pdpa",
+        "gdpr",
+        "audit-chain",
+        "sha256",
+        "tamper-proof",
+        "responsible-ai"
+      ],
+      "summary": "SHA-256 hash-chain immutable audit ledger + multi-jurisdiction compliance (MY PDPA, EU GDPR, SG PDPA, ISO 27001)."
+    },
+    {
+      "id": "sector-13-commercial-onboarding",
+      "title": "Commercial SaaS Onboarding & Metering",
+      "class": "CommercialOnboardingAndMeteringEngine",
+      "tags": [
+        "commercial",
+        "saas",
+        "multi-tenant",
+        "isolation",
+        "onboarding",
+        "metering",
+        "billing",
+        "quota"
+      ],
+      "summary": "Pilot customer onboarding with isolated namespaces + token bucket quota + real-time billing accrual."
+    },
+    {
+      "id": "sector-14-analytics-telemetry",
+      "title": "Analytics & Operations Telemetry",
+      "class": "AnalyticsAndOperationsKPIEngine",
+      "tags": [
+        "analytics",
+        "telemetry",
+        "p50",
+        "p95",
+        "p99",
+        "kpi",
+        "containment-rate",
+        "opex-savings"
+      ],
+      "summary": "Cross-functional dashboard: p50/p95/p99 latency + IVA containment rate + opex savings estimation."
+    },
+    {
+      "id": "sector-15-knowledge-transfer",
+      "title": "Knowledge Transfer & Runbook Generator",
+      "class": "KnowledgeTransferAndRunbookGenerator",
+      "tags": [
+        "knowledge-transfer",
+        "vendor-handover",
+        "runbook",
+        "sop",
+        "disaster-recovery",
+        "adr"
+      ],
+      "summary": "Automated handover blueprint: SLA targets, endpoints, DR procedures, incident SOP."
+    },
+    {
+      "id": "sector-16-cpp-bridge",
+      "title": "Python-to-C++ Native Kernel Bridge",
+      "class": "NativeCppKernelBridge",
+      "tags": [
+        "cpp",
+        "ffi",
+        "native",
+        "bridge",
+        "subprocess",
+        "kernel",
+        "high-frequency",
+        "zero-overhead"
+      ],
+      "summary": "Compile + exec C++ kernel from Python (sub-ms) with deterministic fallback if g++ unavailable."
     }
   ],
   "focus_topics": [
@@ -192,10 +270,16 @@
     "Hybrid BM25 + Dense Vector Reciprocal Rank Fusion (RRF) Search for RAG",
     "CEC/IVR/IVA Real-Time Voice Barge-In State Machine with Warm Transfer to Human Agent",
     "Polyglot SQL (ACID) + NoSQL Document Session Store with Idempotent Transaction Engine",
-    "Automated Canary CI/CD Deployment Gate with Traffic Split & Self-Rollback on SLA Breach"
+    "Automated Canary CI/CD Deployment Gate with Traffic Split & Self-Rollback on SLA Breach",
+    "SHA-256 Hash-Chain Immutable Audit Ledger for PDPA/GDPR Compliance & Responsible AI Governance",
+    "Multi-Tenant SaaS Pilot Onboarding with Isolated Namespaces & Token Bucket Quota Metering",
+    "Real-Time p50/p95/p99 Latency Telemetry with IVA Containment Rate & Opex Savings KPI",
+    "Automated Vendor-to-Internal Knowledge Transfer Runbook & Disaster Recovery SOP Generator",
+    "Python-to-C++ Native Kernel Bridge: Sub-Millisecond FFI for High-Frequency Math & Finance"
   ],
   "v2_module": "tools/sectors/enterprise_advanced_grimoire_v2.py",
   "k8s_manifest": "docs/swarm-output/infra/k8s-ai-gpu-deployment.yaml",
-  "total_classes": 11,
-  "v3_module": "tools/sectors/enterprise_master_grimoire_v3.py"
+  "total_classes": 16,
+  "v3_module": "tools/sectors/enterprise_master_grimoire_v3.py",
+  "v4_module": "tools/sectors/enterprise_ecosystem_grimoire_v4.py"
 }

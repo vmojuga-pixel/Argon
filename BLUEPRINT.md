@@ -565,3 +565,16 @@ Source: 10 job ad screenshots (Malaysia, RM8k-12k/month)
 ### Total
 - 11 sectors (v1 3 + v2 4 + v3 4)
 - 10 focus topics wired to Overlord
+
+## Grimoire V4 — Ecosystem Peripheral (2026-10-15)
+| ID | Class | Cross-Functional Layer |
+|:---|:---|:---|
+| sector-12-legal-compliance | LegalComplianceAndRiskGovernance | Legal + Risk |
+| sector-13-commercial-onboarding | CommercialOnboardingAndMeteringEngine | Commercial + SaaS |
+| sector-14-analytics-telemetry | AnalyticsAndOperationsKPIEngine | Analytics + Ops |
+| sector-15-knowledge-transfer | KnowledgeTransferAndRunbookGenerator | KT + Handover |
+| sector-16-cpp-bridge | NativeCppKernelBridge | Python ↔ C++ FFI |
+
+### Total
+- 16 sectors (v1 3 + v2 4 + v3 4 + v4 5)
+- 20 focus topics wired to Overlord
