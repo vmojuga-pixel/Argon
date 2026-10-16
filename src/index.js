@@ -69,6 +69,33 @@ export default {
     }
     if (path === '/signup' && request.method === 'POST') return handleSignup(request, env);
 
+    if (path === '/api/baobao' && request.method === 'POST') {
+      const ip = request.headers.get('cf-connecting-ip') || 'unknown';
+      const today = new Date().toISOString().slice(0,10);
+      const key = 'baobao:' + ip + ':' + today;
+      const LIMIT = 5;
+      let used = 0;
+      try { used = parseInt((await env.KV.get(key)) || '0', 10) || 0; } catch {}
+      if (used >= LIMIT) {
+        return Response.json({ ok:false, error:'limit_reached', used: used, limit: LIMIT, message: 'Limit 5 chat/hari. Sign up untuk unlimited.' }, { headers: CORS });
+      }
+      let body = {};
+      try { body = await request.json(); } catch {}
+      const msg = String(body.message || '').slice(0, 500).trim();
+      if (!msg) return Response.json({ ok:false, error:'empty' }, { headers: CORS });
+      const sys = 'Kau Baobao, chatbot rasmi BorneoAI. Jawab mesra, ringkas (max 3 baris), dalam BM atau ikut bahasa user. Kalau tak pasti, suruh sign up atau email sales@northerncoastgroup.com.\n\nFakta:\n- BorneoAI = platform autocode AI untuk bisnes (enterprise, startup, SME, non-tech).\n- User taip arahan (BM/EN), AI bina website, SaaS, API, automation agentic, full-stack, deploy ke edge.\n- Harga: Free RM0 (100 chat/bln, 1 project), Starter RM49/bln, Pro RM199/bln, Business RM799/bln, Enterprise custom.\n- Daftar free di /signup. Docs di /docs.\n- Guna 7-ejen Swarm untuk fikir, kritik, optimize kod.\n- Bayar via TnG eWallet. Batal bila-bila.';
+      let reply = 'Maaf, Baobao tengah rehat. Cuba lagi nanti.';
+      try {
+        const r = await env.AI.run('@cf/meta/llama-4-scout-17b-16e-instruct', {
+          messages: [ { role:'system', content: sys }, { role:'user', content: msg } ],
+          max_tokens: 200,
+          temperature: 0.4
+        });
+        reply = (r.response || r.result || r.text || '').trim() || reply;
+      } catch (e) { console.log('[BAOBAO-ERR]', e.message); }
+      try { await env.KV.put(key, String(used + 1), { expirationTtl: 86400 }); } catch {}
+      return Response.json({ ok:true, reply: reply, used: used + 1, remaining: LIMIT - used - 1, limit: LIMIT }, { headers: CORS });
+    }
     if (path === '/api/health') {
       return Response.json({
         status: 'ok', service: 'Argon SaaS', version: '2.0',
