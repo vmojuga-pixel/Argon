@@ -88,6 +88,41 @@ export class SwarmBrain {
     } catch (e) { return { synced: false, reason: e.message }; }
   }
 
+  listCorpusSectors() {
+    return ["advanced-systems","ai-ml","aquaculture-tech","defense-patterns","fintech-ai","livestock-tech","maritime-tech","production-infra","travel-tech","unicorn-portfolio","unified-core"];
+  }
+
+  async readSectorContext(sector) {
+    const repo = this.env.GITHUB_REPO_OVERLORD || "vmojuga-pixel/Argon";
+    const token = this.env.GITHUB_TOKEN;
+    if (!token) return { files: [], summary: "no token" };
+    try {
+      const u = "https://api.github.com/repos/" + repo + "/contents/corpus/sectors/" + sector;
+      const r = await fetch(u, { headers: { "Authorization": "Bearer " + token, "User-Agent": "Nexus-Swarm-OS", "Accept": "application/vnd.github.v3+json" } });
+      if (!r.ok) return { files: [], summary: "sector empty" };
+      const items = await r.json();
+      const names = items.filter(function(i){return i.type === "file";}).map(function(i){return i.name;});
+      return { files: names, summary: "Sector " + sector + " has " + names.length + " files: " + names.slice(0,6).join(", ") };
+    } catch (e) { return { files: [], summary: "read error: " + e.message }; }
+  }
+
+  async commitToCorpus(sector, epoch, entry, codeV2) {
+    const token = this.env.GITHUB_TOKEN;
+    const repo = this.env.GITHUB_REPO_OVERLORD || "vmojuga-pixel/Argon";
+    if (!token) return { synced: false, reason: "no token" };
+    const slug = "epoch-" + epoch + "-" + Date.now().toString(36);
+    const fname = "corpus/sectors/" + sector + "/" + slug + ".md";
+    const md = "# Epoch " + epoch + " | " + sector + "\n\n" + entry;
+    const b64 = btoa(unescape(encodeURIComponent(md)));
+    const u = "https://api.github.com/repos/" + repo + "/contents/" + fname;
+    const h = { "Authorization": "Bearer " + token, "User-Agent": "Nexus-Swarm-OS", "Accept": "application/vnd.github.v3+json", "Content-Type": "application/json" };
+    try {
+      const r = await fetch(u, { method: "PUT", headers: h, body: JSON.stringify({ message: "[Corpus Epoch #" + epoch + "] " + sector, content: b64 }) });
+      if (!r.ok) return { synced: false, reason: "GH: " + (await r.text()) };
+      return { synced: true, reason: "OK", path: fname };
+    } catch (e) { return { synced: false, reason: e.message }; }
+  }
+
   async executeEvolutionCycle(customTopic = null, onEvent = null) {
     const emit = (evt) => { if (onEvent) try { onEvent(evt); } catch {} };
 
@@ -100,7 +135,10 @@ export class SwarmBrain {
     const transcript = [];
 
     emit({ type: "agent_start", agent: "01_VISIONARY" });
-    const topic = customTopic || await this.invokeAgentBrain("ROLE: VISIONARY AGENT. Output: 1 baris.", `Ilmu: ${prev}. Cadang topik.`);
+    const sectors = this.listCorpusSectors();
+    const sector = sectors[(epoch - 1) % sectors.length];
+    const ctx = await this.readSectorContext(sector);
+    const topic = customTopic || (sector + ": " + ctx.summary);
     transcript.push({ agent: "01_VISIONARY", output: topic });
     emit({ type: "agent_done", agent: "01_VISIONARY", output: topic });
 
@@ -135,7 +173,7 @@ export class SwarmBrain {
     const entry = `\n---\n## EPOCH #${epoch} // ${ts}\n### Topik\n${topic}\n### Kod v1\n\`\`\`javascript\n${v1}\n\`\`\`\n### Kritikan + Sandbox v1\n${crit}\nSandbox: ${sandboxV1.join("; ")}\n### Kod v2\n\`\`\`javascript\n${v2}\n\`\`\`\nSandbox v2: ${sandboxV2.join("; ")}\n### Breakthrough\n${bth}\n`;
 
     emit({ type: "agent_start", agent: "07_THE_SCRIBE" });
-    const ghStatus = await this.commitToGitHubGrimoire(entry, epoch);
+    const ghStatus = await this.commitToCorpus(sector, epoch, entry, v2);
     transcript.push({ agent: "07_THE_SCRIBE", output: ghStatus.synced ? `✅ Commit Epoch #${epoch}` : `❌ ${ghStatus.reason}` });
     emit({ type: "agent_done", agent: "07_THE_SCRIBE", output: ghStatus.synced ? "Commit OK" : ghStatus.reason });
 
