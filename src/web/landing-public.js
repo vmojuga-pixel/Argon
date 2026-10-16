@@ -35,7 +35,7 @@ Live — deploy dalam minit
 </div>
 <h1 class="text-4xl md:text-6xl font-bold tracking-tight leading-tight mb-6">
 
-<span class="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">Bisnes kau, kod kami.</span>
+<span class="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">Bisnes kau, kod kami.</span><br><span class="text-slate-300">Cun sudah</span> <svg class="inline-block w-[0.9em] h-[0.9em] text-slate-500 align-middle ml-1" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><circle cx="16" cy="16" r="6" fill="currentColor" fill-opacity="0.2"/><ellipse cx="16" cy="16" rx="14" ry="4.5" transform="rotate(-25 16 16)"/><ellipse cx="16" cy="16" rx="14" ry="4.5" transform="rotate(-25 16 16)" stroke-opacity="0.4"/></svg>
 </h1>
 
 <div class="flex flex-wrap items-center justify-center gap-3 mb-8">
