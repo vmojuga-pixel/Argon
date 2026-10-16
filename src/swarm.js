@@ -92,6 +92,32 @@ export class SwarmBrain {
     return ["advanced-systems","ai-ml","aquaculture-tech","defense-patterns","fintech-ai","livestock-tech","maritime-tech","production-infra","travel-tech","unicorn-portfolio","unified-core"];
   }
 
+  pickSectorForTopic(topic) {
+    const t = String(topic || "").toLowerCase();
+    const rules = [
+      ["saas|onboard|tenant|quota|metering|isolation", "unified-core"],
+      ["rag|llm|lora|vllm|awq|embedding|vector|transformer|fine-tun|hallucination", "ai-ml"],
+      ["k8s|kubernetes|canary|p50|p95|p99|telemetry|deploy|sla|latency", "production-infra"],
+      ["spark|distributed|partition|mapreduce|big-data|rrf|bm25", "advanced-systems"],
+      ["pdpa|gdpr|audit|compliance|legal|tamper|hash-chain", "defense-patterns"],
+      ["fraud|credit|fintech|invoice|billing|stripe|pricing", "fintech-ai"],
+      ["ivr|iva|cec|crm|ticketing|voice|barge-in|contact", "unified-core"],
+      ["aquaculture|shrimp|fish|water", "aquaculture-tech"],
+      ["livestock|poultry|cattle", "livestock-tech"],
+      ["maritime|ship|port|vessel", "maritime-tech"],
+      ["travel|booking|tour|hotel", "travel-tech"],
+      ["unicorn|portfolio|multi-engine|scale-multiplier", "unicorn-portfolio"],
+      ["radar|jammer|rutta|intercept|shooter|defense|military", "defense-patterns"],
+      ["cpp|ffi|native|kernel|sub-ms|python-to-c", "advanced-systems"],
+      ["shard|saga|consistent-hash|dns|resp|json-parser", "production-infra"]
+    ];
+    for (let i = 0; i < rules.length; i++) {
+      const re = new RegExp(rules[i][0]);
+      if (re.test(t)) return rules[i][1];
+    }
+    return "unified-core";
+  }
+
   async listFocusTopics() {
     const repo = this.env.GITHUB_REPO_OVERLORD || "vmojuga-pixel/Argon";
     const token = this.env.GITHUB_TOKEN;
@@ -162,17 +188,14 @@ export class SwarmBrain {
 
     emit({ type: "agent_start", agent: "01_VISIONARY" });
     const topics = await this.listFocusTopics();
-    const sectors = this.listCorpusSectors();
-    const sector = sectors[(epoch - 1) % sectors.length];
-    const ctx = await this.readSectorContext(sector);
     let topic = customTopic;
+    if (!topic && topics.length > 0) topic = topics[(epoch - 1) % topics.length];
+    const sector = this.pickSectorForTopic(topic || "");
+    const ctx = await this.readSectorContext(sector);
     let existingRef = "";
-    if (!topic && topics.length > 0) {
-      topic = topics[(epoch - 1) % topics.length];
+    if (!customTopic) {
       const refFile = (ctx.files || []).find(function(f){ return f.endsWith(".md"); });
-      if (refFile) {
-        existingRef = await this.readFileContent("corpus/sectors/" + sector + "/" + refFile);
-      }
+      if (refFile) existingRef = await this.readFileContent("corpus/sectors/" + sector + "/" + refFile);
     }
     if (!topic) topic = sector + ": " + ctx.summary;
     transcript.push({ agent: "01_VISIONARY", output: topic });
