@@ -1,0 +1,28 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "argon-app-hello-001 API",
+    "version": "1.0.0",
+    "description": "Create a hello utility module with tests"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Watchdog health"
+      }
+    },
+    "/api/items": {
+      "get": {
+        "summary": "List records"
+      },
+      "post": {
+        "summary": "Create record"
+      }
+    },
+    "/api/items/{id}": {
+      "delete": {
+        "summary": "Delete record"
+      }
+    }
+  }
+}
