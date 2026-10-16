@@ -1,114 +1,178 @@
-export function renderPublicLanding(env, isAuthed = false) {
-  const app = (env && env.APP_NAME) || "Argon";
-  const ctaHref = isAuthed ? "/omni-ui" : "/login";
-  const ctaText = isAuthed ? "Open Console →" : "Sign In →";
+export function renderPublicLanding(env, sessOk) {
+  const app = (env && env.APP_NAME) || "BorneoAI";
+  const year = new Date().getFullYear();
   return `<!DOCTYPE html>
-<html lang="ms" class="dark">
+<html lang="en" class="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>${app} — Agentic AI Platform</title>
-<meta name="description" content="Multi-tenant LLM chat, agentic tool-calling, autonomous swarm, and universal full-stack auto-coder on the edge.">
-<script src="https://cdn.tailwindcss.com"><\/script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>${app} — Autocode AI untuk Bisnes</title>
+<meta name="description" content="Kami bina software, website, full-stack apps untuk bisnes anda. Enterprise, startup, SME, non-tech — tak payah coding." />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={darkMode:"class"}</script>
 </head>
-<body class="bg-slate-950 text-slate-200 font-sans min-h-screen flex flex-col">
-<header class="border-b border-slate-800/60 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
-  <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
-      <span class="font-mono font-bold text-lg text-white">${app.toUpperCase()}</span>
-      <span class="text-[10px] font-mono bg-slate-800 text-cyan-400 px-2 py-0.5 rounded border border-slate-700">v2.0</span>
-    </div>
-    <nav class="flex items-center gap-3">
-      <a href="/docs" class="text-sm text-slate-400 hover:text-white transition">Docs</a>
-      <a href="${ctaHref}" class="text-sm bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-4 py-2 rounded-lg transition">${ctaText}</a>
-    </nav>
-  </div>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased">
+<header class="border-b border-slate-800 bg-slate-900/70 backdrop-blur sticky top-0 z-50">
+<div class="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
+<span class="font-bold tracking-tight">${app}</span>
+<span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">v2.0</span>
+</div>
+<nav class="flex items-center gap-4 text-sm">
+<a href="#use-cases" class="text-slate-400 hover:text-white hidden md:inline">Use Cases</a>
+<a href="#pricing" class="text-slate-400 hover:text-white hidden md:inline">Pricing</a>
+<a href="/docs" class="text-slate-400 hover:text-white">Docs</a>
+<a href="/login" class="px-4 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-xs">Sign In</a>
+</nav>
+</div>
 </header>
-
-<main class="flex-1">
-  <section class="max-w-6xl mx-auto px-6 pt-20 pb-16 text-center">
-    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-mono text-emerald-300 mb-6">
-      <span>● Live on Cloudflare Edge</span>
-    </div>
-    <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-white leading-tight mb-6">
-      Agentic AI infrastructure for<br class="hidden md:block" />
-      <span class="bg-gradient-to-r from-emerald-400 via-cyan-400 to-indigo-400 bg-clip-text text-transparent">modern developers.</span>
-    </h1>
-    <p class="text-lg text-slate-400 max-w-2xl mx-auto mb-10">
-      LLM chat, agentic tool-calling, autonomous 7-agent swarm, and a universal full-stack auto-coder — all running on edge in 300+ locations.
-    </p>
-    <div class="flex flex-wrap gap-3 justify-center">
-      <a href="${ctaHref}" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-6 py-3 rounded-xl transition shadow-lg shadow-emerald-500/20">${ctaText}</a>
-      <a href="/docs" class="bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-semibold px-6 py-3 rounded-xl transition">API Documentation</a>
-    </div>
-  </section>
-
-  <section class="max-w-6xl mx-auto px-6 py-16">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 hover:border-emerald-500/40 transition">
-        <div class="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mb-4">
-          <span class="text-emerald-400 font-mono font-bold text-lg">01</span>
-        </div>
-        <h3 class="text-white font-semibold mb-2">Chat + Agent API</h3>
-        <p class="text-sm text-slate-400 leading-relaxed">LLM completion and multi-step tool-calling agents with circuit breakers, rate limits, and quota tracking built-in.</p>
-      </div>
-      <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 hover:border-cyan-500/40 transition">
-        <div class="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center mb-4">
-          <span class="text-cyan-400 font-mono font-bold text-lg">02</span>
-        </div>
-        <h3 class="text-white font-semibold mb-2">Autonomous Swarm</h3>
-        <p class="text-sm text-slate-400 leading-relaxed">7-agent council (Visionary → Architect → Breaker → Optimizer → Judge → Scribe) that evolves code 24/7.</p>
-      </div>
-      <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 hover:border-indigo-500/40 transition">
-        <div class="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center mb-4">
-          <span class="text-indigo-400 font-mono font-bold text-lg">03</span>
-        </div>
-        <h3 class="text-white font-semibold mb-2">Omni Auto-Coder</h3>
-        <p class="text-sm text-slate-400 leading-relaxed">Describe an app. Get full-stack Worker live at edge, committed to GitHub — UI, API, DB, and health endpoint.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="max-w-6xl mx-auto px-6 py-16 border-t border-slate-800/60">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-      <div>
-        <div class="text-3xl font-bold text-white">~50ms</div>
-        <div class="text-xs font-mono text-slate-500 mt-1">GLOBAL LATENCY</div>
-      </div>
-      <div>
-        <div class="text-3xl font-bold text-emerald-400">300+</div>
-        <div class="text-xs font-mono text-slate-500 mt-1">EDGE LOCATIONS</div>
-      </div>
-      <div>
-        <div class="text-3xl font-bold text-cyan-400">82+</div>
-        <div class="text-xs font-mono text-slate-500 mt-1">TEST COVERAGE</div>
-      </div>
-      <div>
-        <div class="text-3xl font-bold text-indigo-400">24/7</div>
-        <div class="text-xs font-mono text-slate-500 mt-1">WATCHDOG</div>
-      </div>
-    </div>
-  </section>
-
-  <section class="max-w-6xl mx-auto px-6 py-16">
-    <div class="bg-gradient-to-br from-emerald-950/40 via-slate-900 to-indigo-950/40 border border-slate-800 rounded-3xl p-10 text-center">
-      <h2 class="text-3xl font-bold text-white mb-4">Ready to build?</h2>
-      <p class="text-slate-400 mb-8">Sign up and get your API key in 30 seconds.</p>
-      <a href="${ctaHref}" class="inline-block bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-8 py-3 rounded-xl transition shadow-lg shadow-emerald-500/20">${ctaText}</a>
-    </div>
-  </section>
+<main>
+<section class="max-w-5xl mx-auto px-6 pt-20 pb-16 text-center">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/5 text-xs text-emerald-400 mb-6">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+Live on Cloudflare Edge — 300+ locations
+</div>
+<h1 class="text-4xl md:text-6xl font-bold tracking-tight leading-tight mb-6">
+Software untuk bisnes anda.<br>
+<span class="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">Tanpa perlu coding.</span>
+</h1>
+<p class="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+Hantar arahan dalam Bahasa Melayu atau English. BorneoAI bina website, SaaS, API, automation agentic — full-stack, live dalam minit. Untuk enterprise, startup, SME, dan founder non-tech.
+</p>
+<div class="flex flex-wrap items-center justify-center gap-3 mb-8">
+<a href="/signup" class="px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-sm transition">Mula Sekarang →</a>
+<a href="#how" class="px-6 py-3 rounded-xl border border-slate-700 hover:border-slate-600 text-sm transition">Tengok Cara Kerja</a>
+</div>
+<p class="text-xs text-slate-500">Free tier tersedia · API key dalam 30 saat · Tiada kad kredit</p>
+</section>
+<section id="use-cases" class="max-w-6xl mx-auto px-6 py-16">
+<h2 class="text-3xl font-bold text-center mb-3">Siapa yang guna BorneoAI?</h2>
+<p class="text-center text-slate-400 mb-12 max-w-2xl mx-auto">Satu platform, empat jenis pengguna. Tak kisah anda developer atau bukan.</p>
+<div class="grid md:grid-cols-2 gap-5">
+<div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-emerald-500/40 transition">
+<div class="text-xs uppercase tracking-wider text-emerald-400 mb-2">Enterprise</div>
+<h3 class="text-xl font-semibold mb-2">Automasi skala besar</h3>
+<p class="text-sm text-slate-400 leading-relaxed">Integrasi API, workflow automation, agentic RAG, multi-tenant SaaS. Deploy ke Cloudflare Edge tanpa infra team.</p>
+</div>
+<div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-cyan-500/40 transition">
+<div class="text-xs uppercase tracking-wider text-cyan-400 mb-2">Startup</div>
+<h3 class="text-xl font-semibold mb-2">MVP dalam hari, bukan bulan</h3>
+<p class="text-sm text-slate-400 leading-relaxed">Dari idea ke live product. Full-stack scaffold, database, API, auth — semua auto-generate.</p>
+</div>
+<div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-amber-500/40 transition">
+<div class="text-xs uppercase tracking-wider text-amber-400 mb-2">SME</div>
+<h3 class="text-xl font-semibold mb-2">Website + sistem bisnes</h3>
+<p class="text-sm text-slate-400 leading-relaxed">Company profile, booking system, inventory, CRM ringkas. Kos fraction dari hire developer.</p>
+</div>
+<div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-purple-500/40 transition">
+<div class="text-xs uppercase tracking-wider text-purple-400 mb-2">Non-Tech Founder</div>
+<h3 class="text-xl font-semibold mb-2">Faham coding tanpa belajar coding</h3>
+<p class="text-sm text-slate-400 leading-relaxed">Taip apa yang anda mahu. BorneoAI handle architecture, database, security, deploy. Anda focus pada bisnes.</p>
+</div>
+</div>
+</section>
+<section id="how" class="max-w-5xl mx-auto px-6 py-16">
+<h2 class="text-3xl font-bold text-center mb-3">Cara Ia Berfungsi</h2>
+<p class="text-center text-slate-400 mb-12">Tiga langkah. Tak payah setup apa-apa.</p>
+<div class="grid md:grid-cols-3 gap-5">
+<div class="p-6 rounded-2xl bg-slate-900 border border-slate-800">
+<div class="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold mb-4">01</div>
+<h3 class="font-semibold mb-2">Taip arahan anda</h3>
+<p class="text-sm text-slate-400">Contoh: "Bina sistem booking untuk salon, dengan admin panel dan payment."</p>
+</div>
+<div class="p-6 rounded-2xl bg-slate-900 border border-slate-800">
+<div class="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 font-bold mb-4">02</div>
+<h3 class="font-semibold mb-2">BorneoAI bina</h3>
+<p class="text-sm text-slate-400">Swarm 7-ejen reka, kod, kritik, perbaiki, dan deploy secara automatik ke Cloudflare Edge.</p>
+</div>
+<div class="p-6 rounded-2xl bg-slate-900 border border-slate-800">
+<div class="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold mb-4">03</div>
+<h3 class="font-semibold mb-2">Live & sedia guna</h3>
+<p class="text-sm text-slate-400">Anda dapat URL live + API key. Boleh terus share dengan team atau pelanggan.</p>
+</div>
+</div>
+</section>
+<section id="pricing" class="max-w-5xl mx-auto px-6 py-16">
+<h2 class="text-3xl font-bold text-center mb-3">Pricing</h2>
+<p class="text-center text-slate-400 mb-12">Mula free. Upgrade bila ready. Bayaran via TnG eWallet.</p>
+<div class="grid md:grid-cols-3 gap-5">
+<div class="p-6 rounded-2xl bg-slate-900 border border-slate-800">
+<div class="text-sm text-slate-400 mb-1">Starter</div>
+<div class="text-3xl font-bold mb-4">RM 99<span class="text-sm text-slate-500 font-normal">/bulan</span></div>
+<ul class="text-sm text-slate-400 space-y-2 mb-6">
+<li>✓ 10,000 chat/bulan</li>
+<li>✓ 1,000 agent calls</li>
+<li>✓ 100 swarm cycles</li>
+<li>✓ Email support</li>
+</ul>
+<a href="/signup?plan=starter" class="block text-center px-4 py-2.5 rounded-lg border border-slate-700 hover:border-slate-600 text-sm">Pilih Starter</a>
+</div>
+<div class="p-6 rounded-2xl bg-slate-900 border-2 border-emerald-500/50 relative">
+<div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-emerald-500 text-slate-950 text-xs font-semibold">Popular</div>
+<div class="text-sm text-emerald-400 mb-1">Pro</div>
+<div class="text-3xl font-bold mb-4">RM 399<span class="text-sm text-slate-500 font-normal">/bulan</span></div>
+<ul class="text-sm text-slate-400 space-y-2 mb-6">
+<li>✓ 100,000 chat/bulan</li>
+<li>✓ 20,000 agent calls</li>
+<li>✓ 5,000 swarm cycles</li>
+<li>✓ Webhook + priority support</li>
+</ul>
+<a href="/signup?plan=pro" class="block text-center px-4 py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-sm">Pilih Pro</a>
+</div>
+<div class="p-6 rounded-2xl bg-slate-900 border border-slate-800">
+<div class="text-sm text-amber-400 mb-1">Enterprise</div>
+<div class="text-3xl font-bold mb-4">Custom</div>
+<ul class="text-sm text-slate-400 space-y-2 mb-6">
+<li>✓ Unlimited semua</li>
+<li>✓ Dedicated support</li>
+<li>✓ SLA + custom integration</li>
+<li>✓ On-premise option</li>
+</ul>
+<a href="mailto:sales@vmojuga.dev" class="block text-center px-4 py-2.5 rounded-lg border border-slate-700 hover:border-slate-600 text-sm">Contact Sales</a>
+</div>
+</div>
+<p class="text-center text-xs text-slate-500 mt-6">Bayaran selamat via Touch n Go eWallet. Untuk korporat, kami sediakan invoice + FPX.</p>
+</section>
+<section class="max-w-3xl mx-auto px-6 py-16">
+<h2 class="text-3xl font-bold text-center mb-10">Soalan Lazim</h2>
+<div class="space-y-3">
+<details class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+<summary class="font-medium cursor-pointer">Saya tak tahu coding. Boleh guna?</summary>
+<p class="text-sm text-slate-400 mt-2">Boleh. Taip apa yang anda mahu dalam Bahasa Melayu atau English. BorneoAI handle semua.</p>
+</details>
+<details class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+<summary class="font-medium cursor-pointer">Berapa lama untuk app live?</summary>
+<p class="text-sm text-slate-400 mt-2">Bergantung complexity. Simple site: minit. SaaS penuh: jam hingga hari.</p>
+</details>
+<details class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+<summary class="font-medium cursor-pointer">Data saya selamat?</summary>
+<p class="text-sm text-slate-400 mt-2">Ya. Semua di Cloudflare Edge. Audit log SHA-256. Multi-tenant isolation.</p>
+</details>
+<details class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+<summary class="font-medium cursor-pointer">Boleh integrate dengan sistem sedia ada?</summary>
+<p class="text-sm text-slate-400 mt-2">Boleh. BorneoAI expose REST API + webhook. Team anda boleh integrate.</p>
+</details>
+</div>
+</section>
+<section class="max-w-3xl mx-auto px-6 py-16">
+<div class="p-8 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-900/50 border border-slate-800 text-center">
+<h2 class="text-3xl font-bold mb-4">Ready to build?</h2>
+<p class="text-slate-400 mb-6">Sign up dan dapat API key dalam 30 saat.</p>
+<a href="/signup" class="inline-block px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold">Mula Sekarang →</a>
+</div>
+</section>
 </main>
-
-<footer class="border-t border-slate-800/60 py-6">
-  <div class="max-w-6xl mx-auto px-6 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
-    <div>${app} v2.0 — Built on Cloudflare Workers + Workers AI + Durable Objects</div>
-    <div class="flex gap-4">
-      <a href="/docs" class="hover:text-slate-300">Docs</a>
-      <a href="/login" class="hover:text-slate-300">Login</a>
-      <a href="/api/health" class="hover:text-slate-300">Status</a>
-    </div>
-  </div>
+<footer class="border-t border-slate-800 mt-16">
+<div class="max-w-6xl mx-auto px-6 py-8 text-sm text-slate-500 flex flex-wrap items-center justify-between gap-4">
+<div>© ${year} ${app} — Built on Cloudflare Workers + Workers AI</div>
+<div class="flex gap-4">
+<a href="/docs" class="hover:text-slate-300">Docs</a>
+<a href="/login" class="hover:text-slate-300">Login</a>
+<a href="/status" class="hover:text-slate-300">Status</a>
+<a href="/legal/terms" class="hover:text-slate-300">Terms</a>
+</div>
+</div>
 </footer>
 </body>
 </html>`;
