@@ -69,6 +69,24 @@ export default {
     }
     if (path === '/signup' && request.method === 'POST') return handleSignup(request, env);
 
+    if (path === '/api/build' && request.method === 'POST') {
+      const sess = await validateSessionOrBasic(request, env);
+      if (!sess.ok) return Response.json({ ok:false, error:'login required' }, { status: 401, headers: CORS });
+      let body = {};
+      try { body = await request.json(); } catch {}
+      const directive = String(body.directive || '').slice(0, 800).trim();
+      const slug = String(body.slug || ('app-' + Date.now().toString(36))).slice(0, 40);
+      if (!directive) return Response.json({ ok:false, error:'directive required' }, { headers: CORS });
+      const id = env.OMNI_OVERLORD.idFromName('GLOBAL_OMNI_OVERLORD_V3');
+      const obj = env.OMNI_OVERLORD.get(id);
+      const r = await obj.fetch('https://internal/omni/execute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ targetRepo: 'vmojuga-pixel/Argon', directive: directive, slug: slug })
+      });
+      const data = await r.json();
+      return Response.json(data, { headers: CORS });
+    }
     if (path === '/api/baobao' && request.method === 'POST') {
       const ip = request.headers.get('cf-connecting-ip') || 'unknown';
       const today = new Date().toISOString().slice(0,10);

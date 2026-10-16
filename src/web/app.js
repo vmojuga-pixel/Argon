@@ -129,7 +129,26 @@ add("ai",d.reply||d.response||d.error||JSON.stringify(d));}
 catch(e){var t3=document.getElementById("thg");if(t3)t3.remove();add("ai","Error: "+e.message);}});
 </script>`;}
 
-function vBuild(){return `<div class="p-6 md:p-8 max-w-3xl mx-auto fade-in"><h2 class="text-3xl font-bold mb-2 txt-grad">Bina App</h2><p class="text-sm text-slate-400 mb-6">Terangkan apa yang anda nak. Baobao bina full-stack Worker.</p><div class="glass p-6"><textarea placeholder="Contoh: Bina sistem tempahan kedai gunting dengan admin panel..." rows="6" class="w-full bg-slate-950/60 border border-slate-800 rounded-xl p-4 text-sm focus:outline-none focus:border-emerald-500/60 focus:ring-2 focus:ring-emerald-500/20 transition resize-none"></textarea><button class="btn3d mt-4 px-6 py-3 rounded-xl text-slate-950 font-semibold text-sm">Bina Sekarang</button></div></div>`;}
+function vBuild(){return `<div class="p-6 md:p-8 max-w-3xl mx-auto fade-in"><h2 class="text-3xl font-bold mb-2 txt-grad">Bina App</h2><p class="text-sm text-slate-400 mb-6">Terangkan apa yang anda nak. Baobao bina full-stack Worker.</p><div class="glass p-6"><textarea id="bdir" placeholder="Contoh: Bina sistem tempahan kedai gunting dengan admin panel..." rows="6" class="w-full bg-slate-950/60 border border-slate-800 rounded-xl p-4 text-sm focus:outline-none focus:border-emerald-500/60 focus:ring-2 focus:ring-emerald-500/20 transition resize-none"></textarea><div id="blog" class="mt-4 hidden text-xs text-slate-400 space-y-1 font-mono"></div><button id="bbuild" onclick="bBuild()" class="btn3d mt-4 px-6 py-3 rounded-xl text-slate-950 font-semibold text-sm">Bina Sekarang</button></div></div>
+<script>
+async function bBuild(){
+var d=document.getElementById("bdir").value.trim();
+if(!d){alert("Taip directive dulu");return;}
+var btn=document.getElementById("bbuild");btn.disabled=true;btn.textContent="Baobao sedang bina...";
+var log=document.getElementById("blog");log.classList.remove("hidden");log.innerHTML="";
+function addlog(m){var p=document.createElement("div");p.textContent="> "+m;log.appendChild(p);}
+addlog("Hantar ke Swarm...");
+try{
+var r=await fetch("/api/build",{method:"POST",credentials:"include",headers:{"Content-Type":"application/json"},body:JSON.stringify({directive:d,slug:"app-"+Date.now().toString(36)})});
+var res=await r.json();
+addlog("Status: "+(res.ok?"OK":"FAIL"));
+if(res.url)addlog("Live: "+res.url);
+if(res.error)addlog("Error: "+res.error);
+if(res.steps&&Array.isArray(res.steps)){res.steps.forEach(function(s){addlog(typeof s==="string"?s:JSON.stringify(s));});}
+btn.textContent=res.ok?"Bina Lagi":"Cuba Lagi";btn.disabled=false;
+}catch(e){addlog("Error: "+e.message);btn.disabled=false;btn.textContent="Bina Sekarang";}
+}
+</script>`;}
 function vProjects(){return `<div class="p-6 md:p-8 max-w-5xl mx-auto fade-in"><h2 class="text-3xl font-bold mb-6 txt-grad">Projects</h2><div class="glass p-12 text-center"><div class="text-5xl mb-4 opacity-40">&#128230;</div><div class="text-slate-500 text-sm">Belum ada project. <a href="/app/build" class="text-emerald-400">Bina sekarang</a></div></div></div>`;}
 function vKeys(){return `<div class="p-6 md:p-8 max-w-3xl mx-auto fade-in"><h2 class="text-3xl font-bold mb-6 txt-grad">API Keys</h2><div class="glass p-6"><div class="text-xs uppercase tracking-wider text-slate-500 mb-3">Your API Key</div><div class="flex"><code id="k" class="flex-1 bg-slate-950/80 border border-slate-800 rounded-lg px-4 py-3 text-xs font-mono truncate text-emerald-300">Loading...</code><button onclick="navigator.clipboard.writeText(document.getElementById('k').textContent);this.textContent='Copied!'" class="ml-2 px-4 py-2 rounded-lg glass hover:bg-slate-800/60 text-xs">Copy</button></div></div></div><script>fetch("/api/me",{credentials:"include"}).then(function(r){return r.json();}).then(function(d){document.getElementById("k").textContent=d.apiKey||d.key||"Not available";}).catch(function(){});</script>`;}
 function vUsage(){return `<div class="p-6 md:p-8 max-w-3xl mx-auto fade-in"><h2 class="text-3xl font-bold mb-6 txt-grad">Usage</h2><div class="glass p-12 text-center text-slate-500 text-sm">Statistik akan muncul bila anda mula guna.</div></div>`;}
