@@ -80,3 +80,15 @@
 - [ ] Whitelist CORS
 - [ ] Rotate admin key quarterly
 - [ ] /root/.argon-secrets/ chmod 600
+
+### 11. Quality Gate Pattern (2026-10-16)
+Cipta gate sebelum commit ke storage. Tiga syarat: (1) AI flag true, (2) output berbeza dari input, (3) sandbox lulus.
+Guna flag lastAgentUsedAI (set di 4 return paths) untuk bezakan AI vs fallback.
+
+### 12. Deterministic Fallback Design
+Setiap agent function perlu return path yang set flag. Jangan campur AI + fallback dalam satu return tanpa flag.
+Pola: set lastAgentUsedAI=false pada setiap fallback return, =true bila AI berjaya.
+
+### 13. Pattern-match vs Line-number Patch
+Pattern-match gagal bila whitespace tak dapat dilihat (spaces vs tabs, trailing).
+Fallback: guna L.insert(N, ...) bila pattern-match fail 2x. Sentiasa verify dengan node --check + grep.

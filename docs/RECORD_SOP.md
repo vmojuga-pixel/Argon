@@ -101,3 +101,18 @@ Sebelum tamat setiap sesi kerja, pastikan:
     ├── RECORD_SOP.md                    → Fail ini (SOP)
     └── JOURNEY.md                       → Status + roadmap
     BLUEPRINT.md                          → Combined (regenerate dari 01-08)
+
+---
+
+## Rule Tambahan (2026-10-16)
+
+### Zero Heredoc di Mobile SSH
+JANGAN guna: cat << 'EOF', cat << 'ZEND', << di mana-mana.
+Sebab: mobile paste drop newline → bash tersangkut di prompt > (PS2).
+Alternatif: printf '%s\n', python3 -c, node -e, base64 -d.
+
+### Strategi Patch Swarm.js (Lessons)
+1. Guna nombor baris (L.insert) jika pattern-match gagal sebab whitespace.
+2. Sentiasa verify: node --check file.js + grep selepas patch.
+3. Guard terhadap variable shadowing: outer let + inner const → crash.
+4. Patch fail besar: satu perubahan per blok, sahkan, baru continue.

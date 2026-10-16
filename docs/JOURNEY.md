@@ -249,3 +249,29 @@ Extracted from private MDSI repo (sanitized). Generic reusable patterns:
 9. Multi-modal command router
 
 Location: corpus/sectors/defense-patterns/
+
+
+---
+
+## 2026-10-16 — Corpus-Driven Refactor + 2 Quality Gates
+
+**Fasa:** Swarm-only. Overlord + Omni cron disabled.
+
+### Perubahan Utama
+- Swarm output: CODING_GRIMOIRE.md → corpus/sectors/<sector>/epoch-<N>-*.md
+- Tambah pickSectorForTopic: keyword → sector auto-routing
+- Tambah GATE 1 (commit gate): skip jika fallback / v1==v2 / sandbox-critical
+- Tambah GATE 2 (cycle gate): skip jika topik tak match sektor
+- Tambah flag v2UsedAI pada invokeAgentBrain (4 return paths)
+- Overlord + Omni cron disabled (src/index.js line 412-413, // [DISABLED-BY-SIR])
+- Corpus: 16 sectors, 55+ fail, index.json v1.0.0
+
+### Ujian Live (2026-10-16)
+- Epoch 67: topic test-quality-gate → unified-core, commit OK (GATE 1 lulus)
+- Epoch 68: topic xyz-random-abc → skipped, reason no_sector_match (GATE 2 lulus)
+- Epoch 69: topic RAG vector → ai-ml, commit OK (routing lulus)
+
+### Deploy Terkini
+- Version ID: bb27705b-0d69-4c0d-8adb-08965892e603
+- Cron: */15 * * * *
+- Live: https://argon.vmojuga.workers.dev
