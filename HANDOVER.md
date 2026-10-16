@@ -100,3 +100,25 @@ cat /root/Argon/BLUEPRINT.md && cat /root/Argon/docs/JOURNEY.md
 2. Format: system (prompt sektor) + user (topic) + assistant (kod v2 + kritikan).
 3. Export ke JSONL bila cukup 1,000+ sample.
 4. Fine-tune LoRA on top Phi-3 / Qwen2-0.5B.
+
+---
+
+## 13. BACKLOG: CORPUS INGEST + TERMUX LLM (Idea 2026-10-16)
+
+### Corpus Ingest
+- Tool: scripts/ingest.py (belum cipta)
+- Fetch repo berkualiti sahaja (filter: stars 100+, ada test, ada src/, license, recent commit)
+- Auto-categorize ke sektor corpus
+- Target: 50-100 repo/hari, corpus kaya 1-2 minggu
+
+### Termux LLM + VPS Agent
+- LLM (Qwen 1.5B / small) jalan dalam Termux (phone) - RAM 4-8GB lebih lega dari VPS 2GB
+- Cloudflare Tunnel: phone LLM expose ke internet tanpa IP public
+- VPS: agentic worker fetch repo -> hantar ke phone analyze -> commit corpus
+- Fallback: kalau phone offline, guna Workers AI
+
+### Fasa
+1. Ingest script + quality filter (sekarang)
+2. Test Swarm lokal Qwen 1.5B (2-3 hari)
+3. Pindah LLM ke Termux (bila VPS OOM)
+4. LoRA fine-tune corpus (2 minggu)
