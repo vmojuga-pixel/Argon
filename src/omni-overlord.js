@@ -254,7 +254,24 @@ export class OmniOverlordEngine {
 
     const sqlSchema = `-- OMNI E2E SCHEMA for: ${appSlug}\n-- Directive: ${cleanTitle}\nCREATE TABLE IF NOT EXISTS records (\n  id TEXT PRIMARY KEY,\n  title TEXT NOT NULL,\n  category TEXT DEFAULT 'GENERAL',\n  amount NUMERIC DEFAULT 0.00,\n  status TEXT DEFAULT 'ACTIVE',\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);\nCREATE INDEX IF NOT EXISTS idx_records_status ON records(status);\n`;
 
-    const workerCode = this.buildFullStackWorker(appSlug, cleanTitle, aiNote);
+    let workerCode = null;
+    if (this.env.AI) {
+      try {
+        const wc = await this.env.AI.run(MODEL, {
+          messages: [
+            { role: "system", content: "You are an expert Cloudflare Workers engineer. Return ONLY valid JS ES module starting with export default. No markdown fences." },
+            { role: "user", content: "Task: " + directive + ". App slug: " + appSlug + ". Requirements: ES module, export default { async fetch(request, env) {} }, CORS, /health returning HEALTHY, implement feature fully in-memory. Return ONLY JavaScript." }
+          ],
+          max_tokens: 2500
+        });
+        const FENCE = String.fromCharCode(96,96,96);
+        let raw = String((wc && (wc.response || wc.result)) || "").trim();
+        raw = raw.split(FENCE + "javascript").join("").split(FENCE + "js").join("").split(FENCE).join("").trim();
+        if (raw.includes("export default") && raw.length > 200) workerCode = raw;
+      } catch (e) { console.log("[OMNI-LLM-CODE-FAIL]", e.message); }
+    }
+    if (!workerCode) workerCode = this.buildFullStackWorker(appSlug, cleanTitle, aiNote);
+
 
     const openApiSpec = JSON.stringify({
       openapi: "3.1.0",

@@ -8,21 +8,101 @@
  * SAFETY: allowlist of repos only (env.OMNI_ALLOWED_REPOS)
  */
 const MODEL = "@cf/meta/llama-4-scout-17b-16e-instruct";
-const DEFAULT_ALLOWED = "vmojuga-pixel/Argon,vmojuga-pixel/buku-koding-agentic";
+const DEFAULT_USER = "vmojuga-pixel";
 
-function allowedRepos(env) {
-  const raw = (env.OMNI_ALLOWED_REPOS || DEFAULT_ALLOWED).split(",");
-  return new Set(raw.map((r) => r.trim()).filter(Boolean));
+function ownerNamespace(env) {
+  return (env.GITHUB_USER || DEFAULT_USER).trim();
 }
 
-function repoAllowed(env, repo) {
-  return allowedRepos(env).has(repo);
+// Sync prefix check — allow anything under SIR's namespace
+function repoAllowedByPrefix(env, repo) {
+  if (!repo || typeof repo !== "string") return false;
+  const owner = ownerNamespace(env);
+  return repo.startsWith(owner + "/") && repo.length > owner.length + 1;
+}
+
+// Extra allowlist from env (for other namespaces)
+function extraAllowedSet(env) {
+  const raw = (env.OMNI_ALLOWED_REPOS || "").split(",");
+  return new Set(raw.map((r) => r.trim()).filter(Boolean));
 }
 
 export class OmniOverlordEngine {
   constructor(state, env) {
     this.state = state;
     this.env = env;
+  }
+
+  // ---- DYNAMIC ALLOWLIST (env prefix + env extra + DO storage) ----
+  async repoAllowed(repo) {
+    if (repoAllowedByPrefix(this.env, repo)) return true;
+    if (extraAllowedSet(this.env).has(repo)) return true;
+    const extra = (await this.state.storage.get("extra_allowlist")) || [];
+    return extra.includes(repo);
+  }
+
+  async addRepoToAllowlist(repo) {
+    if (repoAllowedByPrefix(this.env, repo)) return { added: false, reason: "already in namespace" };
+    const extra = (await this.state.storage.get("extra_allowlist")) || [];
+    if (extra.includes(repo)) return { added: false, reason: "already in extra allowlist" };
+    extra.push(repo);
+    await this.state.storage.put("extra_allowlist", extra);
+    return { added: true, repo, total_extra: extra.length };
+  }
+
+  async listAllowlist() {
+    const extra = (await this.state.storage.get("extra_allowlist")) || [];
+    return {
+      namespace: ownerNamespace(this.env) + "/*",
+      env_extra: [...extraAllowedSet(this.env)],
+      dynamic_extra: extra
+    };
+  }
+
+  // ---- ENSURE REPO EXISTS (auto-create jika belum ada) ----
+  async ensureRepoExists(repo, isPrivate = false) {
+    const token = this.env.GITHUB_TOKEN;
+    if (!token) return { ok: false, error: "GITHUB_TOKEN missing" };
+    if (!repoAllowedByPrefix(this.env, repo)) return { ok: false, error: "repo not in owner namespace" };
+
+    const headers = {
+      "Authorization": `Bearer ${token}`,
+      "User-Agent": "Argon-Omni-Overlord",
+      "Accept": "application/vnd.github.v3+json"
+    };
+
+    try {
+      // Check kalau dah wujud
+      const check = await fetch(`https://api.github.com/repos/${repo}`, { headers });
+      if (check.status === 200) {
+        const data = await check.json();
+        return { ok: true, existed: true, repo, default_branch: data.default_branch, private: data.private };
+      }
+      if (check.status !== 404) {
+        return { ok: false, error: `GitHub returned ${check.status}` };
+      }
+
+      // Belum ada — create
+      const name = repo.split("/")[1];
+      const create = await fetch("https://api.github.com/user/repos", {
+        method: "POST",
+        headers: { ...headers, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          private: !!isPrivate,
+          auto_init: true,
+          description: "Auto-created by Argon Omni-Overlord"
+        })
+      });
+      if (!create.ok) {
+        const errText = await create.text();
+        return { ok: false, error: `create failed: ${create.status} ${errText.slice(0, 200)}` };
+      }
+      const created = await create.json();
+      return { ok: true, existed: false, created: true, repo: created.full_name, default_branch: created.default_branch, private: created.private };
+    } catch (err) {
+      return { ok: false, error: err.message };
+    }
   }
 
   // ---- 1. UNIVERSAL REPO SCANNER ----
@@ -33,7 +113,7 @@ export class OmniOverlordEngine {
     if (!repo) {
       return { scanned: false, repo, branch, detectedStack: ["No-Repo-Specified"], fileCount: 0, files: [], note: "targetRepo required" };
     }
-    if (!repoAllowed(this.env, repo)) {
+    if (!await this.repoAllowed(repo)) {
       return { scanned: false, repo, branch, detectedStack: [], fileCount: 0, files: [], note: "repo not in allowlist" };
     }
     if (!token) {
@@ -76,7 +156,7 @@ export class OmniOverlordEngine {
     const repo = (targetRepo || "").trim();
     const fallback = { committed: false, repo, filesWritten: filesArray.map((f) => f.path) };
 
-    if (!repoAllowed(this.env, repo)) return { ...fallback, note: "repo not in allowlist" };
+    if (!await this.repoAllowed(repo)) return { ...fallback, note: "repo not in allowlist" };
     if (!token) return { ...fallback, note: "GITHUB_TOKEN missing" };
 
     const baseUrl = `https://api.github.com/repos/${repo}/git`;
@@ -289,15 +369,25 @@ export class OmniOverlordEngine {
     const appSlug = (payload.slug || "fullstack-" + Math.random().toString(36).substring(2, 7))
       .toLowerCase().replace(/[^a-z0-9-]/g, "-");
 
-    if (!repoAllowed(this.env, targetRepo)) {
-      return { error: "targetRepo not in allowlist", allowed: [...allowedRepos(this.env)] };
+    if (!await this.repoAllowed(targetRepo)) {
+      return { error: "targetRepo not in allowlist", allowed: [...extraAllowedSet(this.env)], namespace: ownerNamespace(this.env) + "/*" };
     }
 
-    const repoScan = await this.scanAnyRepository(targetRepo, branch);
+    // Auto-create repo kalau belum ada
+    const ensure = await this.ensureRepoExists(targetRepo, false);
+    if (!ensure.ok) {
+      return { error: "ensureRepoExists failed", detail: ensure.error, repo: targetRepo };
+    }
+
+    // Kalau baru create, tunggu init commit propagate
+    const effectiveBranch = ensure.existed ? branch : (ensure.default_branch || branch);
+    if (!ensure.existed) await new Promise(r => setTimeout(r, 1500));
+
+    const repoScan = await this.scanAnyRepository(targetRepo, effectiveBranch);
     const bundle = await this.synthesizeEndToEndFullStackApp(directive, appSlug, repoScan);
 
     const gitResult = await this.atomicMultiFileCommit(
-      targetRepo, branch, bundle.filesToCommit,
+      targetRepo, effectiveBranch, bundle.filesToCommit,
       `[Omni-Overlord E2E] auto-build '${appSlug}'`
     );
 
@@ -305,7 +395,7 @@ export class OmniOverlordEngine {
 
     const registry = (await this.state.storage.get("universal_projects")) || [];
     const record = {
-      appSlug, targetRepo, branch, directive, createdAt: timestamp, lastCheckedAt: timestamp,
+      appSlug, targetRepo, branch: effectiveBranch, directive, createdAt: timestamp, lastCheckedAt: timestamp, repoAutoCreated: !ensure.existed,
       healthStatus: "PENDING_CHECK", autoHealCount: 0,
       repoScanSummary: { existingFilesCount: repoScan.fileCount, detectedStack: repoScan.detectedStack },
       gitCommit: gitResult,
@@ -349,6 +439,34 @@ export class OmniOverlordEngine {
   }
 
   // ---- 7. FETCH ROUTER ----
+  async autoPickTopic() {
+    const epoch = (await this.state.storage.get("topic_rotation_epoch")) || 0;
+    let topics = (await this.state.storage.get("focus_topics")) || [];
+    if (topics.length === 0) {
+      const envTopics = (this.env.OMNI_FOCUS_TOPICS || "").split("|").map(function(s) { return s.trim(); }).filter(Boolean);
+      if (envTopics.length > 0) {
+        topics = envTopics;
+      } else {
+        topics = [
+          "Full-stack SaaS platform with multi-tenant isolation and usage metering",
+          "Real-time dashboard with SSE streaming and Tailwind dark mode",
+          "CRUD API with pagination, filtering, and atomic transactions",
+          "Webhook receiver with HMAC signature verification and idempotency",
+          "AI-powered chat interface with tool-calling agents",
+          "Rate-limited API gateway with token bucket and quota tracking",
+          "Multi-repo auto-coder with atomic git commit and auto-deploy",
+          "Observability dashboard with p50/p95/p99 latency telemetry",
+          "Compliance audit ledger with SHA-256 hash-chain integrity",
+          "Hybrid search engine with BM25 + dense vector RRF fusion"
+        ];
+      }
+      await this.state.storage.put("focus_topics", topics);
+    }
+    const topic = topics[epoch % topics.length];
+    await this.state.storage.put("topic_rotation_epoch", epoch + 1);
+    return { topic: topic, source: "omni_focus_topics", index: epoch % topics.length, total: topics.length };
+  }
+
   async fetch(request) {
     const url = new URL(request.url);
     const cors = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET, POST, OPTIONS", "Access-Control-Allow-Headers": "Content-Type" };
@@ -358,13 +476,113 @@ export class OmniOverlordEngine {
       let body = {}; try { body = await request.json(); } catch {}
       return Response.json(await this.scanAnyRepository(body.targetRepo, body.branch || "main"), { headers: cors });
     }
+    // SSE live build progress
+    if (url.pathname === "/omni/execute-stream" && request.method === "GET") {
+      const repo = url.searchParams.get("repo") || "";
+      const branch = url.searchParams.get("branch") || "main";
+      const slug = url.searchParams.get("slug") || null;
+      const directive = url.searchParams.get("directive") || "";
+      if (!repo || !directive) {
+        return new Response("data: " + JSON.stringify({ error: "repo + directive required" }) + "\n\n", {
+          status: 400, headers: { ...cors, "Content-Type": "text/event-stream" }
+        });
+      }
+      const self = this;
+      const stream = new ReadableStream({
+        async start(controller) {
+          const enc = new TextEncoder();
+          const send = (obj) => { try { controller.enqueue(enc.encode("data: " + JSON.stringify(obj) + "\n\n")); } catch {} };
+          try {
+            send({ step: "start", msg: "Allowlist check" });
+            if (!await self.repoAllowed(repo)) { send({ step: "error", msg: "repo not in allowlist" }); controller.close(); return; }
+
+            send({ step: "ensure", msg: "Ensuring repo exists" });
+            const ensure = await self.ensureRepoExists(repo, false);
+            if (!ensure.ok) { send({ step: "error", msg: ensure.error }); controller.close(); return; }
+            send({ step: "ensure_done", existed: ensure.existed, branch: ensure.default_branch || branch });
+            const effBranch = ensure.existed ? branch : (ensure.default_branch || branch);
+            if (!ensure.existed) await new Promise(r => setTimeout(r, 1500));
+
+            send({ step: "scan", msg: "Scanning repo tree" });
+            const scan = await self.scanAnyRepository(repo, effBranch);
+            send({ step: "scan_done", fileCount: scan.fileCount, stack: scan.detectedStack });
+
+            send({ step: "synth", msg: "Synthesizing full-stack app" });
+            const appSlug = (slug || "fullstack-" + Math.random().toString(36).substring(2, 7)).toLowerCase().replace(/[^a-z0-9-]/g, "-");
+            const bundle = await self.synthesizeEndToEndFullStackApp(directive, appSlug, scan);
+            send({ step: "synth_done", appSlug, fileCount: bundle.filesToCommit.length, files: bundle.filesToCommit.map(f => f.path) });
+
+            send({ step: "commit", msg: "Atomic git commit" });
+            const git = await self.atomicMultiFileCommit(repo, effBranch, bundle.filesToCommit, "[Omni-Overlord E2E] auto-build '" + appSlug + "'");
+            send({ step: "commit_done", committed: git.committed, mode: git.mode, sha: git.commitSha });
+
+            send({ step: "deploy", msg: "Deploying to CF edge" });
+            const deploy = await self.deployToCloudflareEdge(appSlug, bundle.workerCode);
+            send({ step: "deploy_done", deployed: deploy.deployed, mode: deploy.mode, url: deploy.liveUrl });
+
+            // Register
+            const registry = (await self.state.storage.get("universal_projects")) || [];
+            const record = {
+              appSlug, targetRepo: repo, branch: effBranch, directive, createdAt: new Date().toISOString(),
+              lastCheckedAt: new Date().toISOString(), healthStatus: "PENDING_CHECK", autoHealCount: 0,
+              repoAutoCreated: !ensure.existed, repoScanSummary: { existingFilesCount: scan.fileCount, detectedStack: scan.detectedStack },
+              gitCommit: git, deployment: deploy, generatedFiles: bundle.filesToCommit.map(f => f.path), previewWorkerCode: bundle.workerCode
+            };
+            const idx = registry.findIndex(p => p.appSlug === appSlug && p.targetRepo === repo);
+            if (idx >= 0) registry[idx] = record; else registry.unshift(record);
+            await self.state.storage.put("universal_projects", registry);
+
+            send({ step: "complete", record: { appSlug, liveUrl: deploy.liveUrl, commitSha: git.commitSha } });
+          } catch (e) {
+            send({ step: "error", msg: e.message });
+          }
+          try { controller.close(); } catch {}
+        }
+      });
+      return new Response(stream, {
+        headers: { ...cors, "Content-Type": "text/event-stream", "Cache-Control": "no-cache", "Connection": "keep-alive" }
+      });
+    }
+
     if (url.pathname === "/omni/execute" && request.method === "POST") {
       let body = {}; try { body = await request.json(); } catch {}
       if (!body.directive) return Response.json({ error: "directive required" }, { status: 400, headers: cors });
       return Response.json(await this.executeUniversalRepoCommand(body), { headers: cors });
     }
+    if (url.pathname === "/omni/auto-pick" && request.method === "GET") {
+      return Response.json(await this.autoPickTopic(), { headers: cors });
+    }
+    if (url.pathname === "/omni/auto-build" && request.method === "POST") {
+      let body = {};
+      try { body = await request.json(); } catch {}
+      const pick = await this.autoPickTopic();
+      const directive = body.directive || pick.topic;
+      const repo = body.targetRepo;
+      const slug = body.slug || ("auto-" + Date.now().toString(36).slice(-5));
+      if (!repo) return Response.json({ error: "targetRepo required" }, { status: 400, headers: cors });
+      const record = await this.executeUniversalRepoCommand({ targetRepo: repo, directive, slug, branch: body.branch || "main" });
+      return Response.json({ ...record, auto_topic: pick }, { headers: cors });
+    }
+
     if (url.pathname === "/omni/watchdog" && request.method === "POST") {
       return Response.json(await this.runUniversalWatchdogSweep(), { headers: cors });
+    }
+    if (url.pathname === "/omni/repos" && request.method === "GET") {
+      return Response.json(await this.listAllowlist(), { headers: cors });
+    }
+    if (url.pathname === "/omni/repos/register" && request.method === "POST") {
+      let body = {};
+      try { body = await request.json(); } catch {}
+      if (!body.repo) return Response.json({ error: "repo required" }, { status: 400, headers: cors });
+      const r = await this.addRepoToAllowlist(body.repo);
+      return Response.json(r, { headers: cors });
+    }
+    if (url.pathname === "/omni/repos/ensure" && request.method === "POST") {
+      let body = {};
+      try { body = await request.json(); } catch {}
+      if (!body.repo) return Response.json({ error: "repo required" }, { status: 400, headers: cors });
+      const r = await this.ensureRepoExists(body.repo, !!body.private);
+      return Response.json(r, { status: r.ok ? 200 : 400, headers: cors });
     }
     if (url.pathname === "/omni/report" && request.method === "GET") {
       const epoch = (await this.state.storage.get("epoch")) || 0;
@@ -375,7 +593,7 @@ export class OmniOverlordEngine {
         timestamp: new Date().toISOString(),
         executiveSummary: `Omni-Overlord kawal ${projects.length} projek di ${uniqueRepos.length} repo. ${totalHeals} auto-heal.`,
         metrics: { epoch, totalProjects: projects.length, totalRepos: uniqueRepos.length, totalAutoHeals: totalHeals },
-        allowlist: [...allowedRepos(this.env)],
+        allowlist: { namespace: ownerNamespace(this.env) + "/*", extra: [...extraAllowedSet(this.env)] },
         projects
       }, { headers: cors });
     }
