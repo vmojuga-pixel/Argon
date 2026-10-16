@@ -308,3 +308,19 @@ Location: corpus/sectors/defense-patterns/
 - Base64 ≠ compression (jangan confuse).
 - Realiti: quantization 8× kecil, distillation 10-20× kecil, LoRA adapter 100-1000× kecil dari base.
 - LoRA training: 1-3 jam GPU (RTX 4090 atau A100 cloud).
+
+### FLYWHEEL (2026-10-16 Update)
+
+SIR punya insight: Swarm bukan cuma generate kod — ia DATA ENGINE.
+
+Loop:
+1. Feed production-grade code (repo luar) ke corpus sebagai input mentah.
+2. Swarm bakar → kod baru (7-ejen kritik + optimize).
+3. Quality gate lulus → corpus bertambah.
+4. Corpus = dataset SFT untuk LoRA fine-tune.
+5. Fine-tune Qwen kecil + quantize = model autocode sendiri.
+6. Deploy model → serve customer → loop semula.
+
+Target: 1 minggu untuk corpus cukup kaya (bukan 3 bulan).
+
+Moat: DATA. Kompetitor boleh clone API, tapi tak boleh clone evolusi corpus.
