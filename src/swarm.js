@@ -7,12 +7,13 @@ export class SwarmBrain {
   constructor(state, env) { this.state = state; this.env = env; this.swarmId = null; }
 
   async invokeAgentBrain(systemPrompt, userPrompt) {
-    if (!this.env.AI) return this.deterministicHeuristicEngine(systemPrompt);
+    if (!this.env.AI) { this.lastAgentUsedAI = false; return this.deterministicHeuristicEngine(systemPrompt); }
 
     // Free-tier quota guard
     const q = await checkAIQuota(this.env);
     if (!q.allowed) {
       console.log("[QUOTA] Daily AI limit reached:", q.used, "/", q.limit);
+      this.lastAgentUsedAI = false;
       return this.deterministicHeuristicEngine(systemPrompt);
     }
 
@@ -27,9 +28,12 @@ export class SwarmBrain {
       });
       const out = r.response || r.result || r.text || "";
       this.env.KV && (await recordAIUsage(this.env, 30));
-      return out.trim() || this.deterministicHeuristicEngine(systemPrompt);
+      const _t = out.trim();
+      this.lastAgentUsedAI = !!_t;
+      return _t || this.deterministicHeuristicEngine(systemPrompt);
     } catch (err) {
       console.log("[AI-FALLBACK]", err.message);
+      this.lastAgentUsedAI = false;
       return this.deterministicHeuristicEngine(systemPrompt);
     }
   }
@@ -225,6 +229,7 @@ export class SwarmBrain {
 
     emit({ type: "agent_start", agent: "05_OPTIMIZER" });
     const v2 = await this.invokeAgentBrain("ROLE: OPTIMIZER AGENT. Output: kod sahaja.", `Kod:${v1}\nFix:${crit}`);
+      const v2UsedAI = this.lastAgentUsedAI;
     const sandboxV2 = this.sandboxAnalyze(v2);
     transcript.push({ agent: "05_OPTIMIZER", output: v2, sandbox: sandboxV2 });
     emit({ type: "agent_done", agent: "05_OPTIMIZER", output: v2, sandbox: sandboxV2 });
@@ -238,7 +243,16 @@ export class SwarmBrain {
     const entry = `\n---\n## EPOCH #${epoch} // ${ts}\n### Topik\n${topic}\n### Kod v1\n\`\`\`javascript\n${v1}\n\`\`\`\n### Kritikan + Sandbox v1\n${crit}\nSandbox: ${sandboxV1.join("; ")}\n### Kod v2\n\`\`\`javascript\n${v2}\n\`\`\`\nSandbox v2: ${sandboxV2.join("; ")}\n### Breakthrough\n${bth}\n`;
 
     emit({ type: "agent_start", agent: "07_THE_SCRIBE" });
-    const ghStatus = await this.commitToCorpus(sector, epoch, entry, v2);
+      const _v2HasCritical = (sandboxV2 || []).some(function(m){ return /Unsafe eval|Infinite loop|XSS risk/.test(m); });
+      const _v2Improved = v2 && v1 && v2.trim() !== v1.trim();
+      const _gatePass = v2UsedAI === true && _v2Improved && !_v2HasCritical;
+      let ghStatus;
+      if (!_gatePass) {
+        const _r = v2UsedAI !== true ? `fallback` : (!_v2Improved ? `v1_eq_v2` : `sandbox_critical`);
+        ghStatus = { synced: false, reason: `quality_gate_` + _r };
+      } else {
+    ghStatus = await this.commitToCorpus(sector, epoch, entry, v2);
+      }
     transcript.push({ agent: "07_THE_SCRIBE", output: ghStatus.synced ? `✅ Commit Epoch #${epoch}` : `❌ ${ghStatus.reason}` });
     emit({ type: "agent_done", agent: "07_THE_SCRIBE", output: ghStatus.synced ? "Commit OK" : ghStatus.reason });
 
