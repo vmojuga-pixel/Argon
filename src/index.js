@@ -9,6 +9,7 @@ import { createSession, validateSessionOrBasic, verifyLogin, sessionCookieHeader
 import { renderLogin } from './web/login.js';
 import { renderSignup } from './web/signup.js';
 import { renderApp } from './web/app.js';
+import { renderBaobao } from './web/baobao-page.js';
 import { renderPublicLanding } from './web/landing-public.js';
 import { SwarmBrain } from './swarm.js';
 import { OverlordSeniorDev } from './overlord.js';
@@ -86,6 +87,9 @@ export default {
       });
       const data = await r.json();
       return Response.json(data, { headers: CORS });
+    }
+    if (path === '/baobao') {
+      return new Response(renderBaobao(env), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
     if (path === '/api/baobao' && request.method === 'POST') {
       const ip = request.headers.get('cf-connecting-ip') || 'unknown';
