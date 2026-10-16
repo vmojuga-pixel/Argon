@@ -1,3 +1,4 @@
+import { BAOBAO_AVATAR } from "./baobao-asset.js";
 export function renderBaobao(env) {
   const app = (env && env.APP_NAME) || "BorneoAI";
   return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Baobao - ${app}</title><script src="https://cdn.tailwindcss.com"></script>
@@ -5,7 +6,7 @@ export function renderBaobao(env) {
 <body>
 <header style="padding:16px 20px;border-bottom:1px solid #1e293b;display:flex;align-items:center;gap:12px;position:sticky;top:0;background:rgba(3,7,18,.95);backdrop-filter:blur(12px);z-index:10">
 <a href="/" style="color:#64748b;text-decoration:none;font-size:20px">&#8592;</a>
-<div style="width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,#10b981,#06b6d4);display:flex;align-items:center;justify-content:center;font-weight:700;color:#020617;font-size:16px">B</div>
+<img src="${BAOBAO_AVATAR}" style="width:36px;height:36px;border-radius:12px;object-fit:cover;object-position:center 15%;border:1px solid rgba(148,163,184,.2)" alt="Baobao"/>
 <div><div style="font-weight:600;font-size:15px">Baobao</div><div style="font-size:11px;color:#64748b">Autocode assistant</div></div>
 </header>
 <main id="msgs" style="max-width:800px;margin:0 auto;padding:24px 16px 100px;display:flex;flex-direction:column">
