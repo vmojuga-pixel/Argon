@@ -92,6 +92,32 @@ export class SwarmBrain {
     return ["advanced-systems","ai-ml","aquaculture-tech","defense-patterns","fintech-ai","livestock-tech","maritime-tech","production-infra","travel-tech","unicorn-portfolio","unified-core"];
   }
 
+  async listFocusTopics() {
+    const repo = this.env.GITHUB_REPO_OVERLORD || "vmojuga-pixel/Argon";
+    const token = this.env.GITHUB_TOKEN;
+    if (!token) return [];
+    try {
+      const u = "https://api.github.com/repos/" + repo + "/contents/corpus/sectors/_metadata/manifest.json";
+      const r = await fetch(u, { headers: { "Authorization": "Bearer " + token, "User-Agent": "Nexus-Swarm-OS", "Accept": "application/vnd.github.raw" } });
+      if (!r.ok) return [];
+      const j = JSON.parse(await r.text());
+      return Array.isArray(j.focus_topics) ? j.focus_topics : [];
+    } catch (e) { return []; }
+  }
+
+  async readFileContent(path) {
+    const repo = this.env.GITHUB_REPO_OVERLORD || "vmojuga-pixel/Argon";
+    const token = this.env.GITHUB_TOKEN;
+    if (!token) return "";
+    try {
+      const u = "https://api.github.com/repos/" + repo + "/contents/" + path;
+      const r = await fetch(u, { headers: { "Authorization": "Bearer " + token, "User-Agent": "Nexus-Swarm-OS", "Accept": "application/vnd.github.raw" } });
+      if (!r.ok) return "";
+      const t = await r.text();
+      return t.length > 4000 ? t.slice(0, 4000) : t;
+    } catch (e) { return ""; }
+  }
+
   async readSectorContext(sector) {
     const repo = this.env.GITHUB_REPO_OVERLORD || "vmojuga-pixel/Argon";
     const token = this.env.GITHUB_TOKEN;
@@ -135,15 +161,26 @@ export class SwarmBrain {
     const transcript = [];
 
     emit({ type: "agent_start", agent: "01_VISIONARY" });
+    const topics = await this.listFocusTopics();
     const sectors = this.listCorpusSectors();
     const sector = sectors[(epoch - 1) % sectors.length];
     const ctx = await this.readSectorContext(sector);
-    const topic = customTopic || (sector + ": " + ctx.summary);
+    let topic = customTopic;
+    let existingRef = "";
+    if (!topic && topics.length > 0) {
+      topic = topics[(epoch - 1) % topics.length];
+      const refFile = (ctx.files || []).find(function(f){ return f.endsWith(".md"); });
+      if (refFile) {
+        existingRef = await this.readFileContent("corpus/sectors/" + sector + "/" + refFile);
+      }
+    }
+    if (!topic) topic = sector + ": " + ctx.summary;
     transcript.push({ agent: "01_VISIONARY", output: topic });
     emit({ type: "agent_done", agent: "01_VISIONARY", output: topic });
 
     emit({ type: "agent_start", agent: "02_ARCHITECT" });
-    const arch = await this.invokeAgentBrain("ROLE: ARCHITECT AGENT. Output: 3 bullet.", `Topik: ${topic}. Spesifikasi ringkas.`);
+    const refCtx = existingRef ? ("\n\nRujukan fail sedia ada dalam corpus:\n" + existingRef.slice(0, 2000)) : "";
+    const arch = await this.invokeAgentBrain("ROLE: ARCHITECT AGENT. Output: 3 bullet.", `Topik: ${topic}. Spesifikasi ringkas.` + refCtx);
     transcript.push({ agent: "02_ARCHITECT", output: arch });
     emit({ type: "agent_done", agent: "02_ARCHITECT", output: arch });
 
