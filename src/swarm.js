@@ -119,7 +119,7 @@ export class SwarmBrain {
       const re = new RegExp(rules[i][0]);
       if (re.test(t)) return rules[i][1];
     }
-    return "unified-core";
+    return "";
   }
 
   async listFocusTopics() {
@@ -200,6 +200,10 @@ export class SwarmBrain {
     let topic = customTopic;
     if (!topic && topics.length > 0) topic = topics[(epoch - 1) % topics.length];
     const sector = this.pickSectorForTopic(topic || "");
+      if (!sector) {
+        emit({ type: "skipped", reason: "no_sector_match", topic: topic });
+        return { epoch: null, skipped: true, reason: "no_sector_match", topic: topic };
+      }
     const ctx = await this.readSectorContext(sector);
     let existingRef = "";
     if (!customTopic) {
