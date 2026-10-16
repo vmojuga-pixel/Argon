@@ -1,69 +1,44 @@
-export function renderLogin(errorMsg = "") {
-  const err = errorMsg ? `<div class="bg-rose-500/10 border border-rose-500/40 text-rose-300 text-xs rounded-lg p-3 mb-4">${errorMsg}</div>` : "";
+export function renderLogin(err) {
   return `<!DOCTYPE html>
-<html lang="ms" class="dark">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Login — Argon</title>
-<script src="https://cdn.tailwindcss.com"><\/script>
-</head>
-<body class="bg-slate-950 text-slate-200 min-h-screen flex items-center justify-center p-4 font-sans">
+<html lang="en" class="dark"><head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Log in — BorneoAI</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={darkMode:"class"}</script></head>
+<body class="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased flex items-center justify-center p-6">
 <div class="w-full max-w-md">
-  <div class="text-center mb-8">
-    <div class="inline-flex items-center gap-2 mb-3">
-      <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
-      <span class="font-mono font-bold text-2xl text-white">ARGON</span>
-    </div>
-    <p class="text-sm text-slate-400">Sign in to access the console</p>
-  </div>
-  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl">
-    ${err}
-    <form id="loginForm" class="space-y-4">
-      <div>
-        <label class="block text-xs font-mono text-slate-400 mb-2">Username</label>
-        <input id="user" type="text" autocomplete="username" required
-          class="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-sm text-white focus:border-emerald-500 focus:outline-none" />
-      </div>
-      <div>
-        <label class="block text-xs font-mono text-slate-400 mb-2">Password</label>
-        <input id="pass" type="password" autocomplete="current-password" required
-          class="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-sm text-white focus:border-emerald-500 focus:outline-none" />
-      </div>
-      <button id="btn" type="submit"
-        class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-mono font-bold py-3 rounded-lg text-sm">
-        SIGN IN
-      </button>
-    </form>
-  </div>
-  <p class="text-center text-xs text-slate-500 mt-6">
-    <a href="/" class="hover:text-slate-300">Back to landing</a>
-  </p>
+<div class="text-center mb-6">
+<a href="/" class="inline-flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
+<span class="text-2xl font-bold tracking-tight">BorneoAI</span></a>
+<p class="text-sm text-slate-400 mt-2">Welcome back. Log in to continue.</p></div>
+<div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+<div class="space-y-2">
+<button onclick="oauthSignIn(&#39;google&#39;)" class="w-full flex items-center justify-center gap-3 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-medium text-sm">Continue with Google</button>
+<button onclick="oauthSignIn(&#39;github&#39;)" class="w-full flex items-center justify-center gap-3 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-medium text-sm">Continue with GitHub</button>
+<button onclick="oauthSignIn(&#39;apple&#39;)" class="w-full flex items-center justify-center gap-3 px-4 py-2.5 rounded-xl bg-black hover:bg-slate-900 border border-slate-800 font-medium text-sm">Continue with Apple</button>
 </div>
+<div class="flex items-center gap-3 my-5"><div class="flex-1 h-px bg-slate-800"></div><span class="text-xs text-slate-500">or</span><div class="flex-1 h-px bg-slate-800"></div></div>
+<form id="f" class="space-y-3">
+<div><label class="block text-xs font-medium text-slate-300 mb-1.5">Email or username</label>
+<input id="u" type="text" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-emerald-500" placeholder="you@example.com" autocomplete="username" /></div>
+<div><div class="flex items-center justify-between mb-1.5"><label class="block text-xs font-medium text-slate-300">Password</label>
+<a href="/forgot" class="text-xs text-emerald-400 hover:text-emerald-300">Forgot?</a></div>
+<input id="p" type="password" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-emerald-500" placeholder="********" autocomplete="current-password" /></div>
+<button type="submit" class="w-full px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-sm mt-2">Log in</button>
+<div id="e" class="text-sm text-rose-400 text-center hidden"></div>
+</form></div>
+<p class="text-center text-sm text-slate-400 mt-6">Don&#39;t have an account? <a href="/signup" class="text-emerald-400 hover:text-emerald-300 font-medium">Sign up</a></p>
+<p class="text-center text-xs text-slate-500 mt-4"><a href="/" class="hover:text-slate-400">Back to home</a></p></div>
 <script>
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const user = document.getElementById('user').value.trim();
-  const pass = document.getElementById('pass').value;
-  const btn = document.getElementById('btn');
-  btn.disabled = true; btn.innerText = 'SIGNING IN...';
-  try {
-    const r = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user, pass }),
-    });
-    const d = await r.json();
-    if (r.ok && d.ok) {
-      window.location.href = d.redirect || '/omni-ui';
-    } else {
-      window.location.href = '/login?error=' + encodeURIComponent(d.error || 'Invalid credentials');
-    }
-  } catch (err) {
-    window.location.href = '/login?error=' + encodeURIComponent('Network error');
-  }
+function oauthSignIn(p){window.location.href="/oauth/"+p;}
+document.getElementById("f").addEventListener("submit", async (e) => {
+e.preventDefault();
+const el=document.getElementById("e"); el.classList.add("hidden");
+const r=await fetch("/api/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({user:document.getElementById("u").value,pass:document.getElementById("p").value})});
+const d=await r.json();
+if(d.ok){window.location.href=d.redirect||"/dashboard";}
+else{el.textContent=d.error||"Login failed";el.classList.remove("hidden");}
 });
-<\/script>
-</body>
-</html>`;
+</script></body></html>`;
 }

@@ -51,7 +51,7 @@ new_sqlite_classes = ["OmniOverlordEngine"]
 crons = ["*/15 * * * *"]
 
 [vars]
-APP_NAME = "Argon"
+APP_NAME = "BorneoAI"
 DEFAULT_MODEL = "@cf/meta/llama-4-scout-17b-16e-instruct"
 GITHUB_REPO = "vmojuga-pixel/buku-koding-agentic"
 GITHUB_REPO_OVERLORD = "vmojuga-pixel/Argon"

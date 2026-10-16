@@ -7,6 +7,7 @@ import { handleAgent } from './api/agent.js';
 import { validateApiKey, validateBasicAuth } from './auth/apikey.js';
 import { createSession, validateSessionOrBasic, verifyLogin, sessionCookieHeader, clearCookieHeader } from './auth/session.js';
 import { renderLogin } from './web/login.js';
+import { renderSignup } from './web/signup.js';
 import { renderPublicLanding } from './web/landing-public.js';
 import { SwarmBrain } from './swarm.js';
 import { OverlordSeniorDev } from './overlord.js';
@@ -216,6 +217,10 @@ export default {
     if (path === '/' || path === '/landing') {
       const sess = await validateSessionOrBasic(request, env);
       return new Response(renderPublicLanding(env, sess.ok), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+    }
+    if (path === '/signup') {
+      const err = url.searchParams.get('error') || '';
+      return new Response(renderSignup(err), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
     if (path === '/login') {
       const err = url.searchParams.get('error') || '';
