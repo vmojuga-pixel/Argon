@@ -35,7 +35,7 @@ Live — deploy dalam minit
 </div>
 <h1 class="text-4xl md:text-6xl font-bold tracking-tight leading-tight mb-6">
 
-<span class="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">Bisnes kau, kod kami.</span><br><span class="text-slate-400 text-2xl md:text-4xl">Cun sudah 🪐</span></h1>
+<span class="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">Bisnes kau, kod kami.</span><br><span class="text-slate-400 text-2xl md:text-4xl">Tanya Baobao, cun sudah 🪐</span></h1>
 
 <div class="flex flex-wrap items-center justify-center gap-3 mb-8">
 <a href="/signup" class="px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-sm transition">Mula Sekarang →</a>

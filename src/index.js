@@ -8,6 +8,7 @@ import { validateApiKey, validateBasicAuth } from './auth/apikey.js';
 import { createSession, validateSessionOrBasic, verifyLogin, sessionCookieHeader, clearCookieHeader } from './auth/session.js';
 import { renderLogin } from './web/login.js';
 import { renderSignup } from './web/signup.js';
+import { renderApp } from './web/app.js';
 import { renderPublicLanding } from './web/landing-public.js';
 import { SwarmBrain } from './swarm.js';
 import { OverlordSeniorDev } from './overlord.js';
@@ -80,6 +81,12 @@ export default {
       return new Response(renderDocs(), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
 
+    if (path === '/app' || path.startsWith('/app/')) {
+      const sess = await validateSessionOrBasic(request, env);
+      if (!sess.ok) return Response.redirect(url.origin + '/login', 302);
+      const v = path.split('/')[2] || 'home';
+      return new Response(renderApp(env, sess, v), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+    }
     if (path === '/dashboard' || path === '/dashboard/') {
       return new Response(renderDashboard(), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
