@@ -31,15 +31,13 @@ export function renderPublicLanding(env, sessOk) {
 <section class="max-w-5xl mx-auto px-6 pt-20 pb-16 text-center">
 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/5 text-xs text-emerald-400 mb-6">
 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-Live on Cloudflare Edge — 300+ locations
+Live — deploy dalam minit
 </div>
 <h1 class="text-4xl md:text-6xl font-bold tracking-tight leading-tight mb-6">
 
 <span class="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">Bisnes kau, kod kami.</span>
 </h1>
-<p class="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-Taip arahan dalam BM atau English. Kami bina website, SaaS, API, automation agentic, full-stack, deploy terus ke edge.
-</p>
+
 <div class="flex flex-wrap items-center justify-center gap-3 mb-8">
 <a href="/signup" class="px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-sm transition">Mula Sekarang →</a>
 <a href="#how" class="px-6 py-3 rounded-xl border border-slate-700 hover:border-slate-600 text-sm transition">Tengok Cara Kerja</a>
@@ -53,7 +51,7 @@ Taip arahan dalam BM atau English. Kami bina website, SaaS, API, automation agen
 <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-emerald-500/40 transition">
 <div class="text-xs uppercase tracking-wider text-emerald-400 mb-2">Enterprise</div>
 <h3 class="text-xl font-semibold mb-2">Automasi skala besar</h3>
-<p class="text-sm text-slate-400 leading-relaxed">Integrasi API, workflow automation, agentic RAG, multi-tenant SaaS. Deploy ke Cloudflare Edge tanpa infra team.</p>
+<p class="text-sm text-slate-400 leading-relaxed">Integrasi API, workflow automation, agentic RAG, multi-tenant SaaS. Deploy ke Edge tanpa infra team.</p>
 </div>
 <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-cyan-500/40 transition">
 <div class="text-xs uppercase tracking-wider text-cyan-400 mb-2">Startup</div>
@@ -84,7 +82,7 @@ Taip arahan dalam BM atau English. Kami bina website, SaaS, API, automation agen
 <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800">
 <div class="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 font-bold mb-4">02</div>
 <h3 class="font-semibold mb-2">BorneoAI bina</h3>
-<p class="text-sm text-slate-400">Swarm 7-ejen reka, kod, kritik, perbaiki, dan deploy secara automatik ke Cloudflare Edge.</p>
+<p class="text-sm text-slate-400">Swarm 7-ejen reka, kod, kritik, perbaiki, dan deploy secara automatik ke Edge.</p>
 </div>
 <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800">
 <div class="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold mb-4">03</div>
@@ -165,7 +163,7 @@ Taip arahan dalam BM atau English. Kami bina website, SaaS, API, automation agen
 </details>
 <details class="p-4 rounded-xl bg-slate-900 border border-slate-800">
 <summary class="font-medium cursor-pointer">Data saya selamat?</summary>
-<p class="text-sm text-slate-400 mt-2">Ya. Semua di Cloudflare Edge. Audit log SHA-256. Multi-tenant isolation.</p>
+<p class="text-sm text-slate-400 mt-2">Ya. Semua di Edge. Audit log SHA-256. Multi-tenant isolation.</p>
 </details>
 <details class="p-4 rounded-xl bg-slate-900 border border-slate-800">
 <summary class="font-medium cursor-pointer">Boleh integrate dengan sistem sedia ada?</summary>
@@ -183,7 +181,7 @@ Taip arahan dalam BM atau English. Kami bina website, SaaS, API, automation agen
 </main>
 <footer class="border-t border-slate-800 mt-16">
 <div class="max-w-6xl mx-auto px-6 py-8 text-sm text-slate-500 flex flex-wrap items-center justify-between gap-4">
-<div>© ${year} ${app} — Built on Cloudflare Workers + Workers AI</div>
+<div>@${year} ${app} — NORTHERNCOAST GROUP<br><span class="text-xs text-slate-600">Sabah, Malaysia</span></div>
 <div class="flex gap-4">
 <a href="/docs" class="hover:text-slate-300">Docs</a>
 <a href="/login" class="hover:text-slate-300">Login</a>
