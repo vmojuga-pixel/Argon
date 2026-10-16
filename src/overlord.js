@@ -183,7 +183,7 @@ export class OverlordSeniorDev {
     const snippet = await this.invokeSeniorBrain("ROLE: COMPLETE_WORKER_BUILDER. Kod produksi untuk topik ini.", currentTopic);
     const entry = "\n---\n## OVERLORD EPOCH #" + epoch + " // " + timestamp + "\n- Topic: " + currentTopic + "\n- Services: " + services.length + "\n\n```javascript\n" + snippet.slice(0, 3000) + "\n```\n";
 
-    const gs = await this.pushFileToGitHub("CODING_GRIMOIRE.md", entry, "[Overlord #" + epoch + "] R&D sweep", true);
+    const gs = await this.pushFileToGitHub("corpus/overlord/rnd-log.md", entry, "[Overlord #" + epoch + "] R&D sweep", true);
     await this.pushFileToGitHub("docs/swarm-output/epoch-learnings/epoch-" + epoch + ".md", entry, "[Overlord #" + epoch + "] Archive", false);
     await this.logActivity("CRON_SWEEP", "Epoch " + epoch + " done. " + services.length + " services");
 

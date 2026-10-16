@@ -70,7 +70,7 @@ export class OverlordSeniorDev {
 
   async pushFileToGitHub(filePath, contentText, commitMessage, appendMode = false) {
     const token = this.env.GITHUB_TOKEN;
-    const repo = this.env.GITHUB_REPO;
+    const repo = this.env.GITHUB_REPO_OVERLORD || this.env.GITHUB_REPO;
     if (!token || !repo) return { synced: false, path: filePath, reason: "GITHUB_TOKEN/REPO tiada." };
 
     const apiUrl = "https://api.github.com/repos/" + repo + "/contents/" + filePath;
@@ -123,7 +123,7 @@ export class OverlordSeniorDev {
     await this.pushFileToGitHub(docPath, readme, "[Overlord] Docs " + slug, false);
 
     const services = (await this.state.storage.get("managed_services")) || [];
-    const record = { slug, directive: taskDirective, createdAt: timestamp, lastCheckedAt: timestamp, healthStatus: "PENDING_CHECK", autoHealCount: 0, deployInfo: deployResult, gitPath: repoPath, gitSynced: gitCodeSync.synced, lastStableCode: cleanCode };
+    const record = { slug, directive: taskDirective, createdAt: timestamp, lastCheckedAt: timestamp, healthStatus: "DEPLOYED_AWAITING_PROPAGATION", autoHealCount: 0, deployInfo: deployResult, gitPath: repoPath, gitSynced: gitCodeSync.synced, lastStableCode: cleanCode };
     const idx = services.findIndex(s => s.slug === slug);
     if (idx >= 0) services[idx] = record; else services.push(record);
     await this.state.storage.put("managed_services", services);
@@ -143,16 +143,27 @@ export class OverlordSeniorDev {
       svc.lastCheckedAt = timestamp;
       if (svc.deployInfo && svc.deployInfo.deployed && svc.deployInfo.url) {
         try {
-          const r = await fetch(svc.deployInfo.url + "/health");
-          if (!r.ok) throw new Error("HTTP " + r.status);
-          svc.healthStatus = "ONLINE_HEALTHY";
-          results.push({ slug: svc.slug, action: "HEALTH_OK" });
+          const r = await fetch(svc.deployInfo.url + "/health", { cf: { cacheTtl: 0 } });
+          // 530 = subdomain propagation (bukan failure sebenar)
+          if (r.status === 530) {
+            svc.healthStatus = "PROPAGATING (530)";
+            results.push({ slug: svc.slug, action: "SKIP_530_PROPAGATING" });
+          } else if (!r.ok && r.status >= 500) {
+            throw new Error("HTTP " + r.status);
+          } else if (!r.ok) {
+            svc.healthStatus = "WARN_" + r.status;
+            results.push({ slug: svc.slug, action: "WARN_" + r.status });
+          } else {
+            svc.healthStatus = "ONLINE_HEALTHY";
+            results.push({ slug: svc.slug, action: "HEALTH_OK" });
+          }
         } catch (err) {
           svc.healthStatus = "AUTO_HEALED";
           svc.autoHealCount = (svc.autoHealCount || 0) + 1;
           await this.deployWorkerToCloudflare(svc.slug, svc.lastStableCode);
           results.push({ slug: svc.slug, action: "SELF_HEAL: " + err.message });
           await this.logActivity("AUTO_SELF_HEAL", svc.slug + " redeployed");
+          await this.sendAdminAlert("service_self_heal", `Service ${svc.slug} auto-redeployed`, { slug: svc.slug, error: err.message, heal_count: svc.autoHealCount });
         }
       } else {
         svc.healthStatus = "SANDBOX_OK";
@@ -183,13 +194,15 @@ export class OverlordSeniorDev {
     const epoch = (await this.state.storage.get("epoch")) || 0;
     const services = (await this.state.storage.get("managed_services")) || [];
     const logs = (await this.state.storage.get("activity_logs")) || [];
+    const focusTopics = (await this.state.storage.get("focus_topics")) || [];
     const healthy = services.filter(s => /OK|HEALTHY/.test(s.healthStatus)).length;
     const heals = services.reduce((a, s) => a + (s.autoHealCount || 0), 0);
     return {
       reportTimestamp: new Date().toISOString(),
       sirQuery: question || "Full status",
-      summaryForSir: "SIR, Overlord berjalan 24/7. " + services.length + " servis diurus (" + healthy + " sihat, " + heals + " auto-heal). Epoch #" + epoch + ".",
-      metrics: { totalEpoch: epoch, activeServicesCount: services.length, healthyServicesCount: healthy, totalAutoHealsExecuted: heals, cronSchedule: "0 */6 * * *" },
+      summaryForSir: "SIR, Overlord berjalan 24/7. " + services.length + " servis diurus (" + healthy + " sihat, " + heals + " auto-heal). Epoch #" + epoch + ". Focus topics: " + focusTopics.length + ".",
+      metrics: { totalEpoch: epoch, activeServicesCount: services.length, healthyServicesCount: healthy, totalAutoHealsExecuted: heals, focusTopicsCount: focusTopics.length, cronSchedule: "0 */6 * * *" },
+      focusTopics: focusTopics,
       activeServices: services,
       recentLogs: logs.slice(-15).reverse()
     };
@@ -200,6 +213,22 @@ export class OverlordSeniorDev {
     logs.push({ time: new Date().toISOString(), type, detail });
     if (logs.length > 50) logs.shift();
     await this.state.storage.put("activity_logs", logs);
+  }
+
+  async sendAdminAlert(event, message, meta = {}) {
+    const webhookUrl = this.env.ADMIN_ALERT_WEBHOOK;
+    if (!webhookUrl) return { sent: false, reason: 'ADMIN_ALERT_WEBHOOK not set' };
+    const payload = { event, message, meta, ts: new Date().toISOString(), env: this.env.APP_NAME || 'Argon' };
+    try {
+      const res = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { sent: res.ok, status: res.status };
+    } catch (e) {
+      return { sent: false, reason: e.message };
+    }
   }
 
   async fetch(request) {
@@ -236,3 +265,5 @@ export class OverlordSeniorDev {
     return new Response("Overlord Senior Dev Active", { status: 200, headers: cors });
   }
 }
+
+// Alert dispatcher helper (append at end of class — via global)
