@@ -275,3 +275,36 @@ Location: corpus/sectors/defense-patterns/
 - Version ID: bb27705b-0d69-4c0d-8adb-08965892e603
 - Cron: */15 * * * *
 - Live: https://argon.vmojuga.workers.dev
+
+---
+
+## 2026-10-16 (Later) — IDEA: BorneoAI-1 (LoRA + Encoder)
+
+**Status:** BACKLOG (bukan buat sekarang)
+
+### Konsep
+- Base model kecil (Phi-3 mini / Qwen2-0.5B / TinyLlama) + LoRA adapter khusus domain autocode.
+- Guna encoder (quantization 4-bit) untuk kecikkan lagi saiz model.
+- 500MB-1GB model, perform macam 7B untuk task autocode spesifik.
+
+### Kenapa Ini Logik
+- Corpus Swarm sekarang mengumpul 1 sample SFT / epoch (setiap 15 minit).
+- Quality gate lulus = sample berkualiti tinggi (bukan fallback template).
+- 3 bulan × 96 epoch/hari × 90% lulus ≈ 7,700 sample.
+- Cukup untuk LoRA fine-tune on top of base model.
+
+### Roadmap (Rough)
+1. NOW — Guna Workers AI (serverless) + corpus accumulate.
+2. FASA 2 — Export corpus ke format OpenAI JSONL (messages role system/user/assistant).
+3. FASA 3 — LoRA fine-tune + 4-bit quantize, deploy model sendiri.
+4. FASA 4 — Brand 'BorneoAI-1' + monetize (API, on-premise, edge bundle).
+
+### Kenapa Penting
+- Kurangkan dependency Workers AI (cost + rate limit).
+- Boleh deploy on-premise (enterprise Malaysia mahukan data sovereignty).
+- Corpus = asset, bukan sampah.
+
+### Nota
+- Base64 ≠ compression (jangan confuse).
+- Realiti: quantization 8× kecil, distillation 10-20× kecil, LoRA adapter 100-1000× kecil dari base.
+- LoRA training: 1-3 jam GPU (RTX 4090 atau A100 cloud).

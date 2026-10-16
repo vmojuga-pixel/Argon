@@ -84,3 +84,19 @@ export CLOUDFLARE_API_TOKEN=$(cat /root/.cf-key) && cd /root/Argon && npx wrangl
 
 ## 6. FIRST COMMAND
 cat /root/Argon/BLUEPRINT.md && cat /root/Argon/docs/JOURNEY.md
+
+---
+
+## 12. BACKLOG IDEAS (Jangan Lupa)
+
+### BorneoAI-1 (LoRA + Encoder)
+- Rujuk: docs/JOURNEY.md (2026-10-16 Later)
+- Idea: base model kecil + LoRA adapter autocode + 4-bit quantize.
+- Data: corpus Swarm (1 sample/epoch, quality-gated).
+- Potensi: 500MB-1GB model, on-premise, no external API dependency.
+
+### Cara Guna Corpus untuk Training
+1. Setiap fail corpus/sectors/<sector>/epoch-*.md = 1 training sample.
+2. Format: system (prompt sektor) + user (topic) + assistant (kod v2 + kritikan).
+3. Export ke JSONL bila cukup 1,000+ sample.
+4. Fine-tune LoRA on top Phi-3 / Qwen2-0.5B.
