@@ -1,3 +1,4 @@
+import { BAOBAO_AVATAR } from "./baobao-asset.js";
 export function renderPublicLanding(env, sessOk) {
   const app = (env && env.APP_NAME) || "BorneoAI";
   const year = new Date().getFullYear();
@@ -194,7 +195,7 @@ Live — deploy dalam minit
 <button id="bb-btn" onclick="bbToggle()" style="position:fixed;bottom:20px;right:20px;z-index:100;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#10b981,#06b6d4);color:#020617;font-weight:700;border:none;cursor:pointer;box-shadow:0 8px 24px rgba(16,185,129,.5),0 0 40px rgba(6,182,212,.3);font-size:20px;transition:transform .2s" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">B</button>
 <div id="bb-panel" style="position:fixed;bottom:88px;right:20px;z-index:100;width:min(380px,calc(100vw - 40px));height:min(560px,calc(100vh - 120px));background:linear-gradient(135deg,rgba(15,23,42,.97),rgba(15,23,42,.92));backdrop-filter:blur(20px);border:1px solid rgba(148,163,184,.2);border-radius:1.25rem;box-shadow:0 20px 60px rgba(0,0,0,.6),0 0 80px rgba(16,185,129,.15);display:none;flex-direction:column;overflow:hidden">
 <div style="padding:14px 16px;border-bottom:1px solid rgba(148,163,184,.12);display:flex;align-items:center;gap:10px">
-<div style="width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,#10b981,#06b6d4);display:flex;align-items:center;justify-content:center;font-weight:700;color:#020617">B</div>
+<img src="${BAOBAO_AVATAR}" style="width:36px;height:36px;border-radius:12px;object-fit:cover;object-position:center top;border:1px solid rgba(148,163,184,.2)" />
 <div style="flex:1"><div style="font-weight:600;font-size:14px">Baobao</div><div style="font-size:11px;color:#64748b">Autocode assistant</div></div>
 <button onclick="bbToggle()" style="background:none;border:none;color:#64748b;cursor:pointer;font-size:18px">&#10005;</button>
 </div>
