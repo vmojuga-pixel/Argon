@@ -48,7 +48,7 @@ tag = "v3"
 new_sqlite_classes = ["OmniOverlordEngine"]
 
 [triggers]
-crons = ["0 */6 * * *"]
+crons = ["*/15 * * * *"]
 
 [vars]
 APP_NAME = "Argon"
