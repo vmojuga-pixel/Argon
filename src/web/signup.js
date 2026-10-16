@@ -9,7 +9,7 @@ export function renderSignup(err) {
 <div class="w-full max-w-md">
 <div class="text-center mb-6">
 <a href="/" class="inline-flex items-center gap-2">
-<div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
+
 <span class="text-2xl font-bold tracking-tight">BorneoAI</span></a>
 <p class="text-sm text-slate-400 mt-2">Create your free account. No credit card needed.</p></div>
 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">

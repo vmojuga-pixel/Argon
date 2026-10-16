@@ -15,9 +15,9 @@ export function renderPublicLanding(env, sessOk) {
 <header class="border-b border-slate-800 bg-slate-900/70 backdrop-blur sticky top-0 z-50">
 <div class="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
 <div class="flex items-center gap-3">
-<div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
+
 <span class="font-bold tracking-tight">${app}</span>
-<span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">v2.0</span>
+
 </div>
 <nav class="flex items-center gap-4 text-sm">
 <a href="#use-cases" class="text-slate-400 hover:text-white hidden md:inline">Use Cases</a>
@@ -30,7 +30,7 @@ export function renderPublicLanding(env, sessOk) {
 <main>
 <section class="max-w-5xl mx-auto px-6 pt-20 pb-16 text-center">
 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/5 text-xs text-emerald-400 mb-6">
-<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+
 Live — deploy dalam minit
 </div>
 <h1 class="text-4xl md:text-6xl font-bold tracking-tight leading-tight mb-6">

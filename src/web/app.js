@@ -60,7 +60,7 @@ export function renderApp(env, sess, view) {
 <div class="flex min-h-screen relative z-10">
 <aside id="sb" class="sidebar hidden md:flex md:flex-col w-60 fixed md:sticky md:top-0 h-screen inset-y-0 z-40">
 <div class="h-16 flex items-center px-4 border-b border-slate-800/50 gap-2">
-<div class="w-2.5 h-2.5 rounded-full bg-emerald-500 glow animate-pulse"></div>
+
 <span class="font-bold text-lg">${app}</span></div>
 <nav class="flex-1 p-3 space-y-1 overflow-y-auto">${sidebar}</nav>
 <div class="p-3 border-t border-slate-800/50"><div class="flex items-center gap-2 px-2 py-2">
@@ -80,7 +80,7 @@ export function renderApp(env, sess, view) {
 }
 
 function vHome(){return `<div class="p-6 md:p-8 max-w-6xl mx-auto fade-in">
-<div class="mb-10"><div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/5 text-xs text-emerald-400 mb-4"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>Console Live</div>
+<div class="mb-10"><div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/5 text-xs text-emerald-400 mb-4">Console Live</div>
 <h2 class="text-4xl md:text-5xl font-bold mb-3 leading-tight">Selamat datang.<br><span class="txt-grad">Tanya Baobao apa saja.</span></h2>
 <p class="text-slate-400">Pilih satu untuk mula. Semua auto.</p></div>
 <div class="grid md:grid-cols-3 gap-5 mb-8">
