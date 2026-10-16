@@ -1,0 +1,50 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "query_vessel_telemetry",
+      "description": "Query real-time or historical IoT telemetry data from offshore vessels. Returns engine load, hull stress, and fuel metrics.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "vessel_id": {"type": "string", "description": "The unique identifier of the vessel (e.g., 'VSL-004')."},
+          "metric": {"type": "string", "enum": ["engine_load", "hull_stress", "fuel_flow", "exhaust_temp", "all"], "description": "The specific metric to query, or 'all' for full telemetry."},
+          "time_range_hours": {"type": "integer", "description": "Number of hours to look back for historical data. Default is 24."}
+        },
+        "required": ["vessel_id", "metric"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "execute_halal_cross_reference",
+      "description": "Cross-reference a Halal certificate number against the official JAKIM/Global Halal blockchain ledger to verify authenticity and check for recalls.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "cert_number": {"type": "string", "description": "The Halal certificate number (e.g., '01-202345')."},
+          "issuing_body": {"type": "string", "enum": ["JAKIM", "MUI", "GSO", "CIF", "Unknown"], "description": "The Halal certification body."}
+        },
+        "required": ["cert_number"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "adjust_ras_environmental_controls",
+      "description": "Send direct commands to the Recirculating Aquaculture System (RAS) IoT controllers to adjust aerators, feeders, or water exchange valves.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "tank_id": {"type": "string", "description": "The ID of the RAS tank (e.g., 'RAS-09')."},
+          "aerator_speed_percent": {"type": "integer", "minimum": 0, "maximum": 100, "description": "Speed of the aerator in percentage."},
+          "stop_feeding": {"type": "boolean", "description": "Set to true to immediately halt automated feeding."},
+          "emergency_water_exchange_percent": {"type": "integer", "minimum": 0, "maximum": 50, "description": "Percentage of water to exchange immediately (Max 50% to prevent shock)."}
+        },
+        "required": ["tank_id"]
+      }
+    }
+  }
+]
