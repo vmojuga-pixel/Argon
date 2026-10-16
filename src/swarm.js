@@ -177,6 +177,11 @@ export class SwarmBrain {
 
   async executeEvolutionCycle(customTopic = null, onEvent = null) {
     const emit = (evt) => { if (onEvent) try { onEvent(evt); } catch {} };
+    const quota = await checkAIQuota(this.env);
+    if (!quota.allowed) {
+      emit({ type: "skipped", reason: "daily_quota_reached", used: quota.used, limit: quota.limit });
+      return { epoch: null, skipped: true, reason: "daily_quota_reached", used: quota.used, limit: quota.limit };
+    }
 
     let epoch = (await this.state.storage.get("epoch")) || 0;
     epoch += 1;
