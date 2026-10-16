@@ -241,7 +241,7 @@ export default {
       const ok = await verifyLogin(env, user, pass);
       if (!ok) return Response.json({ ok: false, error: 'Invalid credentials' }, { status: 401, headers: CORS });
       const token = await createSession(env, user);
-      return new Response(JSON.stringify({ ok: true, redirect: body.redirect || '/omni-ui' }), {
+      return new Response(JSON.stringify({ ok: true, redirect: body.redirect || '/app' }), {
         status: 200,
         headers: { ...CORS, 'Content-Type': 'application/json', 'Set-Cookie': sessionCookieHeader(token) }
       });
@@ -410,7 +410,7 @@ export default {
       return env.OMNI_OVERLORD.get(id).fetch(request);
     }
 
-    if (path === '/omni-ui' || path === '/omni-ui/') {
+    if (path === '/app' || path === '/omni-ui/') {
       const sess = await validateSessionOrBasic(request, env);
       if (!sess.ok) return Response.redirect(url.origin + '/login?error=' + encodeURIComponent('Auth required') + '&redirect=' + encodeURIComponent(path), 302);
       return new Response(renderOmniUI(), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
