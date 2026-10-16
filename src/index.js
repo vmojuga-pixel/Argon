@@ -10,6 +10,9 @@ import { renderLogin } from './web/login.js';
 import { renderSignup } from './web/signup.js';
 import { renderApp } from './web/app.js';
 import { renderBaobao } from './web/baobao-page.js';
+import { renderOps } from './web/ops.js';
+import { planOps } from './ops/planner.js';
+import { applyOps } from './ops/applier.js';
 import { renderPublicLanding } from './web/landing-public.js';
 import { SwarmBrain } from './swarm.js';
 import { OverlordSeniorDev } from './overlord.js';
@@ -87,6 +90,27 @@ export default {
       });
       const data = await r.json();
       return Response.json(data, { headers: CORS });
+    }
+    if (path === '/ops') {
+      const sess = await validateSessionOrBasic(request, env);
+      if (!sess.ok) return Response.redirect(url.origin + '/login', 302);
+      return new Response(renderOps(env), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+    }
+    if (path === '/api/ops/plan' && request.method === 'POST') {
+      const sess = await validateSessionOrBasic(request, env);
+      if (!sess.ok) return Response.json({ ok:false, error:'login required' }, { status: 401, headers: CORS });
+      let body = {};
+      try { body = await request.json(); } catch {}
+      const out = await planOps(env, String(body.directive || '').slice(0, 1000));
+      return Response.json(out, { headers: CORS });
+    }
+    if (path === '/api/ops/apply' && request.method === 'POST') {
+      const sess = await validateSessionOrBasic(request, env);
+      if (!sess.ok) return Response.json({ ok:false, error:'login required' }, { status: 401, headers: CORS });
+      let body = {};
+      try { body = await request.json(); } catch {}
+      const out = await applyOps(env, body.plan, body.summary || '[Ops] auto-apply');
+      return Response.json(out, { headers: CORS });
     }
     if (path === '/baobao') {
       return new Response(renderBaobao(env), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
