@@ -34,11 +34,11 @@ export function renderPublicLanding(env, sessOk) {
 Live on Cloudflare Edge — 300+ locations
 </div>
 <h1 class="text-4xl md:text-6xl font-bold tracking-tight leading-tight mb-6">
-Software untuk bisnes anda.<br>
-<span class="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">Tanpa perlu coding.</span>
+
+<span class="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">Bisnes kau, kod kami.</span>
 </h1>
 <p class="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-Hantar arahan dalam Bahasa Melayu atau English. BorneoAI bina website, SaaS, API, automation agentic — full-stack, live dalam minit. Untuk enterprise, startup, SME, dan founder non-tech.
+Taip arahan dalam BM atau English. Kami bina website, SaaS, API, automation agentic, full-stack, deploy terus ke edge.
 </p>
 <div class="flex flex-wrap items-center justify-center gap-3 mb-8">
 <a href="/signup" class="px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-sm transition">Mula Sekarang →</a>
@@ -93,46 +93,64 @@ Hantar arahan dalam Bahasa Melayu atau English. BorneoAI bina website, SaaS, API
 </div>
 </div>
 </section>
-<section id="pricing" class="max-w-5xl mx-auto px-6 py-16">
+<section id="pricing" class="max-w-6xl mx-auto px-6 py-16">
 <h2 class="text-3xl font-bold text-center mb-3">Pricing</h2>
-<p class="text-center text-slate-400 mb-12">Mula free. Upgrade bila ready. Bayaran via TnG eWallet.</p>
-<div class="grid md:grid-cols-3 gap-5">
+<p class="text-center text-slate-400 mb-12">Mula free. Bayar bila ready. Semua tier deploy ke 300+ edge locations.</p>
+<div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+<div class="p-6 rounded-2xl bg-slate-900 border border-slate-800">
+<div class="text-sm text-slate-400 mb-1">Free</div>
+<div class="text-3xl font-bold mb-4">RM 0</div>
+<ul class="text-sm text-slate-400 space-y-2 mb-6">
+<li>100 chat/bulan</li>
+<li>1 project</li>
+<li>Community support</li>
+</ul>
+<a href="/signup?plan=free" class="block text-center px-4 py-2.5 rounded-lg border border-slate-700 hover:border-slate-600 text-sm">Mula Free</a>
+</div>
 <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800">
 <div class="text-sm text-slate-400 mb-1">Starter</div>
-<div class="text-3xl font-bold mb-4">RM 99<span class="text-sm text-slate-500 font-normal">/bulan</span></div>
+<div class="text-3xl font-bold mb-4">RM 49<span class="text-sm text-slate-500 font-normal">/bln</span></div>
 <ul class="text-sm text-slate-400 space-y-2 mb-6">
-<li>✓ 10,000 chat/bulan</li>
-<li>✓ 1,000 agent calls</li>
-<li>✓ 100 swarm cycles</li>
-<li>✓ Email support</li>
+<li>1,000 chat/bulan</li>
+<li>200 agent calls</li>
+<li>20 swarm cycles</li>
+<li>5 projects</li>
 </ul>
 <a href="/signup?plan=starter" class="block text-center px-4 py-2.5 rounded-lg border border-slate-700 hover:border-slate-600 text-sm">Pilih Starter</a>
 </div>
 <div class="p-6 rounded-2xl bg-slate-900 border-2 border-emerald-500/50 relative">
 <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-emerald-500 text-slate-950 text-xs font-semibold">Popular</div>
 <div class="text-sm text-emerald-400 mb-1">Pro</div>
-<div class="text-3xl font-bold mb-4">RM 399<span class="text-sm text-slate-500 font-normal">/bulan</span></div>
+<div class="text-3xl font-bold mb-4">RM 199<span class="text-sm text-slate-500 font-normal">/bln</span></div>
 <ul class="text-sm text-slate-400 space-y-2 mb-6">
-<li>✓ 100,000 chat/bulan</li>
-<li>✓ 20,000 agent calls</li>
-<li>✓ 5,000 swarm cycles</li>
-<li>✓ Webhook + priority support</li>
+<li>10,000 chat/bulan</li>
+<li>2,000 agent calls</li>
+<li>200 swarm cycles</li>
+<li>Unlimited projects</li>
 </ul>
 <a href="/signup?plan=pro" class="block text-center px-4 py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-sm">Pilih Pro</a>
 </div>
 <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-<div class="text-sm text-amber-400 mb-1">Enterprise</div>
-<div class="text-3xl font-bold mb-4">Custom</div>
+<div class="text-sm text-slate-400 mb-1">Business</div>
+<div class="text-3xl font-bold mb-4">RM 799<span class="text-sm text-slate-500 font-normal">/bln</span></div>
 <ul class="text-sm text-slate-400 space-y-2 mb-6">
-<li>✓ Unlimited semua</li>
-<li>✓ Dedicated support</li>
-<li>✓ SLA + custom integration</li>
-<li>✓ On-premise option</li>
+<li>100,000 chat/bulan</li>
+<li>20,000 agent calls</li>
+<li>2,000 swarm cycles</li>
+<li>Webhook + priority</li>
 </ul>
-<a href="mailto:sales@vmojuga.dev" class="block text-center px-4 py-2.5 rounded-lg border border-slate-700 hover:border-slate-600 text-sm">Contact Sales</a>
+<a href="/signup?plan=business" class="block text-center px-4 py-2.5 rounded-lg border border-slate-700 hover:border-slate-600 text-sm">Pilih Business</a>
 </div>
 </div>
-<p class="text-center text-xs text-slate-500 mt-6">Bayaran selamat via Touch n Go eWallet. Untuk korporat, kami sediakan invoice + FPX.</p>
+<div class="mt-6 p-6 rounded-2xl bg-gradient-to-r from-amber-500/5 to-transparent border border-amber-500/30 flex flex-wrap items-center justify-between gap-4">
+<div>
+<div class="text-sm text-amber-400 font-medium">Enterprise</div>
+<div class="text-2xl font-bold mt-1">Custom pricing</div>
+<p class="text-xs text-slate-400 mt-1">SLA + dedicated support + on-premise + custom integration</p>
+</div>
+<a href="mailto:sales@northerncoastgroup.com" class="px-5 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-semibold text-sm">Contact Sales</a>
+</div>
+<p class="text-center text-xs text-slate-500 mt-6">Bayar via Touch n Go eWallet. Batal bila-bila. Tiada lock-in.</p>
 </section>
 <section class="max-w-3xl mx-auto px-6 py-16">
 <h2 class="text-3xl font-bold text-center mb-10">Soalan Lazim</h2>
