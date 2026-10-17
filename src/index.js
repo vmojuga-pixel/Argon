@@ -60,6 +60,29 @@ async function auditLog(env, tenantId, action, resource = null, meta = null) {
   } catch {}
 }
 
+
+async function verifyStripeSignature(payload, sigHeader, secret) {
+  if (!sigHeader) return false;
+  const parts = sigHeader.split(',');
+  let timestamp = '';
+  let signature = '';
+  for (const part of parts) {
+    if (part.startsWith('t=')) timestamp = part.substring(2);
+    if (part.startsWith('v1=')) signature = part.substring(3);
+  }
+  if (!timestamp || !signature) return false;
+  const signedPayload = timestamp + '.' + payload;
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']
+  );
+  const hex = signature;
+  const sigBytes = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < hex.length; i += 2) sigBytes[i / 2] = parseInt(hex.substring(i, i + 2), 16);
+  return await crypto.subtle.verify('HMAC', key, sigBytes, enc.encode(signedPayload));
+}
+
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -477,6 +500,11 @@ export default {
 
         if (path === '/api/stripe/webhook' && request.method === 'POST') {
           const payload = await request.text();
+          const sigHeader = request.headers.get('stripe-signature');
+          
+          const isValid = await verifyStripeSignature(payload, sigHeader, env.STRIPE_WEBHOOK_SECRET);
+          if (!isValid) return new Response('Invalid signature', { status: 400 });
+
           let event;
           try { event = JSON.parse(payload); } catch(e) { return new Response('Invalid JSON', { status: 400 }); }
 
