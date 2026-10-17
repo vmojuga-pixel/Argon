@@ -369,7 +369,20 @@ export default {
     }
 
     // ===== TENANT SELF-SERVICE =====
-    if (path === '/api/me' && request.method === 'GET') {
+    if (path === '/api/projects' && request.method === 'GET') {
+          const sess = await validateSessionOrBasic(request, env);
+          if (!sess.ok) return Response.json({ ok:false, error:'login required' }, { status: 401, headers: CORS });
+          try {
+             const id = env.OMNI_OVERLORD.idFromName('GLOBAL_OMNI_OVERLORD_V3');
+             const obj = env.OMNI_OVERLORD.get(id);
+             const r = await obj.fetch('https://internal/omni/report', { method: 'GET' });
+             const data = await r.json();
+             return Response.json({ ok: true, projects: data.projects || [] }, { headers: CORS });
+          } catch(e) {
+             return Response.json({ ok: true, projects: [] }, { headers: CORS });
+          }
+        }
+        if (path === '/api/me' && request.method === 'GET') {
       const auth = await authenticate(request, env);
       if (!auth.ok || auth.mode !== 'tenant') return Response.json({ error: 'tenant key required' }, { status: 401, headers: CORS });
       return handleMe(request, env, auth);
