@@ -427,24 +427,13 @@ export default {
           let body = {};
           try { body = await request.json(); } catch {}
           const out = await handleChat(request, env, tenantId, body);
+          ctx.waitUntil(incrementUsage(env, tenantId, 'chat'));
+          ctx.waitUntil(auditLog(env, tenantId, 'chat.completed'));
+          ctx.waitUntil(dispatchEvent(env, tenantId, 'chat.completed', { ts: Date.now() }));
           return out;
         }
-        if (q.used / q.limit >= 0.8) {
-          ctx.waitUntil(dispatchEvent(env, auth.tenantId, 'quota.warning', { resource: 'chat', used: q.used, limit: q.limit }));
-        }
-        ctx.waitUntil(incrementUsage(env, auth.tenantId, 'chat'));
-      }
-
-      const res = await handleChat(request, env, ctx, auth);
-      if (auth.mode === 'tenant') {
-        ctx.waitUntil(auditLog(env, auth.tenantId, 'chat.completed'));
-        ctx.waitUntil(dispatchEvent(env, auth.tenantId, 'chat.completed', { ts: Date.now() }));
-      }
-      return res;
-    }
-
-    // ===== AGENT =====
-    if (path === '/api/agent' && request.method === 'POST') {
+        
+        if (path === '/api/agent' && request.method === 'POST') {
       const auth = await authenticate(request, env);
       if (!auth.ok) return Response.json({ error: auth.error }, { status: 401, headers: CORS });
 
