@@ -122,3 +122,17 @@ cat /root/Argon/BLUEPRINT.md && cat /root/Argon/docs/JOURNEY.md
 2. Test Swarm lokal Qwen 1.5B (2-3 hari)
 3. Pindah LLM ke Termux (bila VPS OOM)
 4. LoRA fine-tune corpus (2 minggu)
+
+## 12. FINAL ARCHITECTURE (Update 2026-10-17)
+- **Brand**: BorneoAI (Dolphin Theme, Cyan/Slate). Logo: `dolphin.png`.
+- **Auth**: Email/Password & Google OAuth. Landing page (`/`) awam (tiada Basic Auth). Dashboard (`/app`) kunci guna Session Cookie.
+- **Dashboard**: Satu interface untuk semua. Tab: Home, Baobao (Chat+Agent merged), Projects, API Keys, Usage, Billing, Ops, Swarm.
+- **Billing**: Stripe Integration. Checkout URL & Webhook (HMAC verified). Auto-update plan di DB.
+- **Baobao**: Guna `env.AI.run` (llama-4-scout). Prompt agentic (boleh jawab soalan & buat kerja). Bypass `handleChat` untuk elak isu `invalid json`.
+- **Ops**: AI cadang plan, UI approve, GitHub Actions auto-deploy.
+- **Swarm**: Berjalan di background (*/15). Tulis ke corpus GitHub.
+
+## 13. TECHNICAL DEBT & WARNINGS
+- Jangan guna `handleChat` function lama untuk Baobao, ia crash `invalid json` (double read).
+- Guna `String.fromCharCode(10)` untuk newline dalam template literal HTML.
+- Stripe Webhook endpoint: `/api/stripe/webhook`.
