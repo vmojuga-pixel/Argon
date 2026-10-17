@@ -334,3 +334,11 @@ Moat: DATA. Kompetitor boleh clone API, tapi tak boleh clone evolusi corpus.
 - **Landing**: Butang Baobao terapung ditukar kepada Widget FAQ.
 - **Ops**: Sistem auto-deploy GitHub Actions disahkan berfungsi.
 - **Fixes**: Isu `invalid json` pada API Chat diselesaikan dengan bypass fungsi `handleChat` dan panggil `env.AI.run` terus.
+
+---
+## 2026-10-17 (Malam) — Stripe Billing Integration Complete
+- **Stripe Checkout**: User boleh klik Upgrade Plan di dashboard, dan sistem akan auto-generate Stripe Checkout URL.
+- **Webhook Security**: Endpoint `/api/stripe/webhook` dilindungi dengan HMAC SHA-256 signature verification. Hanya Stripe yang sah boleh trigger plan upgrade.
+- **Database Auto-Update**: Bila payment berjaya, webhook akan auto-update `plan` customer di D1 database.
+- **UI Update**: Butang Upgrade di dashboard bertukar ke Stripe Checkout. Selepas berjaya, user dibawa ke `/app/billing?success=true` dengan mesej terima kasih.
+- **Secrets Configured**: `STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`.
