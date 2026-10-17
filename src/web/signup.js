@@ -33,12 +33,12 @@ export function renderSignup(err) {
 <p class="text-center text-sm text-slate-400 mt-6">Already have an account? <a href="/login" class="text-emerald-400 hover:text-emerald-300 font-medium">Log in</a></p>
 <p class="text-center text-xs text-slate-500 mt-4"><a href="/" class="hover:text-slate-400">Back to home</a></p></div>
 <script>
-function oauthSignIn(p){window.location.href="/oauth/"+p;}
+function oauthSignIn(p){alert("OAuth " + p + " belum dikonfigurasi. Sila daftar Client ID di Google/GitHub dan masukkan ke dalam sistem.");}
 document.getElementById("f").addEventListener("submit", async (ev) => {
 ev.preventDefault();
 const er=document.getElementById("er"); er.classList.add("hidden");
 const body={email:document.getElementById("e1").value,company:document.getElementById("co").value,password:document.getElementById("p").value};
-const r=await fetch("/api/signup",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+const r=await fetch("/signup",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
 const d=await r.json();
 if(d.ok&&d.apiKey){localStorage.setItem("argon_key",d.apiKey);window.location.href="/dashboard?welcome=1";}
 else{er.textContent=d.error||"Signup failed";er.classList.remove("hidden");}
