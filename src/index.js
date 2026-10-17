@@ -114,32 +114,25 @@ export default {
       });
     }
     if (path === '/api/build' && request.method === 'POST') {
-      const sess = await validateSessionOrBasic(request, env);
-      if (!sess.ok) return Response.json({ ok:false, error:'login required' }, { status: 401, headers: CORS });
-      let body = {};
-      try { body = await request.json(); } catch {}
-      const directive = String(body.directive || '').slice(0, 800).trim();
-      const slug = String(body.slug || ('app-' + Date.now().toString(36))).slice(0, 40);
-      if (!directive) return Response.json({ ok:false, error:'directive required' }, { headers: CORS });
-      const id = env.OMNI_OVERLORD.idFromName('GLOBAL_OMNI_OVERLORD_V3');
-      const obj = env.OMNI_OVERLORD.get(id);
-      const r = await obj.fetch('https://internal/omni/execute', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ targetRepo: 'vmojuga-pixel/Argon', directive: directive, slug: slug })
-      });
-      const data = await r.json();
-      return Response.json(data, { headers: CORS });
-    }
-    if (path === '/api/billing/upgrade' && request.method === 'POST') {
           const sess = await validateSessionOrBasic(request, env);
           if (!sess.ok) return Response.json({ ok:false, error:'login required' }, { status: 401, headers: CORS });
-          const email = sess.email || sess.user;
           let body = {};
           try { body = await request.json(); } catch {}
-          const plan = body.plan || 'free';
-          await env.DB.prepare('UPDATE tenants SET plan = ? WHERE email = ?').bind(plan, email).run();
-          return Response.json({ ok: true, plan: plan }, { headers: CORS });
+          const directive = String(body.directive || '').slice(0, 800).trim();
+          const slug = String(body.slug || ('app-' + Date.now().toString(36))).slice(0, 40);
+          if (!directive) return Response.json({ ok:false, error:'directive required' }, { headers: CORS });
+          
+          const id = env.OMNI_OVERLORD.idFromName('GLOBAL_OMNI_OVERLORD_V3');
+          const obj = env.OMNI_OVERLORD.get(id);
+          
+          // Trigger di background, jangan tunggu
+          ctx.waitUntil(obj.fetch('https://internal/omni/execute', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ targetRepo: 'vmojuga-pixel/Argon', directive: directive, slug: slug })
+          }).catch(e => console.error('[BUILD-ERR]', e)));
+          
+          return Response.json({ ok: true, message: 'Build started', slug: slug }, { headers: CORS });
         }
         if (path === '/api/ops/plan' && request.method === 'POST') {
       const sess = await validateSessionOrBasic(request, env);
@@ -347,6 +340,11 @@ export default {
       return new Response(renderSignup(err), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
     if (path === '/login') {
+      const sess = await validateSessionOrBasic(request, env);
+      if (sess.ok) {
+        const redirect = url.searchParams.get('redirect') || '/app';
+        return Response.redirect(url.origin + redirect, 302);
+      }
       const err = url.searchParams.get('error') || '';
       return new Response(renderLogin(err), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
