@@ -1,32 +1,27 @@
 const CSS = `
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
-*{font-family:'Space Grotesk',system-ui,sans-serif}
-body{background:#030509;color:#e2e8f0;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(16,185,129,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(16,185,129,.06) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse at 50% 40%,#000 20%,transparent 75%);pointer-events:none;z-index:0}
-.orb{position:fixed;border-radius:9999px;filter:blur(80px);pointer-events:none;z-index:0;opacity:.3}
-.orb1{top:10%;right:-5%;width:30vw;height:30vw;background:radial-gradient(circle,#06b6d4,transparent 70%);animation:fl 15s ease-in-out infinite}
-.orb2{bottom:5%;left:-5%;width:35vw;height:35vw;background:radial-gradient(circle,#8b5cf6,transparent 70%);animation:fl 18s ease-in-out infinite reverse}
-@keyframes fl{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,40px) scale(1.15)}}
-.glass{background:linear-gradient(135deg,rgba(15,23,42,.75),rgba(15,23,42,.4));backdrop-filter:blur(16px);border:1px solid rgba(148,163,184,.15);border-radius:1rem;position:relative;overflow:hidden}
-.glass::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(16,185,129,.5),transparent)}
-.gcard{transition:all .3s cubic-bezier(.4,0,.2,1)}
-.gcard:hover{transform:translateY(-4px);box-shadow:0 20px 40px -20px rgba(16,185,129,.4),0 0 60px -30px rgba(6,182,212,.3)}
-.glow{box-shadow:0 0 20px rgba(16,185,129,.4),0 0 40px rgba(16,185,129,.15)}
-.btn3d{background:linear-gradient(180deg,#10b981,#059669);box-shadow:0 4px 0 #047857,0 8px 20px -8px rgba(16,185,129,.6);transition:all .15s}
-.btn3d:hover{transform:translateY(2px);box-shadow:0 2px 0 #047857,0 4px 12px -6px rgba(16,185,129,.6)}
-.bub-user{background:linear-gradient(135deg,#10b981,#059669);box-shadow:0 8px 24px -12px rgba(16,185,129,.6)}
-.bub-ai{background:linear-gradient(135deg,rgba(30,41,59,.9),rgba(15,23,42,.7));backdrop-filter:blur(12px);border:1px solid rgba(148,163,184,.12);box-shadow:0 8px 24px -16px rgba(0,0,0,.8)}
-.sidebar{background:linear-gradient(180deg,rgba(3,7,18,.95),rgba(3,7,18,.85));backdrop-filter:blur(20px);border-right:1px solid rgba(148,163,184,.1)}
-.nav-item{position:relative;transition:all .2s}
-.nav-item.active{background:linear-gradient(135deg,rgba(16,185,129,.15),rgba(6,182,212,.08));color:#34d399}
-.nav-item.active::before{content:'';position:absolute;left:0;top:15%;bottom:15%;width:3px;background:linear-gradient(180deg,#10b981,#06b6d4);border-radius:0 4px 4px 0;box-shadow:0 0 12px rgba(16,185,129,.8)}
-.spinner{width:14px;height:14px;border:2px solid rgba(148,163,184,.3);border-top-color:#10b981;border-radius:50%;animation:sp .8s linear infinite;display:inline-block}
-@keyframes sp{to{transform:rotate(360deg)}}
-.fade-in{animation:fi .4s ease-out}
-@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.txt-grad{background:linear-gradient(135deg,#34d399,#22d3ee,#818cf8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:rgba(148,163,184,.2);border-radius:3px}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+*{font-family:'Inter',system-ui,sans-serif}
+body{background:#0f1115;color:#e2e8f0;margin:0}
+.card{background:#181b21;border:1px solid #2a2e37;border-radius:8px;padding:24px;}
+.btn{background:#10b981;color:#022c22;padding:8px 16px;border-radius:6px;font-weight:500;font-size:14px;border:none;cursor:pointer;transition:0.2s;}
+.btn:hover{background:#059669;}
+.btn-secondary{background:#2a2e37;color:#e2e8f0;}
+.btn-secondary:hover{background:#374151;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:6px;color:#9ca3af;text-decoration:none;font-size:14px;font-weight:500;transition:all 0.2s;}
+.nav-item:hover{background:#1f232b;color:#e2e8f0;}
+.nav-item.active{background:#1f232b;color:#e2e8f0;}
+.nav-item.active svg{color:#10b981;}
+.bub-user{background:#10b981;color:#022c22;padding:12px 16px;border-radius:8px;max-width:80%;align-self:flex-end;font-size:14px;}
+.bub-ai{background:#181b21;border:1px solid #2a2e37;padding:12px 16px;border-radius:8px;max-width:85%;font-size:14px;line-height:1.5;}
+.glass{background:#181b21;border:1px solid #2a2e37;border-radius:8px;}
+.btn3d{background:#10b981;color:#022c22;padding:8px 16px;border-radius:6px;font-weight:500;font-size:14px;border:none;cursor:pointer;}
+.btn3d:hover{background:#059669;}
+textarea{background:#0f1115;border:1px solid #2a2e37;color:#e2e8f0;border-radius:6px;padding:12px;font-size:14px;width:100%;box-sizing:border-box;}
+textarea:focus{outline:none;border-color:#10b981;}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-thumb{background:#2a2e37;border-radius:3px}
+.txt-grad{color:#e2e8f0;}
 </style>`;
 
 export function renderApp(env, sess, view) {
@@ -34,52 +29,69 @@ export function renderApp(env, sess, view) {
   const app = (env && env.APP_NAME) || "BorneoAI";
   const user = (sess && (sess.email || sess.user)) || "user";
   const initial = String(user).charAt(0).toUpperCase();
-  const nav = [["home","Home","/app"],["chat","Chat","/app/chat"],["build","Build","/app/build"],["projects","Projects","/app/projects"],["keys","API Keys","/app/keys"],["usage","Usage","/app/usage"],["billing","Billing","/app/billing"],["ops","Ops","/app/ops"],["baobao","Baobao","/app/baobao"]];
-  const icons = {
-    home: "M3 12l9-9 9 9M5 10v10h14V10",
-    chat: "M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z",
-    build: "M13 2L3 14h9l-1 8 10-12h-9l1-8z",
-    projects: "M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z",
-    keys: "M21 2l-9.6 9.6M15.5 7.5l3 3L22 7l-3-3",
-    usage: "M18 20V10M12 20V4M6 20v-6",
-    billing: "M2 6h20v12H2zM2 10h20",ops: "M12 2v20M2 12h20",baobao: "M12 2a10 10 0 100 20 10 10 0 000-20zM8 12h8"
-  };
-  const ic = (n) => '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="' + (icons[n]||"") + '"/></svg>';
+  const username = user.split('@')[0];
+
+  const nav = [
+    ["home","Home","/app","M3 12l9-9 9 9M5 10v10h14V10"],
+    ["chat","Chat","/app/chat","M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"],
+    ["build","Build","/app/build","M13 2L3 14h9l-1 8 10-12h-9l1-8z"],
+    ["projects","Projects","/app/projects","M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"],
+    ["keys","API Keys","/app/keys","M21 2l-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"],
+    ["usage","Usage","/app/usage","M18 20V10M12 20V4M6 20v-6"],
+    ["billing","Billing","/app/billing","M2 6h20v12H2zM2 10h20"],
+    ["ops","Ops","/app/ops","M12 2v20M2 12h20"],
+    ["baobao","Baobao","/app/baobao","M12 2a10 10 0 100 20 10 10 0 000-20zM8 12h8"]
+  ];
+
   const sidebar = nav.map(function(a){
-    var id=a[0], label=a[1], href=a[2];
-    var cls = view===id ? "nav-item active" : "nav-item text-slate-400 hover:text-white hover:bg-slate-800/40";
-    return '<a href="'+href+'" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm '+cls+'">'+ic(id)+'<span>'+label+'</span></a>';
+    var id=a[0], label=a[1], href=a[2], icon=a[3];
+    var cls = view===id ? "nav-item active" : "nav-item";
+    return `<a href="${href}" class="${cls}"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="${icon}"/></svg><span>${label}</span></a>`;
   }).join("");
+
   var content = view==="chat"?vChat():view==="build"?vBuild():view==="projects"?vProjects():view==="keys"?vKeys():view==="usage"?vUsage():view==="billing"?vBilling():view==="ops"?vOps():view==="baobao"?vBaobao():vHome();
+
   return `<!DOCTYPE html><html lang="en"><head>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<meta name="theme-color" content="#030509"/>
-<title>${app} — Console</title>
-<script src="https://cdn.tailwindcss.com"></script>${CSS}</head>
-<body><div class="orb orb1"></div><div class="orb orb2"></div>
-<div class="flex min-h-screen relative z-10">
-<aside id="sb" class="sidebar hidden md:flex md:flex-col w-60 fixed md:sticky md:top-0 h-screen inset-y-0 z-40">
-<div class="h-16 flex items-center px-4 border-b border-slate-800/50 gap-2">
-
-<span class="font-bold text-lg">${app}</span></div>
-<nav class="flex-1 p-3 space-y-1 overflow-y-auto">${sidebar}</nav>
-<div class="p-3 border-t border-slate-800/50"><div class="flex items-center gap-2 px-2 py-2">
-<div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center text-xs font-bold text-slate-950 glow">${initial}</div>
-<div class="flex-1 min-w-0"><div class="text-xs truncate text-slate-300">${user}</div></div>
-<button onclick="logout()" class="text-slate-500 hover:text-rose-400 text-xs">Keluar</button>
-</div></div></aside>
-<div class="flex-1 flex flex-col min-w-0">
-<header class="h-16 border-b border-slate-800/50 bg-slate-950/60 backdrop-blur-xl sticky top-0 z-30 flex items-center px-4 gap-3">
-<button onclick="document.getElementById('sb').classList.toggle('hidden')" class="md:hidden text-slate-400 text-xl">&#9776;</button>
-<h1 class="font-semibold text-sm flex-1 capitalize txt-grad">${view}</h1>
-<a href="/docs" class="text-xs text-slate-400 hover:text-emerald-400">Docs</a></header>
-<main class="flex-1">${content}</main>
-</div></div>
-<script>function logout(){fetch('/api/auth/logout',{method:'POST',credentials:'include'}).then(function(){window.location.href='/';});}</script>
-</body></html>`;
-}
-
-function vHome(){return `<div class="p-6 md:p-8 max-w-6xl mx-auto fade-in">
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>${app} — Console</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  ${CSS}
+  </head>
+  <body class="antialiased">
+  <div class="flex h-screen overflow-hidden">
+    <aside id="sb" class="w-64 border-r border-[#2a2e37] bg-[#0f1115] flex flex-col h-full hidden md:flex fixed md:static inset-y-0 z-40">
+      <div class="h-16 flex items-center px-6 border-b border-[#2a2e37]">
+        <span class="font-bold text-lg text-white tracking-tight">${app}</span>
+      </div>
+      <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+        ${sidebar}
+      </nav>
+      <div class="p-4 border-t border-[#2a2e37]">
+        <div class="flex items-center gap-3 mb-4 px-2">
+          <div class="w-8 h-8 rounded-full bg-[#2a2e37] flex items-center justify-center text-sm font-medium text-white">${initial}</div>
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-medium text-white truncate">${username}</div>
+            <div class="text-xs text-gray-500 truncate">${user}</div>
+          </div>
+        </div>
+        <button onclick="logout()" class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-[#1f232b] hover:bg-[#2a2e37] border border-[#2a2e37] rounded-md text-sm font-medium text-gray-300 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+          Log out
+        </button>
+      </div>
+    </aside>
+    <div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
+      <header class="h-16 border-b border-[#2a2e37] bg-[#0f1115] flex items-center px-4 gap-3 shrink-0">
+        <button onclick="document.getElementById('sb').classList.toggle('hidden')" class="md:hidden text-gray-400 hover:text-white">☰</button>
+        <h1 class="font-semibold text-sm capitalize text-white flex-1">${view}</h1>
+        <a href="/docs" class="text-xs text-gray-400 hover:text-white transition">Docs</a>
+      </header>
+      <main class="flex-1 overflow-y-auto">${content}</main>
+    </div>
+  </div>
+  <script>function logout(){fetch('/api/auth/logout',{method:'POST',credentials:'include'}).then(function(){window.location.href='/';});}</script>
+  </body></html>`;
+}\n\nfunction vHome(){return `<div class="p-6 md:p-8 max-w-6xl mx-auto fade-in">
 <div class="mb-10"><div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/5 text-xs text-emerald-400 mb-4">Console Live</div>
 <h2 class="text-4xl md:text-5xl font-bold mb-3 leading-tight">Selamat datang.<br><span class="txt-grad">Tanya Baobao apa saja.</span></h2>
 <p class="text-slate-400">Pilih satu untuk mula. Semua auto.</p></div>
@@ -114,7 +126,7 @@ function vChat(){return `<div class="h-[calc(100vh-4rem)] flex flex-col">
 <button class="btn3d px-6 py-3 rounded-xl text-slate-950 font-semibold text-sm">Hantar</button>
 </form></div></div>
 <script>
-var cf=document.getElementById("cf"),ms=document.getElementById("msgs"),ci=document.getElementById("ci");
+var cf=document.getElementById("cf"),m=document.getElementById("msgs"),ci=document.getElementById("ci");
 function add(r,t){var w=document.createElement("div");w.className="max-w-3xl mx-auto fade-in";var s=String(t).replace(/</g,"&lt;").replace(/\n/g,"<br>");
 if(r==="user"){w.innerHTML='<div class="flex justify-end"><div class="bub-user max-w-[85%] px-4 py-2.5 rounded-2xl text-sm text-slate-950 font-medium">'+s+'</div></div>';}
 else{w.innerHTML='<div class="flex gap-3"><div class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-500 to-cyan-500 flex-shrink-0 flex items-center justify-center text-slate-950 text-xs font-bold glow">B</div><div class="bub-ai max-w-[85%] px-4 py-3 rounded-2xl text-sm leading-relaxed">'+s+'</div></div>';}
