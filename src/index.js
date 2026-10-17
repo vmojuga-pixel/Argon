@@ -27,7 +27,7 @@ import { handleAdminStats, handleAdminTenants, handleAdminUsage } from './admin/
 import { analyzePayload as reconAnalyze, renderReconUI } from './tools/recon.js';
 import { handleAdminRotateKey } from './admin/recover.js';
 import { renderStatus } from './web/status.js';
-import { renderLegal, TERMS_HTML, PRIVACY_HTML, AUP_HTML, COOKIE_HTML } from './web/legal.js';
+import { renderLegal } from './web/legal.js';
 import { generateSDKForSector, listSectors } from './tools/sdk-gen.js';
 
 export { SwarmBrain, OverlordSeniorDev, OmniOverlordEngine };
