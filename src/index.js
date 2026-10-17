@@ -410,7 +410,7 @@ export default {
     // ===== CHAT =====
     if (path === '/api/chat' && request.method === 'POST') {
           let tenantId = null;
-          const auth = await authenticate(request, env);
+          let auth = await authenticate(request, env);
           if (auth.ok) {
             tenantId = auth.tenantId;
           } else {
@@ -422,14 +422,12 @@ export default {
             }
           }
           if (!tenantId) return Response.json({ error: 'auth required' }, { status: 401, headers: CORS });
-      let rl;
-      if (auth.mode === 'tenant') {
-        rl = await checkRateLimit(env, auth.tenantId, auth.plan);
-        if (!rl.ok) return Response.json({ error: 'rate limit exceeded', ...rl }, { status: 429, headers: { ...CORS, ...rateHeaders(rl) } });
-        const q = await checkQuota(env, auth.tenantId, 'chat');
-        if (!q.ok) {
-          ctx.waitUntil(dispatchEvent(env, auth.tenantId, 'quota.exceeded', { resource: 'chat', quota: q }));
-          return Response.json({ error: q.error, quota: q }, { status: 429, headers: CORS });
+          const quota = await checkQuota(env, tenantId, 'chat');
+          if (!quota.ok) return Response.json({ error: quota.error }, { status: 429, headers: CORS });
+          let body = {};
+          try { body = await request.json(); } catch {}
+          const out = await handleChat(request, env, tenantId, body);
+          return out;
         }
         if (q.used / q.limit >= 0.8) {
           ctx.waitUntil(dispatchEvent(env, auth.tenantId, 'quota.warning', { resource: 'chat', used: q.used, limit: q.limit }));
