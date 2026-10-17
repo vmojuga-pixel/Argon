@@ -199,6 +199,64 @@ document.getElementById('chat-form').addEventListener('submit', async (e) => {
     container.appendChild(errDiv);
   }
 });
+</script></div>`;};
+
+document.getElementById('chat-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if(!msg) return;
+  input.value = '';
+  
+  const welcome = document.getElementById('welcome');
+  if(welcome) welcome.remove();
+  
+  const container = document.getElementById('msgs');
+  
+  const userDiv = document.createElement('div');
+  userDiv.className = 'max-w-3xl mx-auto flex justify-end fade-in mb-4';
+  userDiv.innerHTML = '<div class="bub-user">' + msg.replace(/</g,'&lt;') + '</div>';
+  container.appendChild(userDiv);
+  container.scrollTop = container.scrollHeight;
+  
+  const loadDiv = document.createElement('div');
+  loadDiv.id = 'loading-msg';
+  loadDiv.className = 'max-w-3xl mx-auto flex justify-start fade-in mb-4';
+  loadDiv.innerHTML = '<div class="bub-ai text-gray-400 flex items-center gap-2"><svg class="animate-spin h-4 w-4 text-emerald-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Baobao sedang berfikir...</div>';
+  container.appendChild(loadDiv);
+  container.scrollTop = container.scrollHeight;
+  
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg })
+    });
+    const data = await res.json();
+    document.getElementById('loading-msg').remove();
+    
+    const aiDiv = document.createElement('div');
+    aiDiv.className = 'max-w-3xl mx-auto flex justify-start fade-in mb-4';
+    let replyText = '';
+    if(data.ok && data.reply) {
+       replyText = data.reply;
+    } else if (data.error === 'quota exceeded') {
+       replyText = 'Kuota chat anda telah habis. Sila upgrade pelan anda.';
+    } else {
+       replyText = 'Ralat Sistem: ' + (data.error || 'Tiada respon dari AI.');
+    }
+    aiDiv.innerHTML = '<div class="bub-ai">' + replyText.replace(/</g,'&lt;').replace(/
+/g, '<br>') + '</div>';
+    container.appendChild(aiDiv);
+    container.scrollTop = container.scrollHeight;
+  } catch (err) {
+    document.getElementById('loading-msg').remove();
+    const errDiv = document.createElement('div');
+    errDiv.className = 'max-w-3xl mx-auto flex justify-start fade-in mb-4';
+    errDiv.innerHTML = '<div class="bub-ai text-red-400">Error: ' + err.message + '</div>';
+    container.appendChild(errDiv);
+  }
+});
 </script></div>`;});
 </script></div>`;}
 
