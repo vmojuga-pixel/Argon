@@ -136,3 +136,7 @@ cat /root/Argon/BLUEPRINT.md && cat /root/Argon/docs/JOURNEY.md
 - Jangan guna `handleChat` function lama untuk Baobao, ia crash `invalid json` (double read).
 - Guna `String.fromCharCode(10)` untuk newline dalam template literal HTML.
 - Stripe Webhook endpoint: `/api/stripe/webhook`.
+
+
+## 14. IMPORTANT REFERENCE
+- Before coding or fixing bugs, read `corpus/sectors/production-infra/ultimate-gold-mine.md`. It contains ALL lessons learned from the ground up (Terminal rules, Cloudflare 1101 traps, Stripe setup, UI design, Auth, etc).
