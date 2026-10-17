@@ -131,7 +131,7 @@ export default {
         await handleSignup(mockReq, env);
       }
       await env.KV.put('gh_token:' + email, tokenData.access_token);
-      const token = await createSession(env, email);
+      const token = await createSession(env, email, user.name, 'google');
       return new Response(null, {
         status: 302,
         headers: { 'Location': '/app', 'Set-Cookie': sessionCookieHeader(token) }
@@ -379,7 +379,7 @@ export default {
       const pass = (body.pass || '');
       const ok = await verifyLogin(env, user, pass);
       if (!ok) return Response.json({ ok: false, error: 'Invalid credentials' }, { status: 401, headers: CORS });
-      const token = await createSession(env, user);
+      const token = await createSession(env, user, user.split('@')[0], 'email');
       return new Response(JSON.stringify({ ok: true, redirect: body.redirect || '/app' }), {
         status: 200,
         headers: { ...CORS, 'Content-Type': 'application/json', 'Set-Cookie': sessionCookieHeader(token) }

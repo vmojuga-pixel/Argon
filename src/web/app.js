@@ -75,7 +75,7 @@ body {
           <div class="w-8 h-8 rounded-full bg-[#334155] flex items-center justify-center text-sm font-medium text-white">${initial}</div>
           <div class="flex-1 min-w-0">
             <div class="text-sm font-medium text-white truncate">${username}</div>
-            <div class="text-xs text-gray-500 truncate">${user}</div>
+            <div class="text-xs text-gray-500 truncate">${user} &middot; ${provider}</div>
           </div>
         </div>
         <button onclick="logout()" class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-[#1e293b] hover:bg-[#334155] border border-[#334155] rounded-md text-sm font-medium text-gray-300 transition-colors">
@@ -250,16 +250,7 @@ function vBuild(){return `<div class="p-8 max-w-3xl mx-auto"><h2 class="text-2xl
 function vProjects(){return `<div class="p-8 max-w-4xl mx-auto"><h2 class="text-2xl font-semibold mb-6">Projects</h2><div class="card text-center py-12"><div class="text-gray-500 text-sm">Belum ada project. <a href="/app/build" class="text-cyan-500">Bina sekarang</a></div></div></div>`;}
 function vKeys(){return `<div class="p-8 max-w-3xl mx-auto"><h2 class="text-2xl font-semibold mb-6">API Keys</h2><div class="card"><div class="text-xs uppercase tracking-wider text-gray-500 mb-3">Your API Key</div><div class="flex"><code id="k" class="flex-1 bg-[#0f172a] border border-[#334155] rounded-md px-4 py-2.5 text-xs font-mono truncate text-cyan-400">Loading...</code><button onclick="navigator.clipboard.writeText(document.getElementById('k').textContent);this.textContent='Copied!'" class="ml-2 px-4 py-2.5 bg-[#334155] hover:bg-[#475569] rounded-md text-sm">Copy</button></div></div></div><script>fetch("/api/me",{credentials:"include"}).then(function(r){return r.json();}).then(function(d){document.getElementById("k").textContent=d.apiKey||d.key||"Not available";}).catch(function(){});</script>`;}
 function vUsage(){return `<div class="p-8 max-w-3xl mx-auto"><h2 class="text-2xl font-semibold mb-6">Usage</h2><div class="card text-center text-gray-500 text-sm py-12">Statistik akan muncul bila anda mula guna.</div></div>`;}
-function vBilling(){return `<div class="p-8 max-w-3xl mx-auto fade-in">
-<h2 class="text-2xl font-semibold mb-6 text-white">Billing</h2>
-<div class="card mb-6">
-  <div class="text-xs uppercase tracking-wider text-gray-500 mb-2">Current Plan</div>
-  <div class="flex items-end justify-between">
-    <div class="text-3xl font-semibold text-white">Free Tier</div>
-    <a href="/#pricing" class="btn">Upgrade Plan</a>
-  </div>
-</div>
-</div>`;function vIntegrations(){return `<div class="p-8 max-w-4xl mx-auto fade-in">
+function vIntegrations(){return `<div class="p-8 max-w-4xl mx-auto fade-in">
 <h2 class="text-2xl font-semibold mb-6 text-white">Integrations</h2>
 <div class="card mb-6">
   <div class="flex items-center justify-between mb-4">
@@ -285,4 +276,69 @@ fetch('/api/github/repos', {credentials:'include'}).then(r=>r.json()).then(d=>{
 }).catch(e => { document.getElementById('repos-list').innerHTML = '<div class="text-rose-400">Ralat: '+e.message+'</div>'; });
 </script>
 </div>`;}
+function vBilling(){return `<div class="p-8 max-w-4xl mx-auto fade-in">
+<h2 class="text-2xl font-semibold mb-6 text-white">Billing & Plans</h2>
+<div class="card mb-6 border-cyan-500/30">
+  <div class="text-xs uppercase tracking-wider text-gray-500 mb-2">Current Plan</div>
+  <div class="text-3xl font-semibold text-white mb-2" id="current-plan">Free Tier</div>
+  <p class="text-sm text-gray-400">Upgrade untuk had yang lebih tinggi.</p>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="card border border-[#334155] text-center">
+      <div class="text-sm text-gray-400 mb-2">Starter</div><div class="text-2xl font-bold text-cyan-400 mb-4">RM 49<span class="text-sm text-gray-500 font-normal">/bln</span></div>
+      <button onclick="checkoutStripe(this, 'starter')" class="btn w-full">Pilih Starter</button>
+    </div>
+    <div class="card border-2 border-cyan-500 text-center relative">
+      <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-cyan-500 text-[#0f172a] text-xs px-3 py-1 rounded-full font-bold">Popular</div>
+      <div class="text-sm text-gray-400 mb-2 mt-2">Pro</div><div class="text-2xl font-bold text-cyan-400 mb-4">RM 199<span class="text-sm text-gray-500 font-normal">/bln</span></div>
+      <button onclick="checkoutStripe(this, 'pro')" class="btn w-full">Pilih Pro</button>
+    </div>
+    <div class="card border border-[#334155] text-center">
+      <div class="text-sm text-gray-400 mb-2">Business</div><div class="text-2xl font-bold text-cyan-400 mb-4">RM 799<span class="text-sm text-gray-500 font-normal">/bln</span></div>
+      <button onclick="checkoutStripe(this, 'business')" class="btn w-full">Pilih Business</button>
+    </div>
+</div>
+<div id="billing-msg" class="mt-4 text-sm hidden"></div>
+<script>
+async function checkoutStripe(btn, plan){
+  btn.disabled = true; btn.textContent = 'Memproses...';
+  var msg = document.getElementById('billing-msg'); msg.classList.add('hidden');
+  try {
+    var res = await fetch('/api/stripe/checkout?plan=' + plan, { method: 'POST', credentials: 'include' });
+    var data = await res.json();
+    if(data.ok && data.url) { window.location.href = data.url; }
+    else { msg.textContent = 'Ralat: ' + (data.error || 'Unknown'); msg.className = 'mt-4 text-sm text-rose-400'; btn.disabled = false; btn.textContent = 'Pilih'; }
+  } catch(e) { msg.textContent = 'Ralat: ' + e.message; msg.className = 'mt-4 text-sm text-rose-400'; btn.disabled = false; btn.textContent = 'Pilih'; }
+}
+</script>
+</div>`;}
+
+function vIntegrations(){return `<div class="p-8 max-w-4xl mx-auto fade-in">
+<h2 class="text-2xl font-semibold mb-6 text-white">Integrations</h2>
+<div class="card mb-6">
+  <div class="flex items-center justify-between mb-4">
+    <div><h3 class="text-lg font-medium text-white">GitHub Repositories</h3><p class="text-sm text-gray-400">Sambungkan akaun GitHub untuk auto-deploy.</p></div>
+    <a href="/api/auth/oauth/github" class="btn">Connect GitHub</a>
+  </div>
+  <div id="repos-list" class="text-sm text-gray-500">Memuatkan senarai repo...</div>
+</div>
+<script>
+fetch('/api/github/repos', {credentials:'include'}).then(r=>r.json()).then(d=>{
+  var el = document.getElementById('repos-list');
+  if(!d.ok) { el.innerHTML = '<div class="text-rose-400">' + (d.error || 'Gagal tarik repo') + '</div>'; return; }
+  if(d.repos.length === 0) { el.innerHTML = 'Tiada repo dijumpai.'; return; }
+  var h = '<div class="space-y-2">';
+  d.repos.forEach(function(r){
+    h += '<div class="flex items-center justify-between p-3 bg-[#0f172a] border border-[#334155] rounded-md">';
+    h += '<div><div class="text-white font-medium">' + r.full_name + '</div><div class="text-xs text-gray-500">' + (r.private ? 'Private' : 'Public') + '</div></div>';
+    h += '<button onclick="alert(\'Fungsi link repo akan datang!\')" class="text-xs px-3 py-1 bg-[#334155] rounded hover:bg-[#475569]">Link</button>';
+    h += '</div>';
+  });
+  h += '</div>';
+  el.innerHTML = h;
+}).catch(e => { document.getElementById('repos-list').innerHTML = '<div class="text-rose-400">Ralat: '+e.message+'</div>'; });
+</script>
+</div>`;}
+
 }
