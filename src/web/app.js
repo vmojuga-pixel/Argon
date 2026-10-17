@@ -241,3 +241,4 @@ document.getElementById("bbf").addEventListener("submit", async function(e){
 </script>`;}
 }
 function vBilling(){return `<div class="p-6 md:p-8 max-w-3xl mx-auto fade-in"><h2 class="text-3xl font-bold mb-6 txt-grad">Billing</h2><div class="glass p-8"><div class="text-xs uppercase tracking-wider text-slate-500 mb-2">Current Plan</div><div class="text-4xl font-bold mb-6 txt-grad">Free</div><a href="/#pricing" class="btn3d inline-block px-5 py-2.5 rounded-xl text-slate-950 font-semibold text-sm">Upgrade plan &rarr;</a></div></div>`;
+}
