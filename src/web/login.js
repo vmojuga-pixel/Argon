@@ -21,14 +21,14 @@ export function renderLogin(err) {
 <div class="flex items-center gap-3 my-5"><div class="flex-1 h-px bg-slate-800"></div><span class="text-xs text-slate-500">or</span><div class="flex-1 h-px bg-slate-800"></div></div>
 <form id="f" class="space-y-3">
 <div><label class="block text-xs font-medium text-slate-300 mb-1.5">Email or username</label>
-<input id="u" type="text" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-emerald-500" placeholder="you@example.com" autocomplete="username" /></div>
+<input id="u" type="text" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-cyan-500" placeholder="you@example.com" autocomplete="username" /></div>
 <div><div class="flex items-center justify-between mb-1.5"><label class="block text-xs font-medium text-slate-300">Password</label>
-<a href="/forgot" class="text-xs text-emerald-400 hover:text-emerald-300">Forgot?</a></div>
-<input id="p" type="password" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-emerald-500" placeholder="********" autocomplete="current-password" /></div>
-<button type="submit" class="w-full px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-sm mt-2">Log in</button>
+<a href="/forgot" class="text-xs text-cyan-400 hover:text-emerald-300">Forgot?</a></div>
+<input id="p" type="password" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-cyan-500" placeholder="********" autocomplete="current-password" /></div>
+<button type="submit" class="w-full px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-sm mt-2">Log in</button>
 <div id="e" class="text-sm text-rose-400 text-center hidden"></div>
 </form></div>
-<p class="text-center text-sm text-slate-400 mt-6">Don&#39;t have an account? <a href="/signup" class="text-emerald-400 hover:text-emerald-300 font-medium">Sign up</a></p>
+<p class="text-center text-sm text-slate-400 mt-6">Don&#39;t have an account? <a href="/signup" class="text-cyan-400 hover:text-emerald-300 font-medium">Sign up</a></p>
 <p class="text-center text-xs text-slate-500 mt-4"><a href="/" class="hover:text-slate-400">Back to home</a></p></div>
 <script>
 function oauthSignIn(p){if(p==="google"){window.location.href="/api/auth/oauth/google";}else{alert("OAuth " + p + " belum dikonfigurasi. Sila daftar Client ID di Google/GitHub dan masukkan ke dalam sistem.");}}

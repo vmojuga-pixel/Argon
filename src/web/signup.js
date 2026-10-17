@@ -21,16 +21,16 @@ export function renderSignup(err) {
 <div class="flex items-center gap-3 my-5"><div class="flex-1 h-px bg-slate-800"></div><span class="text-xs text-slate-500">or</span><div class="flex-1 h-px bg-slate-800"></div></div>
 <form id="f" class="space-y-3">
 <div><label class="block text-xs font-medium text-slate-300 mb-1.5">Work email</label>
-<input id="e1" type="email" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-emerald-500" placeholder="you@company.com" autocomplete="email" /></div>
+<input id="e1" type="email" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-cyan-500" placeholder="you@company.com" autocomplete="email" /></div>
 <div><label class="block text-xs font-medium text-slate-300 mb-1.5">Company (optional)</label>
-<input id="co" type="text" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-emerald-500" placeholder="Borneo Sdn Bhd" /></div>
+<input id="co" type="text" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-cyan-500" placeholder="Borneo Sdn Bhd" /></div>
 <div><label class="block text-xs font-medium text-slate-300 mb-1.5">Password</label>
-<input id="p" type="password" required minlength="8" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-emerald-500" placeholder="Min 8 chars" autocomplete="new-password" /></div>
-<label class="flex items-start gap-2 text-xs text-slate-400 pt-1"><input id="t" type="checkbox" required class="mt-0.5 accent-emerald-500" /><span>I agree to the <a href="/legal/terms" class="text-emerald-400 hover:text-emerald-300">Terms</a> and <a href="/legal/privacy" class="text-emerald-400 hover:text-emerald-300">Privacy Policy</a></span></label>
-<button type="submit" class="w-full px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-sm mt-2">Create account</button>
+<input id="p" type="password" required minlength="8" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-cyan-500" placeholder="Min 8 chars" autocomplete="new-password" /></div>
+<label class="flex items-start gap-2 text-xs text-slate-400 pt-1"><input id="t" type="checkbox" required class="mt-0.5 accent-cyan-500" /><span>I agree to the <a href="/legal/terms" class="text-cyan-400 hover:text-emerald-300">Terms</a> and <a href="/legal/privacy" class="text-cyan-400 hover:text-emerald-300">Privacy Policy</a></span></label>
+<button type="submit" class="w-full px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-sm mt-2">Create account</button>
 <div id="er" class="text-sm text-rose-400 text-center hidden"></div>
 </form></div>
-<p class="text-center text-sm text-slate-400 mt-6">Already have an account? <a href="/login" class="text-emerald-400 hover:text-emerald-300 font-medium">Log in</a></p>
+<p class="text-center text-sm text-slate-400 mt-6">Already have an account? <a href="/login" class="text-cyan-400 hover:text-emerald-300 font-medium">Log in</a></p>
 <p class="text-center text-xs text-slate-500 mt-4"><a href="/" class="hover:text-slate-400">Back to home</a></p></div>
 <script>
 function oauthSignIn(p){if(p==="google"){window.location.href="/api/auth/oauth/google";}else{alert("OAuth " + p + " belum dikonfigurasi. Sila daftar Client ID di Google/GitHub dan masukkan ke dalam sistem.");}}
