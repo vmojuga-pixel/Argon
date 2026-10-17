@@ -94,47 +94,77 @@ function vHome(){return `<div class="p-8 max-w-4xl mx-auto">
 <div class="card"><h3 class="font-medium text-gray-200 mb-2">Tanya Baobao</h3><p class="text-sm text-gray-400 mb-4">Bina sistem, tanya kod, atau automasi kerja anda.</p><a href="/app/chat" class="btn inline-block">Mula Chat</a></div>
 <div class="card"><h3 class="font-medium text-gray-200 mb-2">API Key</h3><p class="text-sm text-gray-400 mb-4">Dapatkan kunci akses untuk integrasi sistem luar.</p><a href="/app/keys" class="btn inline-block">Lihat API Key</a></div>
 </div>
-<div class="card"><h3 class="font-medium text-gray-200 mb-4">System Status</h3><div class="flex items-center gap-2 text-sm text-gray-400"><div class="w-2 h-2 rounded-full bg-emerald-500"></div> Swarm Aktif &middot; Edge Live</div></div>
+
 </div>`;}
 
-function vChat(){return `<div class="h-[calc(100vh-4rem)] flex flex-col bg-[#09090b]">
-<div id="msgs" class="flex-1 overflow-y-auto p-4 md:p-6 w-full max-w-3xl mx-auto space-y-6">
-<div class="text-center mt-12 fade-in">
-<div class="w-16 h-16 rounded-2xl bg-[#18181b] border border-[#27272a] flex items-center justify-center mx-auto mb-4 shadow-sm">
-<svg class="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+function vChat(){return `<div class="h-full flex flex-col bg-[#09090b]">
+<div id="msgs" class="flex-1 overflow-y-auto p-4 md:p-8 w-full">
+<div id="welcome" class="max-w-3xl mx-auto mt-8 mb-8 text-center fade-in">
+  <div class="w-16 h-16 rounded-2xl bg-[#18181b] border border-[#27272a] flex items-center justify-center mx-auto mb-6 shadow-sm">
+    <svg class="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+  </div>
+  <h1 class="text-2xl md:text-3xl font-semibold text-white mb-2">Tanya Baobao</h1>
+  <p class="text-gray-400 mb-8">Apa yang kita nak buat hari ini?</p>
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-left">
+    <button onclick="fillChat('Bina sistem tempahan untuk salon')" class="p-4 rounded-xl border border-[#27272a] bg-[#18181b] hover:bg-[#27272a] transition-colors group">
+      <div class="font-medium text-white mb-1 flex items-center gap-2"><svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> Bina Sistem</div>
+      <div class="text-xs text-gray-400 group-hover:text-gray-300">Sistem tempahan, e-commerce, atau CRM ringkas.</div>
+    </button>
+    <button onclick="fillChat('Tulis kod HTML dan Tailwind untuk landing page company profile')" class="p-4 rounded-xl border border-[#27272a] bg-[#18181b] hover:bg-[#27272a] transition-colors group">
+      <div class="font-medium text-white mb-1 flex items-center gap-2"><svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg> Tulis Kod</div>
+      <div class="text-xs text-gray-400 group-hover:text-gray-300">HTML, CSS, JavaScript, atau Python.</div>
+    </button>
+    <button onclick="fillChat('Buat automation untuk hantar email mingguan')" class="p-4 rounded-xl border border-[#27272a] bg-[#18181b] hover:bg-[#27272a] transition-colors group">
+      <div class="font-medium text-white mb-1 flex items-center gap-2"><svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> Automasi</div>
+      <div class="text-xs text-gray-400 group-hover:text-gray-300">Kerja berulang, cron job, atau webhook.</div>
+    </button>
+    <button onclick="fillChat('Jelaskan macam mana nak guna API key Argon')" class="p-4 rounded-xl border border-[#27272a] bg-[#18181b] hover:bg-[#27272a] transition-colors group">
+      <div class="font-medium text-white mb-1 flex items-center gap-2"><svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Tanya Soalan</div>
+      <div class="text-xs text-gray-400 group-hover:text-gray-300">Pasal API, dokumentasi, atau cara guna.</div>
+    </button>
+  </div>
 </div>
-<h3 class="font-medium text-lg text-white mb-2">Tanya Baobao</h3>
-<p class="text-sm text-gray-400">Bina sistem, tanya kod, atau automasi kerja anda.</p>
 </div>
-</div>
-<div class="p-4 bg-[#09090b]">
-<form id="chat-form" class="w-full max-w-3xl mx-auto relative">
-<input id="chat-input" type="text" placeholder="Taip arahan anda di sini..." autocomplete="off" class="w-full bg-[#18181b] border border-[#27272a] rounded-xl pl-4 pr-12 py-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors placeholder-gray-500"/>
-<button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-emerald-500 hover:bg-emerald-400 rounded-lg text-[#09090b] transition-colors flex items-center justify-center">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
-</button>
-</form>
-<div class="text-center mt-2"><span class="text-[10px] text-gray-500">Baobao boleh melakukan kesilapan. Sila semak kod penting.</span></div>
+
+<div class="p-4 bg-[#09090b] shrink-0">
+  <form id="chat-form" class="w-full max-w-3xl mx-auto relative">
+    <input id="chat-input" type="text" placeholder="Taip arahan atau soalan anda di sini..." autocomplete="off" class="w-full bg-[#18181b] border border-[#27272a] rounded-xl pl-4 pr-14 py-3.5 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors placeholder-gray-500"/>
+    <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-emerald-500 hover:bg-emerald-400 rounded-lg text-[#09090b] transition-colors flex items-center justify-center">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+    </button>
+  </form>
+  <div class="text-center mt-2"><span class="text-[10px] text-gray-500">Baobao boleh melakukan kesilapan. Sila semak kod penting.</span></div>
 </div>
 <script>
+window.fillChat = function(text) {
+  const input = document.getElementById('chat-input');
+  input.value = text;
+  input.focus();
+};
+
 document.getElementById('chat-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const input = document.getElementById('chat-input');
   const msg = input.value.trim();
   if(!msg) return;
   input.value = '';
+  
+  const welcome = document.getElementById('welcome');
+  if(welcome) welcome.remove();
+  
   const container = document.getElementById('msgs');
   
   const userDiv = document.createElement('div');
-  userDiv.className = 'flex justify-end fade-in';
+  userDiv.className = 'max-w-3xl mx-auto flex justify-end fade-in mb-4';
   userDiv.innerHTML = '<div class="bub-user">' + msg.replace(/</g,'&lt;') + '</div>';
   container.appendChild(userDiv);
   container.scrollTop = container.scrollHeight;
   
   const loadDiv = document.createElement('div');
   loadDiv.id = 'loading-msg';
-  loadDiv.className = 'flex justify-start fade-in';
-  loadDiv.innerHTML = '<div class="bub-ai text-gray-400"><svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-emerald-500 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Baobao sedang berfikir...</div>';
+  loadDiv.className = 'max-w-3xl mx-auto flex justify-start fade-in mb-4';
+  loadDiv.innerHTML = '<div class="bub-ai text-gray-400 flex items-center gap-2"><svg class="animate-spin h-4 w-4 text-emerald-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Baobao sedang berfikir...</div>';
   container.appendChild(loadDiv);
   container.scrollTop = container.scrollHeight;
   
@@ -148,19 +178,28 @@ document.getElementById('chat-form').addEventListener('submit', async (e) => {
     document.getElementById('loading-msg').remove();
     
     const aiDiv = document.createElement('div');
-    aiDiv.className = 'flex justify-start fade-in';
-    const replyText = data.ok ? data.reply : (data.error === 'quota exceeded' ? 'Kuota habis. Sila upgrade.' : (data.error || 'Ralat sistem.'));
-    aiDiv.innerHTML = '<div class="bub-ai">' + replyText.replace(/</g,'&lt;') + '</div>';
+    aiDiv.className = 'max-w-3xl mx-auto flex justify-start fade-in mb-4';
+    let replyText = '';
+    if(data.ok && data.reply) {
+       replyText = data.reply;
+    } else if (data.error === 'quota exceeded') {
+       replyText = 'Kuota chat anda telah habis. Sila upgrade pelan anda.';
+    } else {
+       replyText = 'Ralat Sistem: ' + (data.error || 'Tiada respon dari AI.');
+    }
+    aiDiv.innerHTML = '<div class="bub-ai">' + replyText.replace(/</g,'&lt;').replace(/
+/g, '<br>') + '</div>';
     container.appendChild(aiDiv);
     container.scrollTop = container.scrollHeight;
   } catch (err) {
     document.getElementById('loading-msg').remove();
     const errDiv = document.createElement('div');
-    errDiv.className = 'flex justify-start fade-in';
+    errDiv.className = 'max-w-3xl mx-auto flex justify-start fade-in mb-4';
     errDiv.innerHTML = '<div class="bub-ai text-red-400">Error: ' + err.message + '</div>';
     container.appendChild(errDiv);
   }
 });
+</script></div>`;});
 </script></div>`;}
 
 function vOps(){return `<div class="p-8 max-w-4xl mx-auto fade-in">
