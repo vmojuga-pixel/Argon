@@ -123,7 +123,7 @@ export class SwarmBrain {
   }
 
   async listFocusTopics() {
-    const repo = this.env.GITHUB_REPO_OVERLORD || "vmojuga-pixel/Argon";
+    const repo = "vmojuga-pixel/Argon";
     const token = this.env.GITHUB_TOKEN;
     if (!token) return [];
     try {
@@ -136,7 +136,7 @@ export class SwarmBrain {
   }
 
   async readFileContent(path) {
-    const repo = this.env.GITHUB_REPO_OVERLORD || "vmojuga-pixel/Argon";
+    const repo = "vmojuga-pixel/Argon";
     const token = this.env.GITHUB_TOKEN;
     if (!token) return "";
     try {
@@ -149,7 +149,7 @@ export class SwarmBrain {
   }
 
   async readSectorContext(sector) {
-    const repo = this.env.GITHUB_REPO_OVERLORD || "vmojuga-pixel/Argon";
+    const repo = "vmojuga-pixel/Argon";
     const token = this.env.GITHUB_TOKEN;
     if (!token) return { files: [], summary: "no token" };
     try {
@@ -164,7 +164,7 @@ export class SwarmBrain {
 
   async commitToCorpus(sector, epoch, entry, codeV2) {
     const token = this.env.GITHUB_TOKEN;
-    const repo = this.env.GITHUB_REPO_OVERLORD || "vmojuga-pixel/Argon";
+    const repo = "vmojuga-pixel/Argon";
     if (!token) return { synced: false, reason: "no token" };
     const slug = "epoch-" + epoch + "-" + Date.now().toString(36);
     const fname = "corpus/sectors/" + sector + "/" + slug + ".md";
@@ -174,6 +174,8 @@ export class SwarmBrain {
     const h = { "Authorization": "Bearer " + token, "User-Agent": "Nexus-Swarm-OS", "Accept": "application/vnd.github.v3+json", "Content-Type": "application/json" };
     try {
       const r = await fetch(u, { method: "PUT", headers: h, body: JSON.stringify({ message: "[Corpus Epoch #" + epoch + "] " + sector, content: b64 }) });
+      const rText = await r.text();
+      console.log("[SWARM-GH]", r.status, rText);
       if (!r.ok) return { synced: false, reason: "GH: " + (await r.text()) };
       return { synced: true, reason: "OK", path: fname };
     } catch (e) { return { synced: false, reason: e.message }; }
