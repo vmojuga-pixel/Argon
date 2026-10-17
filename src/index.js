@@ -332,8 +332,8 @@ export default {
 
     // ===== PUBLIC LANDING + LOGIN =====
     if (path === '/' || path === '/landing') {
-      const sess = await validateSessionOrBasic(request, env);
-      return new Response(renderPublicLanding(env, sess.ok), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+      // Halaman awam, tiada basic auth
+      return new Response(renderPublicLanding(env, false), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
     if (path === '/signup') {
       const err = url.searchParams.get('error') || '';
