@@ -187,8 +187,7 @@ document.getElementById('chat-form').addEventListener('submit', async (e) => {
     } else {
        replyText = 'Ralat Sistem: ' + (data.error || 'Tiada respon dari AI.');
     }
-    aiDiv.innerHTML = '<div class="bub-ai">' + replyText.replace(/</g,'&lt;').replace(/
-/g, '<br>') + '</div>';
+    aiDiv.innerHTML = '<div class="bub-ai">' + replyText.replace(/</g,'&lt;').split(String.fromCharCode(10)).join('<br>') + '</div>';
     container.appendChild(aiDiv);
     container.scrollTop = container.scrollHeight;
   } catch (err) {
@@ -245,8 +244,7 @@ document.getElementById('chat-form').addEventListener('submit', async (e) => {
     } else {
        replyText = 'Ralat Sistem: ' + (data.error || 'Tiada respon dari AI.');
     }
-    aiDiv.innerHTML = '<div class="bub-ai">' + replyText.replace(/</g,'&lt;').replace(/
-/g, '<br>') + '</div>';
+    aiDiv.innerHTML = '<div class="bub-ai">' + replyText.replace(/</g,'&lt;').split(String.fromCharCode(10)).join('<br>') + '</div>';
     container.appendChild(aiDiv);
     container.scrollTop = container.scrollHeight;
   } catch (err) {
