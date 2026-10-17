@@ -68,9 +68,7 @@ export default {
     if (request.method === 'OPTIONS') return new Response(null, { headers: CORS });
 
     // ===== PUBLIC =====
-    if (path === '/signup' && request.method === 'GET') {
-      return Response.redirect(url.origin + '/login?signup=1', 302);
-    }
+    
     if (path === '/signup' && request.method === 'POST') return handleSignup(request, env);
 
     if (path === '/api/build' && request.method === 'POST') {
