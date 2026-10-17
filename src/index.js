@@ -422,22 +422,33 @@ export default {
             }
           }
           if (!tenantId) return Response.json({ ok: false, error: 'auth required' }, { status: 401, headers: CORS });
+          
           const quota = await checkQuota(env, tenantId, 'chat');
           if (!quota.ok) return Response.json({ ok: false, error: 'quota exceeded' }, { status: 429, headers: CORS });
+
+          let body = {};
+          try { body = await request.json(); } catch (e) { 
+            return Response.json({ ok: false, error: 'invalid json' }, { status: 400, headers: CORS }); 
+          }
           
+          const msg = body.message || '';
+          if (!msg) return Response.json({ ok: false, error: 'message required' }, { status: 400, headers: CORS });
+
           try {
-            let body = {};
-            try { body = await request.json(); } catch {}
-            const authObj = { ok: true, tenantId: tenantId, mode: 'tenant' };
-            const res = await handleChat(request, env, ctx, authObj);
-            const data = await res.json();
+            const r = await env.AI.run('@cf/meta/llama-4-scout-17b-16e-instruct', {
+               messages: [
+                 { role: 'system', content: 'You are Baobao, a helpful AI assistant for BorneoAI. Reply in the same language as the user. Keep it short and helpful.' },
+                 { role: 'user', content: msg }
+               ],
+               max_tokens: 500
+            });
+            const reply = r.response || r.result || r.text || 'Maaf, saya tidak dapat menjana jawapan.';
             
-            if (data.ok) {
-              ctx.waitUntil(incrementUsage(env, tenantId, 'chat'));
-              ctx.waitUntil(auditLog(env, tenantId, 'chat.completed'));
-              ctx.waitUntil(dispatchEvent(env, tenantId, 'chat.completed', { ts: Date.now() }));
-            }
-            return Response.json(data, { headers: CORS });
+            ctx.waitUntil(incrementUsage(env, tenantId, 'chat'));
+            ctx.waitUntil(auditLog(env, tenantId, 'chat.completed'));
+            ctx.waitUntil(dispatchEvent(env, tenantId, 'chat.completed', { ts: Date.now() }));
+            
+            return Response.json({ ok: true, reply: reply }, { headers: CORS });
           } catch (e) {
             return Response.json({ ok: false, error: e.message }, { status: 500, headers: CORS });
           }
