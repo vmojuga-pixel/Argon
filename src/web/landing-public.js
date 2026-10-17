@@ -91,7 +91,7 @@ Live — deploy dalam minit
 <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800">
 <div class="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 font-bold mb-4">02</div>
 <h3 class="font-semibold mb-2">BorneoAI bina</h3>
-<p class="text-sm text-slate-400">BorneoAI reka, kod, kritik, perbaiki, dan deploy secara automatik ke Edge.</p>
+<p class="text-sm text-slate-400">BorneoAI buat kod, review, perbaiki dan deploy ke Edge.</p>
 </div>
 <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800">
 <div class="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold mb-4">03</div>
