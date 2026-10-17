@@ -1,50 +1,58 @@
-export function renderLegal(title, bodyHtml) {
-  return `<!DOCTYPE html>
-<html lang="en" class="dark">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>${title} — Argon</title>
-<script src="https://cdn.tailwindcss.com"><\/script>
-</head>
-<body class="bg-slate-950 text-slate-200 min-h-screen font-sans">
-<header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
-  <div class="max-w-4xl mx-auto px-6 h-14 flex items-center justify-between">
-    <a href="/" class="flex items-center gap-2">
-      <div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
-      <span class="font-mono font-bold text-white">ARGON</span>
-    </a>
-    <nav class="flex items-center gap-4 text-xs font-mono">
-      <a href="/legal/terms" class="text-slate-400 hover:text-white">Terms</a>
-      <a href="/legal/privacy" class="text-slate-400 hover:text-white">Privacy</a>
-      <a href="/login" class="text-emerald-400 hover:text-emerald-300">Sign In</a>
-    </nav>
-  </div>
-</header>
-<main class="max-w-4xl mx-auto px-6 py-12">
-  <h1 class="text-3xl font-bold text-white mb-8">${title}</h1>
-  <div class="prose prose-invert prose-emerald max-w-none text-slate-300 text-sm leading-relaxed">
-    ${bodyHtml}
-  </div>
-</main>
-<footer class="border-t border-slate-800 py-6 mt-12">
-  <div class="max-w-4xl mx-auto px-6 flex flex-wrap justify-between gap-3 text-xs text-slate-500">
-    <div>Argon v2.0 — Legal</div>
-    <div class="flex gap-4">
-      <a href="/legal/terms" class="hover:text-slate-300">Terms</a>
-      <a href="/legal/privacy" class="hover:text-slate-300">Privacy</a>
-      <a href="/legal/aup" class="hover:text-slate-300">AUP</a>
-      <a href="/legal/cookies" class="hover:text-slate-300">Cookies</a>
-    </div>
-  </div>
-</footer>
-</body></html>`;
+const HTML_HEAD = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><script src="https://cdn.tailwindcss.com"></script><style>body{background:#0f172a;color:#cbd5e1;font-family:system-ui,sans-serif}</style></head><body class="p-8 max-w-3xl mx-auto">
+<header class="mb-8 border-b border-slate-700 pb-4 flex justify-between items-center">
+  <a href="/" class="text-xl font-bold text-white tracking-tight">BorneoAI</a>
+  <nav class="space-x-4 text-sm text-cyan-400"><a href="/legal/terms">Terms</a><a href="/legal/privacy">Privacy</a><a href="/login">Sign In</a></nav>
+</header>`;
+
+const HTML_FOOT = `
+<footer class="mt-12 pt-6 border-t border-slate-700 text-xs text-slate-500">
+  &copy; 2026 BorneoAI &mdash; NORTHERNCOAST GROUP. All rights reserved.
+</footer></body></html>`;
+
+export function renderLegal(type) {
+  if (type === 'terms') return HTML_HEAD + `
+  <h1 class="text-3xl font-bold text-white mb-6">Terms of Service</h1>
+  <div class="space-y-4 text-sm leading-relaxed">
+    <p><strong>1. Acceptance:</strong> By accessing or using BorneoAI ("the Service"), you agree to be bound by these Terms. If you do not agree, do not use the Service.</p>
+    <p><strong>2. Service Provider:</strong> BorneoAI is a software-as-a-service platform operated by Northerncoast Group. We provide AI-assisted coding tools. We are not a law firm, financial advisor, or licensed professional service.</p>
+    <p><strong>3. User Responsibility:</strong> You are solely responsible for any code, software, or content generated using the Service. You must review and test all AI-generated outputs before deploying them to production.</p>
+    <p><strong>4. No Warranty ("AS IS"):</strong> The Service is provided "AS IS" and "AS AVAILABLE" without warranties of any kind, either express or implied. We do not warrant that the Service will be uninterrupted, error-free, or completely secure.</p>
+    <p><strong>5. Limitation of Liability:</strong> TO THE MAXIMUM EXTENT PERMITTED BY LAW, IN NO EVENT SHALL NORTHERNCOAST GROUP, ITS DIRECTORS, EMPLOYEES, OR AGENTS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING WITHOUT LIMITATION, LOSS OF PROFITS, DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES, RESULTING FROM (i) YOUR ACCESS TO OR USE OF OR INABILITY TO ACCESS OR USE THE SERVICE; (ii) ANY CONDUCT OR CONTENT OF ANY THIRD PARTY ON THE SERVICE; (iii) ANY CONTENT OBTAINED FROM THE SERVICE; AND (iv) UNAUTHORIZED ACCESS, USE, OR ALTERATION OF YOUR TRANSMISSIONS OR CONTENT.</p>
+    <p><strong>6. Indemnification:</strong> You agree to defend, indemnify, and hold harmless Northerncoast Group and its licensee and licensors, and their employees, contractors, agents, officers and directors, from and against any and all claims, damages, obligations, losses, liabilities, costs or debt, and expenses (including but not limited to attorney's fees).</p>
+    <p><strong>7. Dispute Resolution:</strong> Any dispute arising out of or relating to these Terms or the Service shall be resolved through binding arbitration, rather than in court, except that you may assert claims in small claims court if your claims qualify. You waive any right to participate in a class action lawsuit.</p>
+    <p><strong>8. Governing Law:</strong> These Terms shall be governed by the laws of Malaysia, without regard to its conflict of law provisions.</p>
+  </div>` + HTML_FOOT;
+
+  if (type === 'aup') return HTML_HEAD + `
+  <h1 class="text-3xl font-bold text-white mb-6">Acceptable Use Policy</h1>
+  <div class="space-y-4 text-sm leading-relaxed">
+    <p><strong>Prohibited Uses:</strong></p>
+    <ul class="list-disc pl-5 space-y-1">
+      <li>Illegal activity, fraud, or promoting violence.</li>
+      <li>Harmful content (CSAM zero tolerance).</li>
+      <li>Spam, phishing, or Denial of Service (DoS) attacks.</li>
+      <li>Intellectual property infringement.</li>
+      <li>Malware, ransomware, or crypto mining.</li>
+    </ul>
+    <p><strong>Enforcement:</strong> We reserve the right to suspend or terminate your account without prior notice if you violate this policy. We may also report illegal activities to the relevant authorities.</p>
+    <p><strong>Report Abuse:</strong> Please report any violations to <a href="mailto:abuse@northerncoastgroup.com" class="text-cyan-400">abuse@northerncoastgroup.com</a>.</p>
+  </div>` + HTML_FOOT;
+
+  if (type === 'privacy') return HTML_HEAD + `
+  <h1 class="text-3xl font-bold text-white mb-6">Privacy Policy</h1>
+  <div class="space-y-4 text-sm leading-relaxed">
+    <p><strong>Data Collection:</strong> We collect only the necessary information to provide the Service, such as your email address, company name, and billing details (processed securely via our payment providers). We do not sell your data to third parties.</p>
+    <p><strong>Data Security:</strong> We use industry-standard security measures (including Cloudflare Edge encryption) to protect your data. However, no method of transmission over the Internet is 100% secure.</p>
+    <p><strong>Third-Party Services:</strong> We use third-party providers for AI processing (Cloudflare Workers AI) and payments (Stripe). Your use of the Service is also subject to their respective privacy policies.</p>
+  </div>` + HTML_FOOT;
+
+  if (type === 'cookies') return HTML_HEAD + `
+  <h1 class="text-3xl font-bold text-white mb-6">Cookie Policy</h1>
+  <div class="space-y-4 text-sm leading-relaxed">
+    <p><strong>Essential Cookies:</strong> We use a single essential cookie (<code class="text-cyan-400">borneoai_session</code>) to keep you logged in. This cookie is required for the Service to function and lasts for 7 days.</p>
+    <p><strong>No Tracking:</strong> We do not use analytics cookies, advertising trackers, or any third-party tracking pixels.</p>
+    <p><strong>Managing Cookies:</strong> You can disable cookies in your browser settings. However, disabling essential cookies will prevent you from logging into the platform.</p>
+  </div>` + HTML_FOOT;
+
+  return HTML_HEAD + '<h1 class="text-3xl text-white">Not Found</h1>' + HTML_FOOT;
 }
-
-export const TERMS_HTML = `<h2>1. Acceptance</h2><p>By using Argon you agree to these Terms.</p><h2>2. Service</h2><p>AI API platform — chat, agent, swarm, omni.</p><h2>3. Acceptable Use</h2><p>No illegal, harmful, or abusive content. See AUP.</p><h2>4. Billing</h2><p>Free tier limited. Paid tiers monthly. Overage charged.</p><h2>5. Liability</h2><p>No liability for indirect or consequential damages.</p><h2>6. Governing Law</h2><p>Laws of Malaysia. Courts of Kuala Lumpur.</p><p class="text-xs text-slate-500 mt-6">Template only. Consult attorney before production.</p>`;
-
-export const PRIVACY_HTML = `<h2>1. Data We Collect</h2><p>Email, usage, content (30-day retention).</p><h2>2. How We Use</h2><p>Provide service, billing, security, improvement.</p><h2>3. Sharing</h2><p>Only Cloudflare (infra), Stripe (billing), legal authorities.</p><h2>4. Your Rights</h2><p>Access, rectify, erase, port (GDPR / PDPA).</p><h2>5. Security</h2><p>TLS 1.3 in transit, AES-256-GCM at rest, SHA-256 audit chain.</p><h2>6. Cookies</h2><p>Session cookie only. No tracking.</p><p class="text-xs text-slate-500 mt-6">Template only. Consult attorney before production.</p>`;
-
-export const AUP_HTML = `<h2>Prohibited</h2><ul><li>Illegal activity</li><li>Harmful content (CSAM zero tolerance)</li><li>Spam, phishing, DoS</li><li>IP infringement</li><li>Malware, crypto mining</li></ul><h2>Enforcement</h2><p>Warning → suspension → ban → legal action.</p><h2>Report</h2><p>abuse@argon.dev</p>`;
-
-export const COOKIE_HTML = `<h2>Cookies</h2><table><tr><td>argon_session</td><td>Auth</td><td>7 days</td><td>Essential</td></tr></table><h2>No Tracking</h2><p>No analytics, no ads, no third-party.</p><h2>Disable</h2><p>Browser settings. API access still works via X-API-Key.</p>`;
