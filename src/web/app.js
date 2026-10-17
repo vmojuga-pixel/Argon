@@ -91,7 +91,9 @@ export function renderApp(env, sess, view) {
   </div>
   <script>function logout(){fetch('/api/auth/logout',{method:'POST',credentials:'include'}).then(function(){window.location.href='/';});}</script>
   </body></html>`;
-}\n\nfunction vHome(){return `<div class="p-6 md:p-8 max-w-6xl mx-auto fade-in">
+}
+
+function vHome(){return `<div class="p-6 md:p-8 max-w-6xl mx-auto fade-in">
 <div class="mb-10"><div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/5 text-xs text-emerald-400 mb-4">Console Live</div>
 <h2 class="text-4xl md:text-5xl font-bold mb-3 leading-tight">Selamat datang.<br><span class="txt-grad">Tanya Baobao apa saja.</span></h2>
 <p class="text-slate-400">Pilih satu untuk mula. Semua auto.</p></div>
