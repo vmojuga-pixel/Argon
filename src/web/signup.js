@@ -24,9 +24,8 @@ body {
 <p class="text-sm text-slate-400 mt-2">Create your free account. No credit card needed.</p></div>
 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
 <div class="space-y-2">
-<button onclick="oauthSignIn(&#39;google&#39;)" class="w-full flex items-center justify-center gap-3 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-medium text-sm">Sign up with Google</button>
-<button onclick="oauthSignIn(&#39;github&#39;)" class="w-full flex items-center justify-center gap-3 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-medium text-sm">Sign up with GitHub</button>
-<button onclick="oauthSignIn(&#39;apple&#39;)" class="w-full flex items-center justify-center gap-3 px-4 py-2.5 rounded-xl bg-black hover:bg-slate-900 border border-slate-800 font-medium text-sm">Sign up with Apple</button>
+<button onclick="window.location.href='/api/auth/oauth/google'" class="w-full flex items-center justify-center gap-3 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-medium text-sm">Sign up with Google</button>
+<button onclick="window.location.href='/api/auth/oauth/github'" class="w-full flex items-center justify-center gap-3 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-medium text-sm">Sign up with GitHub</button>
 </div>
 <div class="flex items-center gap-3 my-5"><div class="flex-1 h-px bg-slate-800"></div><span class="text-xs text-slate-500">or</span><div class="flex-1 h-px bg-slate-800"></div></div>
 <form id="f" class="space-y-3">
@@ -43,7 +42,7 @@ body {
 <p class="text-center text-sm text-slate-400 mt-6">Already have an account? <a href="/login" class="text-cyan-400 hover:text-emerald-300 font-medium">Log in</a></p>
 <p class="text-center text-xs text-slate-500 mt-4"><a href="/" class="hover:text-slate-400">Back to home</a></p></div>
 <script>
-function oauthSignIn(p){if(p==="google"){window.location.href="/api/auth/oauth/google";}else if(p==="github"){window.location.href="/api/auth/oauth/github";}else{alert("OAuth " + p + " belum dikonfigurasi.");}}else{alert("OAuth " + p + " belum dikonfigurasi. Sila daftar Client ID di Google/GitHub dan masukkan ke dalam sistem.");}}
+else if(p==="github"){window.location.href="/api/auth/oauth/github";}else{alert("OAuth " + p + " belum dikonfigurasi.");}}else{alert("OAuth " + p + " belum dikonfigurasi. Sila daftar Client ID di Google/GitHub dan masukkan ke dalam sistem.");}}
 document.getElementById("f").addEventListener("submit", async (ev) => {
 ev.preventDefault();
 const er=document.getElementById("er"); er.classList.add("hidden");
