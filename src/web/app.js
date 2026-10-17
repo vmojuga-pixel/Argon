@@ -28,6 +28,7 @@ export function renderApp(env, sess, view) {
   const nav = [
     ["home","Home","/app","M3 12l9-9 9 9M5 10v10h14V10"],
     ["chat","Chat","/app/chat","M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"],
+    ["agent","Agent","/app/agent","M12 8V4H8 M20 8h-4V4 M4 8h4V4 M8 16h8 M9 12h6"],
     ["build","Build","/app/build","M13 2L3 14h9l-1 8 10-12h-9l1-8z"],
     ["projects","Projects","/app/projects","M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"],
     ["keys","API Keys","/app/keys","M21 2l-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"],
@@ -43,7 +44,7 @@ export function renderApp(env, sess, view) {
     return `<a href="${href}" class="${cls}"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="${icon}"/></svg><span>${label}</span></a>`;
   }).join("");
 
-  var content = view==="chat"?vChat():view==="build"?vBuild():view==="projects"?vProjects():view==="keys"?vKeys():view==="usage"?vUsage():view==="billing"?vBilling():view==="ops"?vOps():view==="baobao"?vBaobao():vHome();
+  var content = view==="chat"?vChat():view==="agent"?vAgent():view==="build"?vBuild():view==="projects"?vProjects():view==="keys"?vKeys():view==="usage"?vUsage():view==="billing"?vBilling():view==="ops"?vOps():view==="baobao"?vBaobao():vHome();
 
   return `<!DOCTYPE html><html lang="en"><head>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -250,4 +251,81 @@ function vBuild(){return `<div class="p-8 max-w-3xl mx-auto"><h2 class="text-2xl
 function vProjects(){return `<div class="p-8 max-w-4xl mx-auto"><h2 class="text-2xl font-semibold mb-6">Projects</h2><div class="card text-center py-12"><div class="text-gray-500 text-sm">Belum ada project. <a href="/app/build" class="text-cyan-500">Bina sekarang</a></div></div></div>`;}
 function vKeys(){return `<div class="p-8 max-w-3xl mx-auto"><h2 class="text-2xl font-semibold mb-6">API Keys</h2><div class="card"><div class="text-xs uppercase tracking-wider text-gray-500 mb-3">Your API Key</div><div class="flex"><code id="k" class="flex-1 bg-[#0f172a] border border-[#334155] rounded-md px-4 py-2.5 text-xs font-mono truncate text-cyan-400">Loading...</code><button onclick="navigator.clipboard.writeText(document.getElementById('k').textContent);this.textContent='Copied!'" class="ml-2 px-4 py-2.5 bg-[#334155] hover:bg-[#475569] rounded-md text-sm">Copy</button></div></div></div><script>fetch("/api/me",{credentials:"include"}).then(function(r){return r.json();}).then(function(d){document.getElementById("k").textContent=d.apiKey||d.key||"Not available";}).catch(function(){});</script>`;}
 function vUsage(){return `<div class="p-8 max-w-3xl mx-auto"><h2 class="text-2xl font-semibold mb-6">Usage</h2><div class="card text-center text-gray-500 text-sm py-12">Statistik akan muncul bila anda mula guna.</div></div>`;}
-function vBilling(){return `<div class="p-8 max-w-3xl mx-auto"><h2 class="text-2xl font-semibold mb-6">Billing</h2><div class="card"><div class="text-xs uppercase tracking-wider text-gray-500 mb-2">Current Plan</div><div class="text-3xl font-semibold mb-6">Free</div><a href="/#pricing" class="btn inline-block">Upgrade plan &rarr;</a></div></div>`;}
+function vBilling(){return `<div class="p-8 max-w-3xl mx-auto"><h2 class="text-2xl font-semibold mb-6">Billing</h2><div class="card"><div class="text-xs uppercase tracking-wider text-gray-500 mb-2">Current Plan</div><div class="text-3xl font-semibold mb-6">Free</div><a href="/#pricing" class="btn inline-block">Upgrade plan &rarr;</a></div></div>`;function vAgent(){return `<div class="h-[calc(100dvh-4rem)] flex flex-col bg-[#0f172a]">
+<div id="agent-msgs" class="flex-1 overflow-y-auto p-4 md:p-8 w-full flex flex-col">
+<div id="agent-welcome" class="m-auto max-w-3xl w-full text-center fade-in">
+  <div class="w-16 h-16 rounded-2xl bg-[#1e293b] border border-[#334155] flex items-center justify-center mx-auto mb-6 shadow-sm">
+    <svg class="w-8 h-8 text-cyan-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+  </div>
+  <h1 class="text-2xl md:text-3xl font-semibold text-white mb-2">Agentic Worker</h1>
+  <p class="text-gray-400 mb-8">Ejen yang boleh berfikir, guna tools, dan selesaikan tugasan kompleks.</p>
+</div>
+</div>
+
+<div class="p-4 pb-12 md:pb-8 bg-[#0f172a] shrink-0">
+  <form id="agent-form" class="w-full max-w-3xl mx-auto relative">
+    <input id="agent-input" type="text" placeholder="Contoh: Kira berapa hari dari hari ini ke 31 Disember 2026" autocomplete="off" class="w-full bg-[#1e293b] border border-[#334155] rounded-xl pl-4 pr-14 py-3.5 text-sm text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors placeholder-gray-500"/>
+    <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-cyan-500 hover:bg-cyan-400 rounded-lg text-[#0f172a] transition-colors flex items-center justify-center">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+    </button>
+  </form>
+</div>
+<script>
+document.getElementById('agent-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const input = document.getElementById('agent-input');
+  const msg = input.value.trim();
+  if(!msg) return;
+  input.value = '';
+  
+  const welcome = document.getElementById('agent-welcome');
+  if(welcome) welcome.remove();
+  
+  const container = document.getElementById('agent-msgs');
+  
+  const userDiv = document.createElement('div');
+  userDiv.className = 'max-w-3xl mx-auto w-full flex justify-end fade-in mb-4';
+  userDiv.innerHTML = '<div class="bub-user">' + msg.replace(/</g,'&lt;') + '</div>';
+  container.appendChild(userDiv);
+  container.scrollTop = container.scrollHeight;
+  
+  const loadDiv = document.createElement('div');
+  loadDiv.id = 'agent-loading';
+  loadDiv.className = 'max-w-3xl mx-auto w-full flex justify-start fade-in mb-4';
+  loadDiv.innerHTML = '<div class="bub-ai text-gray-400 flex items-center gap-2"><svg class="animate-spin h-4 w-4 text-cyan-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Agent sedang berfikir & melaksanakan tools...</div>';
+  container.appendChild(loadDiv);
+  container.scrollTop = container.scrollHeight;
+  
+  try {
+    const res = await fetch('/api/agent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg })
+    });
+    const data = await res.json();
+    document.getElementById('agent-loading').remove();
+    
+    const aiDiv = document.createElement('div');
+    aiDiv.className = 'max-w-3xl mx-auto w-full flex justify-start fade-in mb-4';
+    let replyText = '';
+    if(data.ok && data.reply) {
+       replyText = data.reply;
+    } else if(data.ok && data.response) {
+       replyText = data.response;
+    } else {
+       replyText = 'Ralat Sistem: ' + (data.error || 'Tiada respon dari Agent.');
+    }
+    
+    aiDiv.innerHTML = '<div class="bub-ai">' + replyText.split('<').join('&lt;').split(String.fromCharCode(10)).join('<br>') + '</div>';
+    container.appendChild(aiDiv);
+    container.scrollTop = container.scrollHeight;
+  } catch (err) {
+    document.getElementById('agent-loading').remove();
+    const errDiv = document.createElement('div');
+    errDiv.className = 'max-w-3xl mx-auto w-full flex justify-start fade-in mb-4';
+    errDiv.innerHTML = '<div class="bub-ai text-red-400">Error: ' + err.message + '</div>';
+    container.appendChild(errDiv);
+  }
+});
+</script></div>`;}
+}
