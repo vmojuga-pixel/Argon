@@ -131,7 +131,17 @@ export default {
       const data = await r.json();
       return Response.json(data, { headers: CORS });
     }
-    if (path === '/api/ops/plan' && request.method === 'POST') {
+    if (path === '/api/billing/upgrade' && request.method === 'POST') {
+          const sess = await validateSessionOrBasic(request, env);
+          if (!sess.ok) return Response.json({ ok:false, error:'login required' }, { status: 401, headers: CORS });
+          const email = sess.email || sess.user;
+          let body = {};
+          try { body = await request.json(); } catch {}
+          const plan = body.plan || 'free';
+          await env.DB.prepare('UPDATE tenants SET plan = ? WHERE email = ?').bind(plan, email).run();
+          return Response.json({ ok: true, plan: plan }, { headers: CORS });
+        }
+        if (path === '/api/ops/plan' && request.method === 'POST') {
       const sess = await validateSessionOrBasic(request, env);
       if (!sess.ok) return Response.json({ ok:false, error:'login required' }, { status: 401, headers: CORS });
       let body = {};
@@ -189,6 +199,8 @@ export default {
     if (path === '/app' || path.startsWith('/app/')) {
       const sess = await validateSessionOrBasic(request, env);
       if (!sess.ok) return Response.redirect(url.origin + '/login', 302);
+      // Tambah log untuk tengok siapa yang masuk
+      console.log('[APP-ACCESS]', sess.email || sess.user);
       const v = path.split('/')[2] || 'home';
       return new Response(renderApp(env, sess, v), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }

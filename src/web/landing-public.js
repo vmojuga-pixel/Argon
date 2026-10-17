@@ -32,7 +32,7 @@ body {
 <nav class="flex items-center gap-4 text-sm">
 <a href="#use-cases" class="text-slate-400 hover:text-white hidden md:inline">Use Cases</a>
 <a href="#pricing" class="text-slate-400 hover:text-white hidden md:inline">Pricing</a>
-<a href="/docs" class="text-slate-400 hover:text-white">Docs</a>
+
 <a href="/login" class="px-4 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-xs">Sign In</a>
 </nav>
 </div>
@@ -112,7 +112,7 @@ Live — deploy dalam minit
 <li>1 project</li>
 <li>Community support</li>
 </ul>
-<a href="/signup?plan=free" class="block text-center px-4 py-2.5 rounded-lg border border-slate-700 hover:border-slate-600 text-sm">Mula Free</a>
+<a href="/login?redirect=/app/billing" class="block text-center px-4 py-2.5 rounded-lg border border-slate-700 hover:border-slate-600 text-sm">Mula Free</a>
 </div>
 <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800">
 <div class="text-sm text-slate-400 mb-1">Starter</div>
@@ -123,7 +123,7 @@ Live — deploy dalam minit
 <li>20 swarm cycles</li>
 <li>5 projects</li>
 </ul>
-<a href="/signup?plan=starter" class="block text-center px-4 py-2.5 rounded-lg border border-slate-700 hover:border-slate-600 text-sm">Pilih Starter</a>
+<a href="/login?redirect=/app/billing" class="block text-center px-4 py-2.5 rounded-lg border border-slate-700 hover:border-slate-600 text-sm">Pilih Starter</a>
 </div>
 <div class="p-6 rounded-2xl bg-slate-900 border-2 border-cyan-500/50 relative">
 <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-cyan-500 text-slate-950 text-xs font-semibold">Popular</div>
@@ -135,7 +135,7 @@ Live — deploy dalam minit
 <li>200 swarm cycles</li>
 <li>Unlimited projects</li>
 </ul>
-<a href="/signup?plan=pro" class="block text-center px-4 py-2.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-sm">Pilih Pro</a>
+<a href="/login?redirect=/app/billing" class="block text-center px-4 py-2.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-sm">Pilih Pro</a>
 </div>
 <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800">
 <div class="text-sm text-slate-400 mb-1">Business</div>
@@ -146,7 +146,7 @@ Live — deploy dalam minit
 <li>2,000 swarm cycles</li>
 <li>Webhook + priority</li>
 </ul>
-<a href="/signup?plan=business" class="block text-center px-4 py-2.5 rounded-lg border border-slate-700 hover:border-slate-600 text-sm">Pilih Business</a>
+<a href="/login?redirect=/app/billing" class="block text-center px-4 py-2.5 rounded-lg border border-slate-700 hover:border-slate-600 text-sm">Pilih Business</a>
 </div>
 </div>
 <div class="mt-6 p-6 rounded-2xl bg-gradient-to-r from-amber-500/5 to-transparent border border-amber-500/30 flex flex-wrap items-center justify-between gap-4">
@@ -159,7 +159,7 @@ Live — deploy dalam minit
 </div>
 <p class="text-center text-xs text-slate-500 mt-6">Bayar via Touch n Go eWallet. Batal bila-bila. Tiada lock-in.</p>
 </section>
-<section class="max-w-3xl mx-auto px-6 py-16">
+<section id="faq" class="max-w-3xl mx-auto px-6 py-16">
 <h2 class="text-3xl font-bold text-center mb-10">Soalan Lazim</h2>
 <div class="space-y-3">
 <details class="p-4 rounded-xl bg-slate-900 border border-slate-800">
@@ -192,7 +192,7 @@ Live — deploy dalam minit
 <div class="max-w-6xl mx-auto px-6 py-8 text-sm text-slate-500 flex flex-wrap items-center justify-between gap-4">
 <div>@${year} ${app} — NORTHERNCOAST GROUP<br><span class="text-xs text-slate-600">Sabah, Malaysia</span></div>
 <div class="flex gap-4">
-<a href="/docs" class="hover:text-slate-300">Docs</a>
+<a href="#faq" class="hover:text-slate-300">Help</a>
 <a href="/login" class="hover:text-slate-300">Login</a>
 <a href="/status" class="hover:text-slate-300">Status</a>
 <a href="/legal/terms" class="hover:text-slate-300">Terms</a>
