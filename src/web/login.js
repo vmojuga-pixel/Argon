@@ -41,7 +41,7 @@ body {
 <p class="text-center text-sm text-slate-400 mt-6">Don&#39;t have an account? <a href="/signup" class="text-cyan-400 hover:text-emerald-300 font-medium">Sign up</a></p>
 <p class="text-center text-xs text-slate-500 mt-4"><a href="/" class="hover:text-slate-400">Back to home</a></p></div>
 <script>
-function oauthSignIn(p){if(p==="google"){window.location.href="/api/auth/oauth/google";}else{alert("OAuth " + p + " belum dikonfigurasi. Sila daftar Client ID di Google/GitHub dan masukkan ke dalam sistem.");}}
+function oauthSignIn(p){if(p==="google"){window.location.href="/api/auth/oauth/google";}else if(p==="github"){window.location.href="/api/auth/oauth/github";}else{alert("OAuth " + p + " belum dikonfigurasi.");}}else{alert("OAuth " + p + " belum dikonfigurasi. Sila daftar Client ID di Google/GitHub dan masukkan ke dalam sistem.");}}
 document.getElementById("f").addEventListener("submit", async (e) => {
 e.preventDefault();
 const el=document.getElementById("e"); el.classList.add("hidden");
