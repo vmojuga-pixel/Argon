@@ -324,3 +324,13 @@ Loop:
 Target: 1 minggu untuk corpus cukup kaya (bukan 3 bulan).
 
 Moat: DATA. Kompetitor boleh clone API, tapi tak boleh clone evolusi corpus.
+
+---
+## 2026-10-17 — BorneoAI Rebrand & Core Completion
+- **Theme**: Ditukar sepenuhnya kepada Dolphin Cyan (Biru) dari Emerald.
+- **Background**: Gambar Dolphin dijadikan background di Landing, Login, Signup, dan App.
+- **Chat**: UI direka semula mengikut gaya Cloudflare AI (input sticky di bawah, suggestion cards).
+- **Auth**: Google OAuth berjaya di-wire (tiada prompt berulang).
+- **Landing**: Butang Baobao terapung ditukar kepada Widget FAQ.
+- **Ops**: Sistem auto-deploy GitHub Actions disahkan berfungsi.
+- **Fixes**: Isu `invalid json` pada API Chat diselesaikan dengan bypass fungsi `handleChat` dan panggil `env.AI.run` terus.
