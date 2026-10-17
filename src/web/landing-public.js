@@ -91,7 +91,7 @@ Live — deploy dalam minit
 <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800">
 <div class="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 font-bold mb-4">02</div>
 <h3 class="font-semibold mb-2">BorneoAI bina</h3>
-<p class="text-sm text-slate-400">Swarm 7-ejen reka, kod, kritik, perbaiki, dan deploy secara automatik ke Edge.</p>
+<p class="text-sm text-slate-400">BorneoAI reka, kod, kritik, perbaiki, dan deploy secara automatik ke Edge.</p>
 </div>
 <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800">
 <div class="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold mb-4">03</div>
@@ -202,7 +202,7 @@ Live — deploy dalam minit
 
 
 <!-- FAQ WIDGET -->
-<button id="faq-btn" onclick="toggleFaq()" style="position:fixed;bottom:20px;right:20px;z-index:100;width:56px;height:56px;border-radius:50%;background:#06b6d4;color:#0f172a;border:none;cursor:pointer;box-shadow:0 8px 24px rgba(6,182,212,.4);font-weight:bold;font-size:22px;transition:transform .2s" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">?</button>
+<button id="faq-btn" onclick="toggleFaq()" style="position:fixed;bottom:24px;right:24px;z-index:100;height:44px;padding:0 16px;border-radius:10px;background:#06b6d4;color:#0f172a;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(6,182,212,.4);font-weight:600;font-size:14px;transition:all .2s;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">FAQ</button>
 <div id="faq-panel" style="position:fixed;bottom:88px;right:20px;z-index:100;width:min(340px, calc(100vw - 40px));background:#0f172a;border:1px solid #334155;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.5);display:none;flex-direction:column;overflow:hidden;color:#e2e8f0;font-family:system-ui, sans-serif;text-align:left;">
   <div style="padding:16px;border-bottom:1px solid #334155;display:flex;justify-content:space-between;align-items:center;background:#1e293b;">
     <span style="font-weight:600;font-size:14px;">Soalan Lazim (FAQ)</span>
