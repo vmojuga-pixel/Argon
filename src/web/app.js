@@ -151,21 +151,41 @@ btn.textContent=res.ok?"Bina Lagi":"Cuba Lagi";btn.disabled=false;
 </script>`;}
 function vProjects(){return `<div class="p-6 md:p-8 max-w-5xl mx-auto fade-in"><h2 class="text-3xl font-bold mb-6 txt-grad">Projects</h2><div class="glass p-12 text-center"><div class="text-5xl mb-4 opacity-40">&#128230;</div><div class="text-slate-500 text-sm">Belum ada project. <a href="/app/build" class="text-emerald-400">Bina sekarang</a></div></div></div>`;}
 function vKeys(){return `<div class="p-6 md:p-8 max-w-3xl mx-auto fade-in"><h2 class="text-3xl font-bold mb-6 txt-grad">API Keys</h2><div class="glass p-6"><div class="text-xs uppercase tracking-wider text-slate-500 mb-3">Your API Key</div><div class="flex"><code id="k" class="flex-1 bg-slate-950/80 border border-slate-800 rounded-lg px-4 py-3 text-xs font-mono truncate text-emerald-300">Loading...</code><button onclick="navigator.clipboard.writeText(document.getElementById('k').textContent);this.textContent='Copied!'" class="ml-2 px-4 py-2 rounded-lg glass hover:bg-slate-800/60 text-xs">Copy</button></div></div></div><script>fetch("/api/me",{credentials:"include"}).then(function(r){return r.json();}).then(function(d){document.getElementById("k").textContent=d.apiKey||d.key||"Not available";}).catch(function(){});</script>`;}
-function vUsage(){return `<div class="p-6 md:p-8 max-w-3xl mx-auto fade-in"><h2 class="text-3xl font-bold mb-6 txt-grad">Usage</h2><div class="glass p-12 text-center text-slate-500 text-sm">Statistik akan muncul bila anda mula guna.</div></div>`;}
-function vBilling(){return `<div class="p-6 md:p-8 max-w-3xl mx-auto fade-in"><h2 class="text-3xl font-bold mb-6 txt-grad">Billing</h2><div class="glass p-8"><div class="text-xs uppercase tracking-wider text-slate-500 mb-2">Current Plan</div><div class="text-4xl font-bold mb-6 txt-grad">Free</div><a href="/#pricing" class="btn3d inline-block px-5 py-2.5 rounded-xl text-slate-950 font-semibold text-sm">Upgrade plan &rarr;</a></div></div>`;
+function vUsage(){return `<div class="p-6 md:p-8 max-w-3xl mx-auto fade-in"><h2 class="text-3xl font-bold mb-6 txt-grad">Usage</h2><div class="glass p-12 text-center text-slate-500 text-sm">Statistik akan muncul bila anda mula guna.</div></div>`;
 function vOps(){return `<div class="p-6 md:p-8 max-w-3xl mx-auto fade-in">
 <h2 class="text-3xl font-bold mb-2 txt-grad">Ops</h2>
-<p class="text-sm text-slate-400 mb-6">Taip arahan. Baobao cadang plan. Kau approve. Auto-deploy.</p>
-<div class="glass p-6">
-<textarea id="opsdir" rows="4" placeholder="Contoh: Tukar hero landing jadi biru..." class="w-full bg-slate-950/60 border border-slate-800 rounded-xl p-4 text-sm focus:outline-none focus:border-emerald-500/60 focus:ring-2 focus:ring-emerald-500/20 transition resize-none"></textarea>
-<div class="mt-3 flex gap-2"><button id="opsplan" onclick="opsPlan()" class="btn3d px-5 py-2.5 rounded-xl text-slate-950 font-semibold text-sm">Cadang Plan</button><button onclick="opsReset()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm">Reset</button></div>
-</div>
-<div id="opsout" class="mt-4"></div>
+<p class="text-sm text-slate-400 mb-6">Taip arahan. Baobao cadang. Kau approve. Auto-deploy.</p>
+<div class="glass p-6"><textarea id="opdir" rows="4" placeholder="Contoh: Tukar hero landing jadi biru..." class="w-full bg-slate-950/60 border border-slate-800 rounded-xl p-4 text-sm focus:outline-none focus:border-emerald-500/60 focus:ring-2 focus:ring-emerald-500/20 transition resize-none"></textarea>
+<div class="mt-3 flex gap-2"><button id="opbtn" onclick="runOps()" class="btn3d px-5 py-2.5 rounded-xl text-slate-950 font-semibold text-sm">Cadang Plan</button><button onclick="clearOps()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm">Reset</button></div></div>
+<div id="opout" class="mt-4"></div>
 <script>
-async function opsPlan(){var d=document.getElementById("opsdir").value.trim();if(!d){alert("Taip arahan dulu");return;}var b=document.getElementById("opsplan");b.disabled=true;b.textContent="Baobao fikir...";var o=document.getElementById("opsout");o.innerHTML='<div class="glass p-4 text-slate-500 text-xs">Baobao baca repo + fikir plan...</div>';try{var r=await fetch("/api/ops/plan",{method:"POST",credentials:"include",headers:{"Content-Type":"application/json"},body:JSON.stringify({directive:d})});var res=await r.json();if(!res.ok){o.innerHTML='<div class="glass p-4 text-rose-400 text-sm">Error: '+esc2(res.error||"unknown")+'</div>';b.disabled=false;b.textContent="Cadang Plan";return;}var h='<div class="glass p-5"><div class="text-xs uppercase tracking-wider text-emerald-400 mb-2">Plan</div><div class="text-base font-semibold mb-4">'+esc2(res.summary)+'</div>';res.files.forEach(function(f){h+='<div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 mb-2 font-mono text-xs"><div class="text-emerald-400 font-semibold mb-1">'+(f.action==="create"?"[NEW] ":"[EDIT] ")+esc2(f.path)+'</div><div class="text-slate-500 mb-2">'+f.oldSize+' → '+f.newSize+' bytes</div><div class="whitespace-pre-wrap max-h-60 overflow-auto text-slate-300">'+esc2(f.preview)+'</div></div>';});h+='<div class="mt-4 flex gap-2"><button onclick="opsApply()" class="btn3d px-5 py-2.5 rounded-xl text-slate-950 font-semibold text-sm">Approve & Deploy</button><button onclick="opsReset()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm">Batal</button></div></div>';o.innerHTML=h;window._oplan=res;b.disabled=false;b.textContent="Cadang Plan";}catch(e){o.innerHTML='<div class="glass p-4 text-rose-400 text-sm">Error: '+e.message+'</div>';b.disabled=false;b.textContent="Cadang Plan";}}
-async function opsApply(){if(!window._oplan)return;var o=document.getElementById("opsout");o.innerHTML+='<div class="glass p-4 text-slate-500 text-xs mt-2">Commit ke GitHub...</div>';try{var r=await fetch("/api/ops/apply",{method:"POST",credentials:"include",headers:{"Content-Type":"application/json"},body:JSON.stringify({plan:window._oplan,summary:window._oplan.summary})});var res=await r.json();var h='<div class="glass p-5"><div class="text-xs uppercase tracking-wider text-emerald-400 mb-2">Hasil</div><div class="font-semibold mb-4">'+esc2(res.message||"")+'</div>';if(res.results)res.results.forEach(function(x){h+='<div class="text-xs font-mono py-1">'+(x.ok?"✅":"❌")+' '+esc2(x.path)+(x.sha?' @'+x.sha:'')+(x.error?' — '+esc2(x.error):'')+'</div>';});h+='<div class="mt-4 text-xs text-slate-500">GitHub Actions auto-deploy ~1 minit. Refresh site untuk tengok.</div></div>';o.innerHTML=h;}catch(e){o.innerHTML+='<div class="glass p-4 text-rose-400 text-sm mt-2">Error: '+e.message+'</div>';}}
-function opsReset(){document.getElementById("opsout").innerHTML="";document.getElementById("opsdir").value="";window._oplan=null;}
-function esc2(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+async function runOps(){
+  var d=document.getElementById("opdir").value.trim(); if(!d){alert("Taip arahan dulu");return;}
+  var b=document.getElementById("opbtn"); b.disabled=true; b.textContent="Baobao fikir...";
+  var o=document.getElementById("opout"); o.innerHTML='<div class="glass p-4 text-slate-500 text-xs">Baobao baca repo + fikir plan...</div>';
+  try{
+    var r=await fetch("/api/ops/plan",{method:"POST",credentials:"include",headers:{"Content-Type":"application/json"},body:JSON.stringify({directive:d})});
+    var res=await r.json();
+    if(!res.ok){o.innerHTML='<div class="glass p-4 text-rose-400 text-sm">Error: '+(res.error||"unknown")+'</div>';b.disabled=false;b.textContent="Cadang Plan";return;}
+    var h='<div class="glass p-5"><div class="text-xs uppercase tracking-wider text-emerald-400 mb-2">Plan</div><div class="text-base font-semibold mb-4">'+res.summary+'</div>';
+    res.files.forEach(function(f){h+='<div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 mb-2 font-mono text-xs"><div class="text-emerald-400 font-semibold mb-1">'+(f.action==="create"?"[NEW] ":"[EDIT] ")+f.path+'</div><div class="text-slate-500 mb-2">'+f.oldSize+' &rarr; '+f.newSize+' bytes</div><div class="whitespace-pre-wrap max-h-60 overflow-auto text-slate-300">'+f.preview+'</div></div>';});
+    h+='<div class="mt-4 flex gap-2"><button onclick="applyOps()" class="btn3d px-5 py-2.5 rounded-xl text-slate-950 font-semibold text-sm">Approve & Deploy</button><button onclick="clearOps()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm">Batal</button></div></div>';
+    o.innerHTML=h; window._oplan=res; b.disabled=false; b.textContent="Cadang Plan";
+  }catch(e){o.innerHTML='<div class="glass p-4 text-rose-400 text-sm">Error: '+e.message+'</div>';b.disabled=false;b.textContent="Cadang Plan";}
+}
+async function applyOps(){
+  if(!window._oplan)return; var o=document.getElementById("opout");
+  o.innerHTML+='<div class="glass p-4 text-slate-500 text-xs mt-2">Commit ke GitHub...</div>';
+  try{
+    var r=await fetch("/api/ops/apply",{method:"POST",credentials:"include",headers:{"Content-Type":"application/json"},body:JSON.stringify({plan:window._oplan,summary:window._oplan.summary})});
+    var res=await r.json();
+    var h='<div class="glass p-5"><div class="text-xs uppercase tracking-wider text-emerald-400 mb-2">Hasil</div><div class="font-semibold mb-4">'+(res.message||"")+'</div>';
+    if(res.results)res.results.forEach(function(x){h+='<div class="text-xs font-mono py-1">'+(x.ok?"OK":"FAIL")+' '+x.path+(x.sha?' @'+x.sha:'')+'</div>';});
+    h+='<div class="mt-4 text-xs text-slate-500">GitHub Actions auto-deploy ~1 minit.</div></div>';
+    o.innerHTML=h;
+  }catch(e){o.innerHTML+='<div class="glass p-4 text-rose-400 text-sm mt-2">Error: '+e.message+'</div>';}
+}
+function clearOps(){document.getElementById("opout").innerHTML="";document.getElementById("opdir").value="";window._oplan=null;}
 </script></div>`;}
 
 function vBaobao(){return `<div class="h-[calc(100vh-4rem)] flex flex-col">
@@ -179,8 +199,45 @@ function vBaobao(){return `<div class="h-[calc(100vh-4rem)] flex flex-col">
 <button class="btn3d px-6 py-3 rounded-xl text-slate-950 font-semibold text-sm">Hantar</button>
 </form></div></div>
 <script>
-(function(){var f=document.getElementById("bbf"),m=document.getElementById("bbm"),i=document.getElementById("bbi");if(!f)return;
-function add(r,t){var w=document.createElement("div");w.className="max-w-3xl mx-auto fade-in";var s=String(t).split("<").join("&lt;").split(String.fromCharCode(10)).join("<br>");if(r==="u"){w.innerHTML='<div class="flex justify-end"><div class="bub-user max-w-[85%] px-4 py-2.5 rounded-2xl text-sm text-slate-950 font-medium">'+s+'</div></div>';}else{w.innerHTML='<div class="flex gap-3"><div class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-500 to-cyan-500 flex-shrink-0 flex items-center justify-center text-slate-950 text-xs font-bold glow">B</div><div class="bub-ai max-w-[85%] px-4 py-3 rounded-2xl text-sm leading-relaxed">'+s+'</div></div>';}m.appendChild(w);m.scrollTop=m.scrollHeight;}
-f.addEventListener("submit",async function(e){e.preventDefault();var t=i.value.trim();if(!t)return;i.value="";add("u",t);var th=document.createElement("div");th.id="bbth";th.className="max-w-3xl mx-auto";th.innerHTML='<div class="flex gap-3"><div class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-500 to-cyan-500 flex-shrink-0 flex items-center justify-center text-slate-950 text-xs font-bold glow">B</div><div class="bub-ai px-4 py-3 rounded-2xl text-slate-400 text-sm">Baobao fikir...</div></div>';m.appendChild(th);m.scrollTop=m.scrollHeight;try{var r=await fetch("/api/baobao",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:t})});var d=await r.json();var tt=document.getElementById("bbth");if(tt)tt.remove();if(d.ok){add("a",d.reply);}else if(d.error==="limit_reached"){add("a","Limit 5 chat/hari dah habis. Sign up free di /signup");}else{add("a","Maaf: "+(d.error||"unknown"));}}catch(er){var tt2=document.getElementById("bbth");if(tt2)tt2.remove();add("a","Error: "+er.message);}});})();
+document.getElementById("bbf").addEventListener("submit", async function(e){
+  e.preventDefault();
+  var i = document.getElementById("bbi");
+  var t = i.value.trim();
+  if(!t) return;
+  i.value = "";
+  var m = document.getElementById("bbm");
+  
+  // Append user msg
+  var u = document.createElement("div");
+  u.className = "max-w-3xl mx-auto fade-in flex justify-end";
+  u.innerHTML = '<div class="bub-user max-w-[85%] px-4 py-2.5 rounded-2xl text-sm text-slate-950 font-medium">' + t + '</div>';
+  m.appendChild(u); m.scrollTop = m.scrollHeight;
+  
+  // Append loading
+  var th = document.createElement("div");
+  th.id = "th";
+  th.className = "max-w-3xl mx-auto fade-in";
+  th.innerHTML = '<div class="flex gap-3"><div class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-500 to-cyan-500 flex-shrink-0 flex items-center justify-center text-slate-950 text-xs font-bold glow">B</div><div class="bub-ai px-4 py-3 rounded-2xl text-slate-400 text-sm">Baobao sedang fikir...</div></div>';
+  m.appendChild(th); m.scrollTop = m.scrollHeight;
+  
+  try {
+    var r = await fetch("/api/baobao", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({message: t}) });
+    var d = await r.json();
+    var el = document.getElementById("th"); if(el) el.remove();
+    
+    var a = document.createElement("div");
+    a.className = "max-w-3xl mx-auto fade-in";
+    var reply = d.ok ? d.reply : (d.error === "limit_reached" ? "Limit 5 chat/hari dah habis. Sign up free di /signup" : "Maaf, ada masalah: " + (d.error||"unknown"));
+    a.innerHTML = '<div class="flex gap-3"><div class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-500 to-cyan-500 flex-shrink-0 flex items-center justify-center text-slate-950 text-xs font-bold glow">B</div><div class="bub-ai max-w-[85%] px-4 py-3 rounded-2xl text-sm leading-relaxed">' + reply + '</div></div>';
+    m.appendChild(a); m.scrollTop = m.scrollHeight;
+  } catch(err) {
+    var el2 = document.getElementById("th"); if(el2) el2.remove();
+    var errDiv = document.createElement("div");
+    errDiv.className = "max-w-3xl mx-auto fade-in";
+    errDiv.innerHTML = '<div class="text-rose-400 text-sm">Error: ' + err.message + '</div>';
+    m.appendChild(errDiv); m.scrollTop = m.scrollHeight;
+  }
+});
 </script>`;}
 }
+function vBilling(){return `<div class="p-6 md:p-8 max-w-3xl mx-auto fade-in"><h2 class="text-3xl font-bold mb-6 txt-grad">Billing</h2><div class="glass p-8"><div class="text-xs uppercase tracking-wider text-slate-500 mb-2">Current Plan</div><div class="text-4xl font-bold mb-6 txt-grad">Free</div><a href="/#pricing" class="btn3d inline-block px-5 py-2.5 rounded-xl text-slate-950 font-semibold text-sm">Upgrade plan &rarr;</a></div></div>`;
