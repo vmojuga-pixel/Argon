@@ -71,6 +71,48 @@ export default {
     
     if (path === '/signup' && request.method === 'POST') return handleSignup(request, env);
 
+    if (path === '/api/auth/oauth/google') {
+      const clientId = env.GOOGLE_CLIENT_ID;
+      const redirectUri = url.origin + '/api/auth/oauth/google/callback';
+      const scope = 'email profile';
+      const googleAuthUrl = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=' + clientId + '&redirect_uri=' + encodeURIComponent(redirectUri) + '&response_type=code&scope=' + encodeURIComponent(scope) + '&access_type=offline&prompt=consent';
+      return Response.redirect(googleAuthUrl, 302);
+    }
+    if (path === '/api/auth/oauth/google/callback') {
+      const code = url.searchParams.get('code');
+      if (!code) return new Response('No code', { status: 400 });
+      const clientId = env.GOOGLE_CLIENT_ID;
+      const clientSecret = env.GOOGLE_CLIENT_SECRET;
+      const redirectUri = url.origin + '/api/auth/oauth/google/callback';
+      const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ code, client_id: clientId, client_secret: clientSecret, redirect_uri: redirectUri, grant_type: 'authorization_code' })
+      });
+      const tokenData = await tokenRes.json();
+      if (!tokenData.access_token) return new Response('Token fail: ' + JSON.stringify(tokenData), { status: 400 });
+      const userRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+        headers: { Authorization: 'Bearer ' + tokenData.access_token }
+      });
+      const user = await userRes.json();
+      const email = user.email;
+      if (!email) return new Response('No email', { status: 400 });
+      
+      let tenant = await env.DB.prepare('SELECT * FROM tenants WHERE email = ?').bind(email).first();
+      if (!tenant) {
+        const mockReq = new Request(url.origin + '/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email, plan: 'free' })
+        });
+        await handleSignup(mockReq, env);
+      }
+      const token = await createSession(env, email);
+      return new Response(null, {
+        status: 302,
+        headers: { 'Location': '/app', 'Set-Cookie': sessionCookieHeader(token) }
+      });
+    }
     if (path === '/api/build' && request.method === 'POST') {
       const sess = await validateSessionOrBasic(request, env);
       if (!sess.ok) return Response.json({ ok:false, error:'login required' }, { status: 401, headers: CORS });
