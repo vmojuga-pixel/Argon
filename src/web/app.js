@@ -47,7 +47,7 @@ export function renderApp(env, sess, view) {
 
   return `<!DOCTYPE html><html lang="en"><head>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>${app} — Console</title>
+  <title>${app} - Console</title>
   <script src="https://cdn.tailwindcss.com"></script>
   ${CSS}
   </head>
@@ -94,7 +94,7 @@ function vHome(){return `<div class="p-8 max-w-4xl mx-auto">
 <div class="card"><h3 class="font-medium text-gray-200 mb-2">Tanya Baobao</h3><p class="text-sm text-gray-400 mb-4">Bina sistem, tanya kod, atau automasi kerja anda.</p><a href="/app/chat" class="btn inline-block">Mula Chat</a></div>
 <div class="card"><h3 class="font-medium text-gray-200 mb-2">API Key</h3><p class="text-sm text-gray-400 mb-4">Dapatkan kunci akses untuk integrasi sistem luar.</p><a href="/app/keys" class="btn inline-block">Lihat API Key</a></div>
 </div>
-<div class="card"><h3 class="font-medium text-gray-200 mb-4">System Status</h3><div class="flex items-center gap-2 text-sm text-gray-400"><div class="w-2 h-2 rounded-full bg-emerald-500"></div> Swarm Aktif · Edge Live</div></div>
+<div class="card"><h3 class="font-medium text-gray-200 mb-4">System Status</h3><div class="flex items-center gap-2 text-sm text-gray-400"><div class="w-2 h-2 rounded-full bg-emerald-500"></div> Swarm Aktif &middot; Edge Live</div></div>
 </div>`;}
 
 function vChat(){return `<div class="h-[calc(100vh-4rem)] flex flex-col bg-[#09090b]">
@@ -125,14 +125,12 @@ document.getElementById('chat-form').addEventListener('submit', async (e) => {
   input.value = '';
   const container = document.getElementById('msgs');
   
-  // Append user message
   const userDiv = document.createElement('div');
   userDiv.className = 'flex justify-end fade-in';
   userDiv.innerHTML = '<div class="bub-user">' + msg.replace(/</g,'&lt;') + '</div>';
   container.appendChild(userDiv);
   container.scrollTop = container.scrollHeight;
   
-  // Append loading
   const loadDiv = document.createElement('div');
   loadDiv.id = 'loading-msg';
   loadDiv.className = 'flex justify-start fade-in';
@@ -152,8 +150,7 @@ document.getElementById('chat-form').addEventListener('submit', async (e) => {
     const aiDiv = document.createElement('div');
     aiDiv.className = 'flex justify-start fade-in';
     const replyText = data.ok ? data.reply : (data.error === 'quota exceeded' ? 'Kuota habis. Sila upgrade.' : (data.error || 'Ralat sistem.'));
-    aiDiv.innerHTML = '<div class="bub-ai">' + replyText.replace(/</g,'&lt;').replace(/
-/g, '<br>') + '</div>';
+    aiDiv.innerHTML = '<div class="bub-ai">' + replyText.replace(/</g,'&lt;') + '</div>';
     container.appendChild(aiDiv);
     container.scrollTop = container.scrollHeight;
   } catch (err) {
@@ -164,8 +161,7 @@ document.getElementById('chat-form').addEventListener('submit', async (e) => {
     container.appendChild(errDiv);
   }
 });
-</script>`;}
-</script>`;}
+</script></div>`;}
 
 function vOps(){return `<div class="p-8 max-w-4xl mx-auto fade-in">
 <h2 class="text-2xl font-semibold mb-6">Ops Console</h2>
@@ -195,7 +191,7 @@ async function applyOps(){
     var r=await fetch("/api/ops/apply",{method:"POST",credentials:"include",headers:{"Content-Type":"application/json"},body:JSON.stringify({plan:window._oplan,summary:window._oplan.summary})});
     var res=await r.json();
     var h='<div class="card mt-4"><div class="text-xs uppercase tracking-wider text-emerald-500 mb-2 font-semibold">Hasil</div><div class="font-medium mb-4">'+(res.message||"")+'</div>';
-    if(res.results)res.results.forEach(function(x){h+='<div class="text-xs font-mono py-1">'+(x.ok?"✅":"❌")+' '+x.path+(x.sha?' @'+x.sha:'')+'</div>';});
+    if(res.results)res.results.forEach(function(x){h+='<div class="text-xs font-mono py-1">'+(x.ok?"OK":"FAIL")+' '+x.path+(x.sha?' @'+x.sha:'')+'</div>';});
     h+='<div class="mt-4 text-xs text-gray-500">GitHub Actions auto-deploy ~1 minit.</div></div>';
     o.innerHTML=h;
   }catch(e){o.innerHTML+='<div class="text-red-400 text-sm mt-2">Error: '+e.message+'</div>';}
