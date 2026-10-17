@@ -431,7 +431,71 @@ export default {
     }
 
     // ===== CHAT =====
-    if (path === '/api/chat' && request.method === 'POST') {
+    if (path === '/api/stripe/checkout' && request.method === 'POST') {
+          const sess = await validateSessionOrBasic(request, env);
+          if (!sess.ok) return Response.json({ ok: false, error: 'login required' }, { status: 401, headers: CORS });
+          const email = sess.email || sess.user;
+          const plan = url.searchParams.get('plan') || 'pro';
+          
+          let amount = 4900; // Starter RM49
+          if (plan === 'pro') amount = 19900;
+          if (plan === 'business') amount = 79900;
+
+          const body = new URLSearchParams();
+          body.append('mode', 'subscription');
+          body.append('payment_method_types[0]', 'card'); 
+          body.append('line_items[0][price_data][currency]', 'myr');
+          body.append('line_items[0][price_data][product_data][name]', 'BorneoAI ' + plan.toUpperCase());
+          body.append('line_items[0][price_data][unit_amount]', amount.toString());
+          body.append('line_items[0][price_data][recurring][interval]', 'month');
+          body.append('line_items[0][quantity]', '1');
+          body.append('customer_email', email);
+          body.append('success_url', url.origin + '/app/billing?success=true');
+          body.append('cancel_url', url.origin + '/app/billing?canceled=true');
+          body.append('client_reference_id', email);
+          body.append('metadata[plan]', plan);
+
+          try {
+            const stripeRes = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + env.STRIPE_SECRET_KEY,
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: body.toString()
+            });
+            const stripeData = await stripeRes.json();
+            if (stripeData.url) {
+                return Response.json({ ok: true, url: stripeData.url }, { headers: CORS });
+            } else {
+                return Response.json({ ok: false, error: stripeData.error ? stripeData.error.message : 'Stripe error' }, { headers: CORS });
+            }
+          } catch(e) {
+            return Response.json({ ok: false, error: e.message }, { status: 500, headers: CORS });
+          }
+        }
+
+        if (path === '/api/stripe/webhook' && request.method === 'POST') {
+          const payload = await request.text();
+          let event;
+          try { event = JSON.parse(payload); } catch(e) { return new Response('Invalid JSON', { status: 400 }); }
+
+          if (event.type === 'checkout.session.completed') {
+              const session = event.data.object;
+              const email = session.client_reference_id;
+              const plan = session.metadata.plan;
+              if (email && plan) {
+                  try {
+                      await env.DB.prepare('UPDATE tenants SET plan = ? WHERE email = ?').bind(plan, email).run();
+                      console.log('[STRIPE] Upgraded', email, 'to', plan);
+                  } catch(e) {
+                      console.log('[STRIPE-DB-ERR]', e.message);
+                  }
+              }
+          }
+          return new Response('OK', { status: 200 });
+        }
+        if (path === '/api/chat' && request.method === 'POST') {
           let tenantId = null;
           let auth = await authenticate(request, env);
           if (auth.ok) {
