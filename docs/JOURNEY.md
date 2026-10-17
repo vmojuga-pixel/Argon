@@ -342,3 +342,8 @@ Moat: DATA. Kompetitor boleh clone API, tapi tak boleh clone evolusi corpus.
 - **Database Auto-Update**: Bila payment berjaya, webhook akan auto-update `plan` customer di D1 database.
 - **UI Update**: Butang Upgrade di dashboard bertukar ke Stripe Checkout. Selepas berjaya, user dibawa ke `/app/billing?success=true` dengan mesej terima kasih.
 - **Secrets Configured**: `STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`.
+
+---
+## 2026-10-17 (Late Night) — The "Gold Mine" Documentation
+- **Comprehensive Lessons Learned**: Kesemua kegagalan (1101, Invalid JSON, Regex Trap, OAuth Consent, Stripe DBA) dan kejayaan (Stripe Webhook Security, UI Vercel-style, Swarm Quality Gates) telah didokumenkan ke dalam `corpus/sectors/production-infra/gold-mine-lessons-2026.md`.
+- **Purpose**: Menjadi rujukan utama untuk Swarm semasa generate kod baru supaya tak ulang silap yang sama, dan rujukan untuk AI masa depan.
