@@ -95,9 +95,9 @@ function vHome(){return `<div class="p-8 max-w-4xl mx-auto">
 <div class="card"><h3 class="font-medium text-gray-200 mb-2">API Key</h3><p class="text-sm text-gray-400 mb-4">Dapatkan kunci akses untuk integrasi sistem luar.</p><a href="/app/keys" class="btn inline-block">Lihat API Key</a></div>
 </div></div>`;}
 
-function vChat(){return `<div class="h-[calc(100vh-4rem)] flex flex-col bg-[#09090b]">
-<div id="msgs" class="flex-1 overflow-y-auto p-4 md:p-8 w-full">
-<div id="welcome" class="max-w-3xl mx-auto mt-8 mb-8 text-center fade-in">
+function vChat(){return `<div class="h-[calc(100dvh-4rem)] flex flex-col bg-[#09090b]">
+<div id="msgs" class="flex-1 overflow-y-auto p-4 md:p-8 w-full flex flex-col">
+<div id="welcome" class="m-auto max-w-3xl w-full text-center fade-in">
   <div class="w-16 h-16 rounded-2xl bg-[#18181b] border border-[#27272a] flex items-center justify-center mx-auto mb-6 shadow-sm">
     <svg class="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
   </div>
@@ -125,7 +125,7 @@ function vChat(){return `<div class="h-[calc(100vh-4rem)] flex flex-col bg-[#090
 </div>
 </div>
 
-<div class="p-4 bg-[#09090b] shrink-0">
+<div class="p-4 pb-12 md:pb-8 bg-[#09090b] shrink-0">
   <form id="chat-form" class="w-full max-w-3xl mx-auto relative">
     <input id="chat-input" type="text" placeholder="Taip arahan atau soalan anda di sini..." autocomplete="off" class="w-full bg-[#18181b] border border-[#27272a] rounded-xl pl-4 pr-14 py-3.5 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors placeholder-gray-500"/>
     <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-emerald-500 hover:bg-emerald-400 rounded-lg text-[#09090b] transition-colors flex items-center justify-center">
