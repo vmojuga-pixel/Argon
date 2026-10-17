@@ -33,7 +33,8 @@ export function renderApp(env, sess, view) {
     ["usage","Usage","/app/usage","M18 20V10M12 20V4M6 20v-6"],
     ["billing","Billing","/app/billing","M2 6h20v12H2zM2 10h20"],
     ["ops","Ops","/app/ops","M12 2v20M2 12h20"],
-    ["baobao","Baobao","/app/baobao","M12 2a10 10 0 100 20 10 10 0 000-20zM8 12h8"]
+    ["baobao","Baobao","/app/baobao","M12 2a10 10 0 100 20 10 10 0 000-20zM8 12h8"],
+    ["integrations","Integrations","/app/integrations","M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"]
   ];
 
   const sidebar = nav.map(function(a){
@@ -42,7 +43,7 @@ export function renderApp(env, sess, view) {
     return `<a href="${href}" class="${cls}"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="${icon}"/></svg><span>${label}</span></a>`;
   }).join("");
 
-  var content = view==="chat"?vChat():view==="projects"?vProjects():view==="keys"?vKeys():view==="usage"?vUsage():view==="billing"?vBilling():view==="ops"?vOps():view==="baobao"?vBaobao():vHome();
+  var content = view==="chat"?vChat():view==="projects"?vProjects():view==="keys"?vKeys():view==="usage"?vUsage():view==="billing"?vBilling():view==="ops"?vOps():view==="baobao"?vBaobao():view==="integrations"?vIntegrations():vHome();
 
   return `<!DOCTYPE html><html lang="en"><head>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -258,4 +259,30 @@ function vBilling(){return `<div class="p-8 max-w-3xl mx-auto fade-in">
     <a href="/#pricing" class="btn">Upgrade Plan</a>
   </div>
 </div>
+</div>`;function vIntegrations(){return `<div class="p-8 max-w-4xl mx-auto fade-in">
+<h2 class="text-2xl font-semibold mb-6 text-white">Integrations</h2>
+<div class="card mb-6">
+  <div class="flex items-center justify-between mb-4">
+    <div><h3 class="text-lg font-medium text-white">GitHub Repositories</h3><p class="text-sm text-gray-400">Sambungkan repo GitHub SIR untuk auto-deploy (macam Cloudflare).</p></div>
+    <a href="/api/auth/oauth/github" class="btn">Connect GitHub</a>
+  </div>
+  <div id="repos-list" class="text-sm text-gray-500">Memuatkan senarai repo...</div>
+</div>
+<script>
+fetch('/api/github/repos', {credentials:'include'}).then(r=>r.json()).then(d=>{
+  var el = document.getElementById('repos-list');
+  if(!d.ok) { el.innerHTML = '<div class="text-rose-400">' + (d.error || 'Gagal tarik repo') + '</div>'; return; }
+  if(d.repos.length === 0) { el.innerHTML = 'Tiada repo dijumpai.'; return; }
+  var h = '<div class="space-y-2">';
+  d.repos.forEach(function(r){
+    h += '<div class="flex items-center justify-between p-3 bg-[#0f172a] border border-[#334155] rounded-md">';
+    h += '<div><div class="text-white font-medium">' + r.full_name + '</div><div class="text-xs text-gray-500">' + (r.private ? 'Private' : 'Public') + '</div></div>';
+    h += '<button onclick="alert(\'Fungsi link repo akan datang!\')" class="text-xs px-3 py-1 bg-[#334155] rounded hover:bg-[#475569]">Link</button>';
+    h += '</div>';
+  });
+  h += '</div>';
+  el.innerHTML = h;
+}).catch(e => { document.getElementById('repos-list').innerHTML = '<div class="text-rose-400">Ralat: '+e.message+'</div>'; });
+</script>
 </div>`;}
+}

@@ -130,6 +130,7 @@ export default {
         });
         await handleSignup(mockReq, env);
       }
+      await env.KV.put('gh_token:' + email, tokenData.access_token);
       const token = await createSession(env, email);
       return new Response(null, {
         status: 302,
@@ -526,7 +527,7 @@ export default {
         if (path === '/api/auth/oauth/github') {
       const clientId = env.GITHUB_CLIENT_ID;
       const redirectUri = url.origin + '/api/auth/oauth/github/callback';
-      const scope = 'user:email';
+      const scope = 'repo,user:email';
       const githubAuthUrl = 'https://github.com/login/oauth/authorize?client_id=' + clientId + '&redirect_uri=' + encodeURIComponent(redirectUri) + '&scope=' + encodeURIComponent(scope);
       return Response.redirect(githubAuthUrl, 302);
     }
@@ -573,7 +574,26 @@ export default {
       });
     }
     
-    if (path === '/api/chat' && request.method === 'POST') {
+    if (path === '/api/github/repos' && request.method === 'GET') {
+          const sess = await validateSessionOrBasic(request, env);
+          if (!sess.ok) return Response.json({ ok: false, error: 'login required' }, { status: 401, headers: CORS });
+          const email = sess.email || sess.user;
+          const token = await env.KV.get('gh_token:' + email);
+          if (!token) return Response.json({ ok: false, error: 'GitHub belum disambungkan. Sila login semula guna GitHub.' }, { headers: CORS });
+          
+          try {
+            const ghRes = await fetch('https://api.github.com/user/repos?per_page=100&sort=updated', {
+              headers: { Authorization: 'Bearer ' + token, 'User-Agent': 'BorneoAI' }
+            });
+            const repos = await ghRes.json();
+            if (!Array.isArray(repos)) return Response.json({ ok: false, error: 'Gagal tarik repo' }, { headers: CORS });
+            const simplified = repos.map(r => ({ name: r.name, full_name: r.full_name, private: r.private }));
+            return Response.json({ ok: true, repos: simplified }, { headers: CORS });
+          } catch(e) {
+            return Response.json({ ok: false, error: e.message }, { status: 500, headers: CORS });
+          }
+        }
+        if (path === '/api/chat' && request.method === 'POST') {
           let tenantId = null;
           let auth = await authenticate(request, env);
           if (auth.ok) {
