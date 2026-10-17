@@ -424,13 +424,12 @@ export default {
           if (!tenantId) return Response.json({ error: 'auth required' }, { status: 401, headers: CORS });
           const quota = await checkQuota(env, tenantId, 'chat');
           if (!quota.ok) return Response.json({ error: quota.error }, { status: 429, headers: CORS });
-          let body = {};
-          try { body = await request.json(); } catch {}
-          const out = await handleChat(request, env, tenantId, body);
+          const authObj = { ok: true, tenantId: tenantId, mode: 'tenant' };
+          const res = await handleChat(request, env, ctx, authObj);
           ctx.waitUntil(incrementUsage(env, tenantId, 'chat'));
           ctx.waitUntil(auditLog(env, tenantId, 'chat.completed'));
           ctx.waitUntil(dispatchEvent(env, tenantId, 'chat.completed', { ts: Date.now() }));
-          return out;
+          return res;
         }
         
         if (path === '/api/agent' && request.method === 'POST') {
