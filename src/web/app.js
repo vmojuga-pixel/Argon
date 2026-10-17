@@ -164,7 +164,7 @@ document.getElementById('chat-form').addEventListener('submit', async (e) => {
     container.appendChild(errDiv);
   }
 });
-</script>`;});
+</script>`;}
 </script>`;}
 
 function vOps(){return `<div class="p-8 max-w-4xl mx-auto fade-in">
