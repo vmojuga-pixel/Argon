@@ -409,9 +409,19 @@ export default {
 
     // ===== CHAT =====
     if (path === '/api/chat' && request.method === 'POST') {
-      const auth = await authenticate(request, env);
-      if (!auth.ok) return Response.json({ error: auth.error }, { status: 401, headers: CORS });
-
+          let tenantId = null;
+          const auth = await authenticate(request, env);
+          if (auth.ok) {
+            tenantId = auth.tenantId;
+          } else {
+            const sess = await validateSessionOrBasic(request, env);
+            if (sess.ok) {
+              const email = sess.email || sess.user;
+              const t = await env.DB.prepare('SELECT id FROM tenants WHERE email = ?').bind(email).first();
+              if (t) tenantId = t.id;
+            }
+          }
+          if (!tenantId) return Response.json({ error: 'auth required' }, { status: 401, headers: CORS });
       let rl;
       if (auth.mode === 'tenant') {
         rl = await checkRateLimit(env, auth.tenantId, auth.plan);
