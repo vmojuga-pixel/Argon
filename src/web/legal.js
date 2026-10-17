@@ -15,9 +15,9 @@ export function renderLegal(type) {
   <div class="space-y-4 text-sm leading-relaxed">
     <p><strong>1. Acceptance of Absolute Terms:</strong> By accessing or using BorneoAI ("the Service"), you explicitly agree to all terms stated herein. If you do not agree, you are prohibited from using the Service.</p>
     
-    <p><strong>2. Service Provider Status:</strong> BorneoAI is a software-as-a-service platform operated by Northerncoast Group. We provide AI-assisted coding tools. We are NOT a law firm, financial advisor, licensed professional, or government entity. Our service does not involve life-critical systems or physical property management.</p>
+    <p><strong>2. Service Provider Status:</strong> BorneoAI is a software-as-a-service platform operated by NORTHERNCOAST GROUP. We provide AI-assisted coding tools. We are NOT a law firm, financial advisor, licensed professional, or government entity. Our service does not involve life-critical systems or physical property management.</p>
     
-    <p><strong>3. Absolute Waiver of Court Proceedings:</strong> You, the Customer, explicitly and irrevocably agree that you will NOT bring Northerncoast Group, its directors, employees, or agents to any court of law, tribunal, or civil dispute resolution forum for any claim, loss, damage, or dispute arising from the use of this Service. Any attempt to file a lawsuit or civil claim is a direct violation of these Terms.</p>
+    <p><strong>3. Absolute Waiver of Court Proceedings:</strong> You, the Customer, explicitly and irrevocably agree that you will NOT bring NORTHERNCOAST GROUP, its directors, employees, or agents to any court of law, tribunal, or civil dispute resolution forum for any claim, loss, damage, or dispute arising from the use of this Service. Any attempt to file a lawsuit or civil claim is a direct violation of these Terms.</p>
 
     <p><strong>4. Use Wisely:</strong> You are solely and entirely responsible for any code, software, content, or actions generated using the Service. Use this platform wisely. You must review, test, and verify all AI-generated outputs before deploying them.</p>
     
@@ -25,7 +25,7 @@ export function renderLegal(type) {
     
     <p><strong>6. Absolute Limitation of Liability:</strong> TO THE MAXIMUM EXTENT PERMITTED BY LAW, NORTHERNCOAST GROUP SHALL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO LOSS OF PROFITS, DATA, OR BUSINESS INTERRUPTION, ARISING FROM YOUR USE OF THE SERVICE.</p>
     
-    <p><strong>7. Indemnification:</strong> You agree to defend, indemnify, and hold harmless Northerncoast Group from any claims, damages, obligations, losses, liabilities, costs or debt, and expenses (including attorney's fees) arising from your use of the Service or your violation of these Terms.</p>
+    <p><strong>7. Indemnification:</strong> You agree to defend, indemnify, and hold harmless NORTHERNCOAST GROUP from any claims, damages, obligations, losses, liabilities, costs or debt, and expenses (including attorney's fees) arising from your use of the Service or your violation of these Terms.</p>
   </div>` + HTML_FOOT;
 
   if (type === 'aup') return HTML_HEAD + `
