@@ -445,18 +445,23 @@ export default {
           if (!msg) return Response.json({ ok: false, error: 'message required' }, { status: 400, headers: CORS });
 
           try {
+            const sysPrompt = `You are Baobao, an agentic AI assistant for BorneoAI. 
+You can answer questions OR perform tasks. 
+If the user asks to build software, automate tasks, or write code, acknowledge it and provide a brief plan or the code.
+If the user asks a general question, answer it clearly.
+Reply in the same language as the user (BM or English). Keep it helpful and concise.`;
+
             const r = await env.AI.run('@cf/meta/llama-4-scout-17b-16e-instruct', {
                messages: [
-                 { role: 'system', content: 'You are Baobao, a helpful AI assistant for BorneoAI. Reply in the same language as the user. Keep it short and helpful.' },
+                 { role: 'system', content: sysPrompt },
                  { role: 'user', content: msg }
                ],
-               max_tokens: 500
+               max_tokens: 800
             });
             const reply = r.response || r.result || r.text || 'Maaf, saya tidak dapat menjana jawapan.';
             
             ctx.waitUntil(incrementUsage(env, tenantId, 'chat'));
             ctx.waitUntil(auditLog(env, tenantId, 'chat.completed'));
-            ctx.waitUntil(dispatchEvent(env, tenantId, 'chat.completed', { ts: Date.now() }));
             
             return Response.json({ ok: true, reply: reply }, { headers: CORS });
           } catch (e) {
