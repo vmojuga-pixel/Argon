@@ -250,6 +250,13 @@ function vBuild(){return `<div class="p-8 max-w-3xl mx-auto"><h2 class="text-2xl
 function vProjects(){return `<div class="p-8 max-w-4xl mx-auto"><h2 class="text-2xl font-semibold mb-6">Projects</h2><div class="card text-center py-12"><div class="text-gray-500 text-sm">Belum ada project. <a href="/app/build" class="text-cyan-500">Bina sekarang</a></div></div></div>`;}
 function vKeys(){return `<div class="p-8 max-w-3xl mx-auto"><h2 class="text-2xl font-semibold mb-6">API Keys</h2><div class="card"><div class="text-xs uppercase tracking-wider text-gray-500 mb-3">Your API Key</div><div class="flex"><code id="k" class="flex-1 bg-[#0f172a] border border-[#334155] rounded-md px-4 py-2.5 text-xs font-mono truncate text-cyan-400">Loading...</code><button onclick="navigator.clipboard.writeText(document.getElementById('k').textContent);this.textContent='Copied!'" class="ml-2 px-4 py-2.5 bg-[#334155] hover:bg-[#475569] rounded-md text-sm">Copy</button></div></div></div><script>fetch("/api/me",{credentials:"include"}).then(function(r){return r.json();}).then(function(d){document.getElementById("k").textContent=d.apiKey||d.key||"Not available";}).catch(function(){});</script>`;}
 function vUsage(){return `<div class="p-8 max-w-3xl mx-auto"><h2 class="text-2xl font-semibold mb-6">Usage</h2><div class="card text-center text-gray-500 text-sm py-12">Statistik akan muncul bila anda mula guna.</div></div>`;}
-function vBilling(){return `<div class="p-8 max-w-3xl mx-auto"><h2 class="text-2xl font-semibold mb-6">Billing</h2><div class="card"><div class="text-xs uppercase tracking-wider text-gray-500 mb-2">Current Plan</div><div class="text-3xl font-semibold mb-6">Free</div><a href="/#pricing" class="btn inline-block">Upgrade plan &rarr;</a></div></div>`;}
-</script></div>`;}
-}
+function vBilling(){return `<div class="p-8 max-w-3xl mx-auto fade-in">
+<h2 class="text-2xl font-semibold mb-6 text-white">Billing</h2>
+<div class="card mb-6">
+  <div class="text-xs uppercase tracking-wider text-gray-500 mb-2">Current Plan</div>
+  <div class="flex items-end justify-between">
+    <div class="text-3xl font-semibold text-white">Free Tier</div>
+    <a href="/#pricing" class="btn">Upgrade Plan</a>
+  </div>
+</div>
+</div>`;}
