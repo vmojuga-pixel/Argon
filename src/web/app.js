@@ -28,7 +28,6 @@ export function renderApp(env, sess, view) {
   const nav = [
     ["home","Home","/app","M3 12l9-9 9 9M5 10v10h14V10"],
     ["baobao","Baobao","/app/chat","M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"],
-    ["build","Build","/app/build","M13 2L3 14h9l-1 8 10-12h-9l1-8z"],
     ["projects","Projects","/app/projects","M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"],
     ["keys","API Keys","/app/keys","M21 2l-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"],
     ["usage","Usage","/app/usage","M18 20V10M12 20V4M6 20v-6"],
@@ -43,7 +42,7 @@ export function renderApp(env, sess, view) {
     return `<a href="${href}" class="${cls}"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="${icon}"/></svg><span>${label}</span></a>`;
   }).join("");
 
-  var content = view==="chat"?vChat():view==="build"?vBuild():view==="projects"?vProjects():view==="keys"?vKeys():view==="usage"?vUsage():view==="billing"?vBilling():view==="ops"?vOps():view==="baobao"?vBaobao():vHome();
+  var content = view==="chat"?vChat():view==="projects"?vProjects():view==="keys"?vKeys():view==="usage"?vUsage():view==="billing"?vBilling():view==="ops"?vOps():view==="baobao"?vBaobao():vHome();
 
   return `<!DOCTYPE html><html lang="en"><head>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
