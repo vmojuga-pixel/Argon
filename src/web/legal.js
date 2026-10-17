@@ -13,14 +13,19 @@ export function renderLegal(type) {
   if (type === 'terms') return HTML_HEAD + `
   <h1 class="text-3xl font-bold text-white mb-6">Terms of Service</h1>
   <div class="space-y-4 text-sm leading-relaxed">
-    <p><strong>1. Acceptance:</strong> By accessing or using BorneoAI ("the Service"), you agree to be bound by these Terms. If you do not agree, do not use the Service.</p>
-    <p><strong>2. Service Provider:</strong> BorneoAI is a software-as-a-service platform operated by Northerncoast Group. We provide AI-assisted coding tools. We are not a law firm, financial advisor, or licensed professional service.</p>
-    <p><strong>3. User Responsibility:</strong> You are solely responsible for any code, software, or content generated using the Service. You must review and test all AI-generated outputs before deploying them to production.</p>
-    <p><strong>4. No Warranty ("AS IS"):</strong> The Service is provided "AS IS" and "AS AVAILABLE" without warranties of any kind, either express or implied. We do not warrant that the Service will be uninterrupted, error-free, or completely secure.</p>
-    <p><strong>5. Limitation of Liability:</strong> TO THE MAXIMUM EXTENT PERMITTED BY LAW, IN NO EVENT SHALL NORTHERNCOAST GROUP, ITS DIRECTORS, EMPLOYEES, OR AGENTS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING WITHOUT LIMITATION, LOSS OF PROFITS, DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES, RESULTING FROM (i) YOUR ACCESS TO OR USE OF OR INABILITY TO ACCESS OR USE THE SERVICE; (ii) ANY CONDUCT OR CONTENT OF ANY THIRD PARTY ON THE SERVICE; (iii) ANY CONTENT OBTAINED FROM THE SERVICE; AND (iv) UNAUTHORIZED ACCESS, USE, OR ALTERATION OF YOUR TRANSMISSIONS OR CONTENT.</p>
-    <p><strong>6. Indemnification:</strong> You agree to defend, indemnify, and hold harmless Northerncoast Group and its licensee and licensors, and their employees, contractors, agents, officers and directors, from and against any and all claims, damages, obligations, losses, liabilities, costs or debt, and expenses (including but not limited to attorney's fees).</p>
-    <p><strong>7. Dispute Resolution:</strong> Any dispute arising out of or relating to these Terms or the Service shall be resolved through binding arbitration, rather than in court, except that you may assert claims in small claims court if your claims qualify. You waive any right to participate in a class action lawsuit.</p>
-    <p><strong>8. Governing Law:</strong> These Terms shall be governed by the laws of Malaysia, without regard to its conflict of law provisions.</p>
+    <p><strong>1. Acceptance of Absolute Terms:</strong> By accessing or using BorneoAI ("the Service"), you explicitly agree to all terms stated herein. If you do not agree, you are prohibited from using the Service.</p>
+    
+    <p><strong>2. Service Provider Status:</strong> BorneoAI is a software-as-a-service platform operated by Northerncoast Group. We provide AI-assisted coding tools. We are NOT a law firm, financial advisor, licensed professional, or government entity. Our service does not involve life-critical systems or physical property management.</p>
+    
+    <p><strong>3. Absolute Waiver of Court Proceedings:</strong> You, the Customer, explicitly and irrevocably agree that you will NOT bring Northerncoast Group, its directors, employees, or agents to any court of law, tribunal, or civil dispute resolution forum for any claim, loss, damage, or dispute arising from the use of this Service. Any attempt to file a lawsuit or civil claim is a direct violation of these Terms.</p>
+
+    <p><strong>4. Use Wisely:</strong> You are solely and entirely responsible for any code, software, content, or actions generated using the Service. Use this platform wisely. You must review, test, and verify all AI-generated outputs before deploying them.</p>
+    
+    <p><strong>5. "AS IS" & Full Disclaimer:</strong> The Service is provided "AS IS" and "AS AVAILABLE" without any warranties of any kind. We do not guarantee that the Service will be error-free, secure, or uninterrupted.</p>
+    
+    <p><strong>6. Absolute Limitation of Liability:</strong> TO THE MAXIMUM EXTENT PERMITTED BY LAW, NORTHERNCOAST GROUP SHALL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO LOSS OF PROFITS, DATA, OR BUSINESS INTERRUPTION, ARISING FROM YOUR USE OF THE SERVICE.</p>
+    
+    <p><strong>7. Indemnification:</strong> You agree to defend, indemnify, and hold harmless Northerncoast Group from any claims, damages, obligations, losses, liabilities, costs or debt, and expenses (including attorney's fees) arising from your use of the Service or your violation of these Terms.</p>
   </div>` + HTML_FOOT;
 
   if (type === 'aup') return HTML_HEAD + `
@@ -34,24 +39,23 @@ export function renderLegal(type) {
       <li>Intellectual property infringement.</li>
       <li>Malware, ransomware, or crypto mining.</li>
     </ul>
-    <p><strong>Enforcement:</strong> We reserve the right to suspend or terminate your account without prior notice if you violate this policy. We may also report illegal activities to the relevant authorities.</p>
+    <p><strong>Enforcement:</strong> We reserve the right to suspend or terminate your account immediately without prior notice if you violate this policy.</p>
     <p><strong>Report Abuse:</strong> Please report any violations to <a href="mailto:abuse@northerncoastgroup.com" class="text-cyan-400">abuse@northerncoastgroup.com</a>.</p>
   </div>` + HTML_FOOT;
 
   if (type === 'privacy') return HTML_HEAD + `
   <h1 class="text-3xl font-bold text-white mb-6">Privacy Policy</h1>
   <div class="space-y-4 text-sm leading-relaxed">
-    <p><strong>Data Collection:</strong> We collect only the necessary information to provide the Service, such as your email address, company name, and billing details (processed securely via our payment providers). We do not sell your data to third parties.</p>
+    <p><strong>Data Collection:</strong> We collect only the necessary information to provide the Service, such as your email address, company name, and billing details (processed securely via our payment providers).</p>
     <p><strong>Data Security:</strong> We use industry-standard security measures (including Cloudflare Edge encryption) to protect your data. However, no method of transmission over the Internet is 100% secure.</p>
-    <p><strong>Third-Party Services:</strong> We use third-party providers for AI processing (Cloudflare Workers AI) and payments (Stripe). Your use of the Service is also subject to their respective privacy policies.</p>
+    <p><strong>Third-Party Services:</strong> We use third-party providers for AI processing (Cloudflare Workers AI) and payments (Stripe).</p>
   </div>` + HTML_FOOT;
 
   if (type === 'cookies') return HTML_HEAD + `
   <h1 class="text-3xl font-bold text-white mb-6">Cookie Policy</h1>
   <div class="space-y-4 text-sm leading-relaxed">
-    <p><strong>Essential Cookies:</strong> We use a single essential cookie (<code class="text-cyan-400">borneoai_session</code>) to keep you logged in. This cookie is required for the Service to function and lasts for 7 days.</p>
+    <p><strong>Essential Cookies:</strong> We use a single essential cookie (<code class="text-cyan-400">borneoai_session</code>) to keep you logged in. This cookie is required for the Service to function.</p>
     <p><strong>No Tracking:</strong> We do not use analytics cookies, advertising trackers, or any third-party tracking pixels.</p>
-    <p><strong>Managing Cookies:</strong> You can disable cookies in your browser settings. However, disabling essential cookies will prevent you from logging into the platform.</p>
   </div>` + HTML_FOOT;
 
   return HTML_HEAD + '<h1 class="text-3xl text-white">Not Found</h1>' + HTML_FOOT;
