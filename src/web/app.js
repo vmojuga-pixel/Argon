@@ -50,8 +50,18 @@ export function renderApp(env, sess, view) {
   <title>${app} - Console</title>
   <script src="https://cdn.tailwindcss.com"></script>
   ${CSS}
-  </head>
-  <body class="antialiased flex h-screen overflow-hidden">
+  
+<style>
+body {
+    background-image: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), url('https://raw.githubusercontent.com/vmojuga-pixel/Argon/main/dolphin.png') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-attachment: fixed !important;
+    background-repeat: no-repeat !important;
+}
+</style>
+</head>
+  <body class="antialiased flex h-screen overflow-hidden bg-transparent">
     <aside id="sb" class="w-64 border-r border-[#334155] bg-[#0f172a] flex flex-col h-full fixed md:static inset-y-0 z-40 hidden md:flex">
       <div class="h-16 flex items-center justify-between px-6 border-b border-[#334155]">
         <span class="font-bold text-lg text-white tracking-tight">${app}</span>

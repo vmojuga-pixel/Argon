@@ -10,6 +10,16 @@ export function renderPublicLanding(env, sessOk) {
 <meta name="description" content="Kami bina software, website, full-stack apps untuk bisnes anda. Enterprise, startup, SME, non-tech — tak payah coding." />
 <script src="https://cdn.tailwindcss.com"></script>
 <script>tailwind.config={darkMode:"class"}</script>
+
+<style>
+body {
+    background-image: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), url('https://raw.githubusercontent.com/vmojuga-pixel/Argon/main/dolphin.png') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-attachment: fixed !important;
+    background-repeat: no-repeat !important;
+}
+</style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased">
 <header class="border-b border-slate-800 bg-slate-900/70 backdrop-blur sticky top-0 z-50">

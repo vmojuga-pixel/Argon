@@ -4,8 +4,18 @@ export function renderLogin(err) {
 <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Log in — BorneoAI</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<script>tailwind.config={darkMode:"class"}</script></head>
-<body class="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased flex items-center justify-center p-6">
+<script>tailwind.config={darkMode:"class"}</script>
+<style>
+body {
+    background-image: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), url('https://raw.githubusercontent.com/vmojuga-pixel/Argon/main/dolphin.png') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-attachment: fixed !important;
+    background-repeat: no-repeat !important;
+}
+</style>
+</head>
+<body class="min-h-screen text-slate-100 font-sans antialiased flex items-center justify-center p-6">
 <div class="w-full max-w-md">
 <div class="text-center mb-6">
 <a href="/" class="inline-flex items-center gap-2">
