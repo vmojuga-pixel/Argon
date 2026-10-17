@@ -523,7 +523,57 @@ export default {
           }
           return new Response('OK', { status: 200 });
         }
-        if (path === '/api/chat' && request.method === 'POST') {
+        if (path === '/api/auth/oauth/github') {
+      const clientId = env.GITHUB_CLIENT_ID;
+      const redirectUri = url.origin + '/api/auth/oauth/github/callback';
+      const scope = 'user:email';
+      const githubAuthUrl = 'https://github.com/login/oauth/authorize?client_id=' + clientId + '&redirect_uri=' + encodeURIComponent(redirectUri) + '&scope=' + encodeURIComponent(scope);
+      return Response.redirect(githubAuthUrl, 302);
+    }
+    if (path === '/api/auth/oauth/github/callback') {
+      const code = url.searchParams.get('code');
+      if (!code) return new Response('No code', { status: 400 });
+      const clientId = env.GITHUB_CLIENT_ID;
+      const clientSecret = env.GITHUB_CLIENT_SECRET;
+      const redirectUri = url.origin + '/api/auth/oauth/github/callback';
+      
+      const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ code, client_id: clientId, client_secret: clientSecret, redirect_uri: redirectUri })
+      });
+      const tokenData = await tokenRes.json();
+      if (!tokenData.access_token) return new Response('Token fail: ' + JSON.stringify(tokenData), { status: 400 });
+      
+      const emailsRes = await fetch('https://api.github.com/user/emails', {
+        headers: { Authorization: 'Bearer ' + tokenData.access_token, 'User-Agent': 'BorneoAI' }
+      });
+      const emails = await emailsRes.json();
+      let email = null;
+      if (Array.isArray(emails)) {
+        const primary = emails.find(e => e.primary && e.verified);
+        email = primary ? primary.email : (emails.length > 0 ? emails[0].email : null);
+      }
+      
+      if (!email) return new Response('No email from GitHub', { status: 400 });
+      
+      let tenant = await env.DB.prepare('SELECT * FROM tenants WHERE email = ?').bind(email).first();
+      if (!tenant) {
+        const mockReq = new Request(url.origin + '/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email, plan: 'free' })
+        });
+        await handleSignup(mockReq, env);
+      }
+      const token = await createSession(env, email);
+      return new Response(null, {
+        status: 302,
+        headers: { 'Location': '/app', 'Set-Cookie': sessionCookieHeader(token) }
+      });
+    }
+    
+    if (path === '/api/chat' && request.method === 'POST') {
           let tenantId = null;
           let auth = await authenticate(request, env);
           if (auth.ok) {
