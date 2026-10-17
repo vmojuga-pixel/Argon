@@ -97,21 +97,25 @@ function vHome(){return `<div class="p-8 max-w-4xl mx-auto">
 <div class="card"><h3 class="font-medium text-gray-200 mb-4">System Status</h3><div class="flex items-center gap-2 text-sm text-gray-400"><div class="w-2 h-2 rounded-full bg-emerald-500"></div> Swarm Aktif · Edge Live</div></div>
 </div>`;}
 
-function vChat(){return `<div class="h-full flex flex-col max-w-4xl mx-auto w-full">
-<div id="msgs" class="flex-1 overflow-y-auto p-4 md:p-8 space-y-6">
-<div class="text-center py-12">
-<div class="w-16 h-16 rounded-xl bg-[#18181b] border border-[#27272a] flex items-center justify-center mx-auto mb-4">
+function vChat(){return `<div class="h-[calc(100vh-4rem)] flex flex-col bg-[#09090b]">
+<div id="msgs" class="flex-1 overflow-y-auto p-4 md:p-6 w-full max-w-3xl mx-auto space-y-6">
+<div class="text-center mt-12 fade-in">
+<div class="w-16 h-16 rounded-2xl bg-[#18181b] border border-[#27272a] flex items-center justify-center mx-auto mb-4 shadow-sm">
 <svg class="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
 </div>
-<h3 class="font-medium text-lg text-white mb-2">Baobao</h3>
-<p class="text-sm text-gray-400 max-w-sm mx-auto">Taip arahan anda di bawah. Contoh: Bina sistem tempahan untuk salon.</p>
+<h3 class="font-medium text-lg text-white mb-2">Tanya Baobao</h3>
+<p class="text-sm text-gray-400">Bina sistem, tanya kod, atau automasi kerja anda.</p>
 </div>
 </div>
-<div class="p-4 border-t border-[#27272a] bg-[#09090b]">
-<form id="chat-form" class="flex gap-2">
-<input id="chat-input" type="text" placeholder="Tanya Baobao apa saja..." autocomplete="off" class="flex-1 bg-[#18181b] border border-[#27272a] rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 text-white"/>
-<button type="submit" class="btn">Hantar</button>
-</form></div></div>
+<div class="p-4 bg-[#09090b]">
+<form id="chat-form" class="w-full max-w-3xl mx-auto relative">
+<input id="chat-input" type="text" placeholder="Taip arahan anda di sini..." autocomplete="off" class="w-full bg-[#18181b] border border-[#27272a] rounded-xl pl-4 pr-12 py-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors placeholder-gray-500"/>
+<button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-emerald-500 hover:bg-emerald-400 rounded-lg text-[#09090b] transition-colors flex items-center justify-center">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+</button>
+</form>
+<div class="text-center mt-2"><span class="text-[10px] text-gray-500">Baobao boleh melakukan kesilapan. Sila semak kod penting.</span></div>
+</div>
 <script>
 document.getElementById('chat-form').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -121,16 +125,18 @@ document.getElementById('chat-form').addEventListener('submit', async (e) => {
   input.value = '';
   const container = document.getElementById('msgs');
   
+  // Append user message
   const userDiv = document.createElement('div');
   userDiv.className = 'flex justify-end fade-in';
   userDiv.innerHTML = '<div class="bub-user">' + msg.replace(/</g,'&lt;') + '</div>';
   container.appendChild(userDiv);
   container.scrollTop = container.scrollHeight;
   
+  // Append loading
   const loadDiv = document.createElement('div');
   loadDiv.id = 'loading-msg';
   loadDiv.className = 'flex justify-start fade-in';
-  loadDiv.innerHTML = '<div class="bub-ai text-gray-400">Baobao sedang berfikir...</div>';
+  loadDiv.innerHTML = '<div class="bub-ai text-gray-400"><svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-emerald-500 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Baobao sedang berfikir...</div>';
   container.appendChild(loadDiv);
   container.scrollTop = container.scrollHeight;
   
@@ -146,7 +152,8 @@ document.getElementById('chat-form').addEventListener('submit', async (e) => {
     const aiDiv = document.createElement('div');
     aiDiv.className = 'flex justify-start fade-in';
     const replyText = data.ok ? data.reply : (data.error === 'quota exceeded' ? 'Kuota habis. Sila upgrade.' : (data.error || 'Ralat sistem.'));
-    aiDiv.innerHTML = '<div class="bub-ai">' + replyText.replace(/</g,'&lt;') + '</div>';
+    aiDiv.innerHTML = '<div class="bub-ai">' + replyText.replace(/</g,'&lt;').replace(/
+/g, '<br>') + '</div>';
     container.appendChild(aiDiv);
     container.scrollTop = container.scrollHeight;
   } catch (err) {
@@ -157,6 +164,7 @@ document.getElementById('chat-form').addEventListener('submit', async (e) => {
     container.appendChild(errDiv);
   }
 });
+</script>`;});
 </script>`;}
 
 function vOps(){return `<div class="p-8 max-w-4xl mx-auto fade-in">

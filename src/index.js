@@ -75,7 +75,7 @@ export default {
       const clientId = env.GOOGLE_CLIENT_ID;
       const redirectUri = url.origin + '/api/auth/oauth/google/callback';
       const scope = 'email profile';
-      const googleAuthUrl = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=' + clientId + '&redirect_uri=' + encodeURIComponent(redirectUri) + '&response_type=code&scope=' + encodeURIComponent(scope) + '&access_type=offline&prompt=consent';
+      const googleAuthUrl = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=' + clientId + '&redirect_uri=' + encodeURIComponent(redirectUri) + '&response_type=code&scope=' + encodeURIComponent(scope) + '';
       return Response.redirect(googleAuthUrl, 302);
     }
     if (path === '/api/auth/oauth/google/callback') {
